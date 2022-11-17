@@ -1,12 +1,22 @@
 {% extends 'pages/layout.html' %}
 
 {% block content %}
-    <h1>Projects list page</h1>
+<div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12">
+            <div class="card bg-white" style="border-radius: 1rem;">
+                <div class="card-body p-5">
 
-    {% for project in projects %}
-        <p>
-            <h2><a href="{% url 'project_detail' pk=project.pk %}">{{ project.name }}</a></h2>
-            <p>{{ project.url }}</p>
-        </p>
-    {% endfor %}
+                    {% for project in projects %}
+                    <p>
+                    <h2><a href="{% url 'project_detail' pk=project.pk %}">{{ project.name }}</a></h2>
+                    <p>{{ project.url }}</p>
+                    </p>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
