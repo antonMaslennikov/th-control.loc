@@ -18,22 +18,29 @@
                                 {% csrf_token %}
                                 
                                 <div class="form-outline form-white mb-4">
-                                    <input type="text" id="typeEmailX" class="form-control form-control-lg" placeholder="email" name="username" />
-                                    <label class="form-label" for="typeEmailX">Email</label>
+                                    <input type="email" id="id_email" class="form-control form-control-lg" placeholder="Email" name="email" {% if form.email.value != None %}value="{{ form.email.value }}"{% endif %} required />
+                                    <label class="form-label" for="id_email">Email *</label>
                                 </div>
 
                                 <div class="form-outline form-white mb-4">
-                                    <input type="password" id="typePasswordX" class="form-control form-control-lg" placeholder="пароль" name="password1" />
-                                    <label class="form-label" for="typePasswordX">Пароль</label>
+                                    <input type="text" id="id_first_name" class="form-control form-control-lg" placeholder="Имя" name="first_name" {% if form.first_name.value != None %}value="{{ form.first_name.value }}"{% endif %} />
+                                    <label class="form-label" for="id_first_name">Имя</label>
                                 </div>
 
                                 <div class="form-outline form-white mb-4">
-                                    <input type="password" id="typePasswordX" class="form-control form-control-lg" placeholder="пароль" name="password2" />
-                                    <label class="form-label" for="typePasswordX">Пароль ещё раз</label>
+                                    <input type="password" id="id_password1" class="form-control form-control-lg" placeholder="Пароль" name="password1" required />
+                                    <label class="form-label" for="id_password1">Пароль</label>
+                                </div>
+
+                                <div class="form-outline form-white mb-4">
+                                    <input type="password" id="id_password2" class="form-control form-control-lg" placeholder="Пароль ещё раз" name="password2" required />
+                                    <label class="form-label" for="id_password2">Пароль ещё раз</label>
                                 </div>
 
                                 <button class="btn btn-outline-light btn-lg px-5" type="submit">Зарегистрироваться</button>
                                 
+<!-- {{ form }} -->
+
                                 {% if form.errors %}
                                     <div class="pt-3 text-color-error">
                                     {% for field, errors in form.errors.items %}

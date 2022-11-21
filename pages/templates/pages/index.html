@@ -7,9 +7,8 @@
         <div class="col-12">
             <div class="card bg-white" style="border-radius: 1rem;">
                 <div class="card-body p-5">
-                    home    
                     {% if user.is_authenticated %}
-                        авторизован {{ user.get_username }} <a href="{% url 'logout' %}">Выйти</a>
+                        авторизован {{ user.first_name }} <a href="{% url 'logout' %}">Выйти</a>
                     {% else %}
                         не авторизован <a href="{% url 'login' %}">Войти</a> или <a href="{% url 'signup' %}">Зарегистрироваться</a>
                     {% endif %}
