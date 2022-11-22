@@ -9,6 +9,9 @@ def index(request):
 
 @login_required
 def detail(request, pk):
-    # projects = Project.objects.all()
     project = Project.objects.get(pk=pk)
     return render(request, 'project/detail.html', {'project': project})
+
+@login_required
+def create(request):
+    return render(request, 'project/detail.html')
