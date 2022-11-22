@@ -136,3 +136,9 @@ ALLOWED_HOSTS = ['127.0.0.1']
 # Redirect to home URL after login (Default redirects to /accounts/profile/)
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+EMAIL_USE_TLS = True 
+EMAIL_HOST = 'smtp.gmail.com' 
+EMAIL_HOST_USER = 'anton.maslennikov@gmail.com' 
+EMAIL_HOST_PASSWORD = 'aquossven1' 
+EMAIL_PORT = 587
