@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
 from django.shortcuts import render
@@ -60,11 +61,19 @@ def activate(request, uidb64, token):
     except(TypeError, ValueError, OverflowError, User.DoesNotExist): 
         user = None 
 
-    if user is not None and account_activation_token.check_token(user, token): 
-        user.is_active = True 
-        user.save() 
-        # return HttpResponse('Thank you for your email confirmation. Now you can login your account.') 
-        return render(request, 'accounts/activate.html', {'result': 'success'})
+    if user is not None: 
+        if user.is_active == False and account_activation_token.check_token(user, token):
+            user.is_active = True 
+            user.save() 
+
+            # авторизуем
+            login(request, user)
+
+            return render(request, 'accounts/activate.html', {'result': 'success'})
+        else:
+            if user.is_active == True:
+                return render(request, 'accounts/activate.html', {'result': 'already'})
+            else:
+                return render(request, 'accounts/activate.html', {'result': 'error'})
     else: 
-        # return HttpResponse('Activation link is invalid!')
         return render(request, 'accounts/activate.html', {'result': 'error'})
