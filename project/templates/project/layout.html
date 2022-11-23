@@ -1,0 +1,35 @@
+{% extends 'layout.html' %}
+
+
+{% block content %}
+
+    <div class="card bg-white mt-5" style="border-radius: 1rem;">
+        <div class="card-body px-4 pb-5">
+
+            <h1 class="h2">Проекты</h1>
+
+            <div class="row mt-5">
+                <div class="col-3">
+
+                    <a href="{% url 'project_create' %}" class="btn btn-sm btn-primary w-100 mb-3">Новый проект</a>
+
+                    <ul class="list-group">
+                        {% for project in projects %}
+                            <li class="list-group-item">
+                                <a href="{% url 'project_detail' pk=project.pk %}">{{ project.name }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="col-9">
+
+                    {% block content_projects %}
+                    {% endblock %}
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}
