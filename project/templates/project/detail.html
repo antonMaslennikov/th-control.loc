@@ -1,8 +1,14 @@
 {% extends 'project/layout.html' %}
 
+{% block breadcrumps_projects %}
+    <h1 class="h2">
+        <a href="{% url 'index' %}">Проекты</a> ::
+        {{ project.name }}
+    </h1>
+{% endblock %}
+
 {% block content_projects %}
     
     {{ project.name }}
-
     
 {% endblock %}
