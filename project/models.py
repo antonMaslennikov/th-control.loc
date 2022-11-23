@@ -33,6 +33,7 @@ class Project(models.Model):
     users = models.ManyToManyField(settings.AUTH_USER_MODEL, through='UsersRelation')
     regions = models.ManyToManyField(Region)
     types = models.ManyToManyField(Type)
+    is_deleted = models.BooleanField(default=0)
 
     def __str__(self):
         return self.name
