@@ -12,3 +12,9 @@ background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 
 .text-color-error {
     color:red;
 }
+
+.errorlist {
+    list-style: none;
+    color:red;
+    padding-left: 0;
+}

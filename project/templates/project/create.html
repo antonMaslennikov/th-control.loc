@@ -9,6 +9,58 @@
 
 {% block content_projects %}
 
-    create
+    <form action="" method="post">
+        {% csrf_token %}
+
+        <div class="form-outline form-white mb-4">
+            <label class="form-label" for="{{ form.name.id_for_label }}">Название проекта</label>
+            {{ form.name }}
+            {{ form.name.errors }}
+        </div>
+
+        <div class="form-outline form-white mb-4">
+            <label class="form-label" for="{{ form.url.id_for_label }}">Url</label>
+            {{ form.url }}
+            {{ form.url.errors }}
+        </div>
+        
+        <div class="form-outline form-white mb-4">
+            <label class="form-label" for="{{ form.types.id_for_label }}">Тип</label>
+            {{ form.types }}
+            <small>Используйте Ctrl+ чтобы выбрать несколько пунктов в списке</small>
+            {{ form.types.errors }}
+        </div>
+        
+        <div class="form-outline form-white mb-4">
+            <label class="form-label" for="{{ form.regions.id_for_label }}">Служебный</label>
+            {{ form.regions }}
+            <small>Используйте Ctrl+ чтобы выбрать несколько пунктов в списке</small>
+            {{ form.regions.errors }}
+        </div>
+
+        
+        <div class="form-outline form-white mb-4">
+            <label class="form-label" for="{{ form.is_service.id_for_label }}">Служебный</label>
+            <p>{{ form.is_service }}</p>
+            {{ form.is_service.errors }}
+        </div>
+
+        <br>
+
+        <button class="btn  btn-success px-5" type="submit">
+            Сохранить
+        </button>
+
+        {% comment %} {% if form.errors %}
+            <div class="pt-3 text-color-error">
+            {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            {% endfor %}
+            </div>
+        {% endif %} {% endcomment %}
+
+    </form>
 
 {% endblock %}

@@ -31,8 +31,8 @@ class Project(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(default=timezone.now)
     users = models.ManyToManyField(settings.AUTH_USER_MODEL, through='UsersRelation')
-    regions = models.ManyToManyField(Region)
-    types = models.ManyToManyField(Type)
+    regions = models.ManyToManyField(Region, blank=True)
+    types = models.ManyToManyField(Type, blank=True)
     is_deleted = models.BooleanField(default=0)
 
     def __str__(self):
