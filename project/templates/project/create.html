@@ -3,7 +3,7 @@
 {% block breadcrumps_projects %}
     <h1 class="h2">
         <a href="{% url 'index' %}">Проекты</a> ::
-        Новый
+        {% if project %} {{ project.name }} {% else %} Новый {% endif %}
     </h1>
 {% endblock %}
 
@@ -13,26 +13,26 @@
         {% csrf_token %}
 
         <div class="form-outline form-white mb-4">
-            <label class="form-label" for="{{ form.name.id_for_label }}">Название проекта</label>
+            <label class="form-label" for="{{ form.name.id_for_label }}"><b>Название проекта</b></label>
             {{ form.name }}
             {{ form.name.errors }}
         </div>
 
         <div class="form-outline form-white mb-4">
-            <label class="form-label" for="{{ form.url.id_for_label }}">Url</label>
+            <label class="form-label" for="{{ form.url.id_for_label }}"><b>Url</b></label>
             {{ form.url }}
             {{ form.url.errors }}
         </div>
         
         <div class="form-outline form-white mb-4">
-            <label class="form-label" for="{{ form.types.id_for_label }}">Тип</label>
+            <label class="form-label" for="{{ form.types.id_for_label }}"><b>Тип</b></label>
             {{ form.types }}
             <small>Используйте Ctrl+ чтобы выбрать несколько пунктов в списке</small>
             {{ form.types.errors }}
         </div>
         
         <div class="form-outline form-white mb-4">
-            <label class="form-label" for="{{ form.regions.id_for_label }}">Служебный</label>
+            <label class="form-label" for="{{ form.regions.id_for_label }}"><b>Регион</b></label>
             {{ form.regions }}
             <small>Используйте Ctrl+ чтобы выбрать несколько пунктов в списке</small>
             {{ form.regions.errors }}
@@ -40,16 +40,23 @@
 
         
         <div class="form-outline form-white mb-4">
-            <label class="form-label" for="{{ form.is_service.id_for_label }}">Служебный</label>
+            <label class="form-label" for="{{ form.is_service.id_for_label }}"><b>Служебный</b></label>
             <p>{{ form.is_service }}</p>
             {{ form.is_service.errors }}
         </div>
 
         <br>
 
-        <button class="btn  btn-success px-5" type="submit">
-            Сохранить
-        </button>
+        <div class="row">
+            <div class="col-6">
+                <button class="btn btn-success px-5" type="submit">Сохранить</button>
+            </div>
+            <div class="col-6 text-end">
+                {% if project %}
+                    <a href="{% url 'project_delete' pk=project.pk %}" class="btn btn-danger px-5" onclick="return confirm('Вы уверены, что хотите удалить проект?')">Удалить</a>
+                {% endif %}
+            </div>
+        </div>
 
         {% comment %} {% if form.errors %}
             <div class="pt-3 text-color-error">
