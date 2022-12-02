@@ -8,7 +8,53 @@
 {% endblock %}
 
 {% block content_projects %}
-    
-    {{ project.name }}
-    
+
+    <div class="row">
+        <div class="col-6">
+            <p>{{ project.name }}</p>
+            <p>{{ project.url }}</p>
+            <p>{{ project.is_service }}</p>
+        </div>
+        <div class="col-6">
+            <p>{{ project.types }}</p>
+            <p>{{ project.regions }}</p>
+        </div>
+    </div>
+
+    <hr>
+
+    <p>
+        <b>CRM: </b>
+        <a href="">Подключить</a>
+    </p>
+
+    <hr>
+    <br>
+
+    <div class="row">
+        <div class="col-4">
+            <h5>Пользователи</h5>
+
+            <ul>
+                <li>...</li>
+                <li>...</li>
+                <li>...</li>
+            </ul>
+
+            <a href="">Добавить</a>
+        </div>
+
+        <div class="col-4">
+            <h5>Метрики</h5>
+
+
+        </div>
+
+        <div class="col-4">
+            <h5>Задачи</h5>
+
+
+        </div>
+    </div>
+
 {% endblock %}
