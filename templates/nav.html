@@ -26,7 +26,11 @@
                             {{ user.first_name }} 
                         </a>
 
+
+
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="{% url 'project_connect_crm' %}">Подключить CRM</a>
+
                             <a class="dropdown-item" href="{% url 'logout' %}">Выйти</a>
                         </div>
                     </li>

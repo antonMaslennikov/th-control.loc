@@ -31,15 +31,6 @@
     </div>
 
     <hr>
-
-    <p>
-        <b>CRM: </b>
-        {% if project.author_id == user.pk %}
-            <a href="{% url 'project_connect_crm' pk=project.id %}">Подключить</a>
-        {% endif %}
-    </p>
-
-    <hr>
     <br>
 
     <div class="row">

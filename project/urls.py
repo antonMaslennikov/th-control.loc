@@ -8,5 +8,5 @@ urlpatterns = [
     path('update/<int:pk>/', views.update, name='project_update'),
     path('delete/<int:pk>/', views.delete, name='project_delete'),
     path('invite/<int:pk>/', views.invite, name='project_invite'),
-    path('connect_crm/<int:pk>/', views.connect_crm, name='project_connect_crm'),
+    path('connect_crm/', views.connect_crm, name='project_connect_crm'),
 ]

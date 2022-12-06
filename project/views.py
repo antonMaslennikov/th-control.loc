@@ -130,21 +130,15 @@ def invite(request, pk):
     })
 
 @login_required
-def connect_crm(request, pk):
+def connect_crm(request):
     try:
-        project = Project.objects.get(
-            pk=pk,
-            author_id=request.user.id,
-            is_deleted=False
-        )
 
-        print(project)
+        print('hola')
 
     except Project.DoesNotExist:
         raise Http404('No access')
 
     return render(request, 'project/connect_crm.html', {
         'projects': getmyprojects(request),
-        'project': project,
         # 'form': form
     })
