@@ -52,7 +52,7 @@
                 <button class="btn btn-success px-5" type="submit">Сохранить</button>
             </div>
             <div class="col-6 text-end">
-                {% if project %}
+                {% if project and project.author_id == user.pk %}
                     <a href="{% url 'project_delete' pk=project.pk %}" class="btn btn-danger px-5" onclick="return confirm('Вы уверены, что хотите удалить проект?')">Удалить</a>
                 {% endif %}
             </div>

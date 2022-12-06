@@ -1,0 +1,15 @@
+{% extends 'project/layout.html' %}
+
+{% block breadcrumps_projects %}
+    <h1 class="h2">
+        <a href="{% url 'index' %}">Проекты</a> ::
+        <a href="{% url 'project_detail' pk=project.id %}">{{ project.name }}</a> ::
+        Подключить CRM
+    </h1>
+{% endblock %}
+
+{% block content_projects %}
+
+  connect crm
+
+{% endblock %}

@@ -30,6 +30,7 @@ def detail(request, pk):
             author_id=request.user.id,
             is_deleted=False
         )
+
     except Project.DoesNotExist:
         raise Http404('No access')
 
@@ -107,3 +108,43 @@ def delete(request, pk):
         raise Http404('No access')
 
     return redirect('index')
+
+@login_required
+def invite(request, pk):
+    try:
+        project = Project.objects.get(
+            pk=pk,
+            author_id=request.user.id,
+            is_deleted=False
+        )
+
+        print(project)
+
+    except Project.DoesNotExist:
+        raise Http404('No access')
+
+    return render(request, 'project/invite.html', {
+        'projects': getmyprojects(request),
+        'project': project,
+        # 'form': form
+    })
+
+@login_required
+def connect_crm(request, pk):
+    try:
+        project = Project.objects.get(
+            pk=pk,
+            author_id=request.user.id,
+            is_deleted=False
+        )
+
+        print(project)
+
+    except Project.DoesNotExist:
+        raise Http404('No access')
+
+    return render(request, 'project/connect_crm.html', {
+        'projects': getmyprojects(request),
+        'project': project,
+        # 'form': form
+    })

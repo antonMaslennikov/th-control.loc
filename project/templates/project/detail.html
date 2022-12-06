@@ -10,14 +10,23 @@
 {% block content_projects %}
 
     <div class="row">
-        <div class="col-6">
-            <p>{{ project.name }}</p>
-            <p>{{ project.url }}</p>
-            <p>{{ project.is_service }}</p>
-        </div>
-        <div class="col-6">
-            <p>{{ project.types }}</p>
-            <p>{{ project.regions }}</p>
+        <div class="col-12">
+            {% if project.url %}
+                <p><a href="{{ project.url }}">{{ project.url }}</a></p>
+            {% endif %}
+            <p>
+                {% for type in project.types.all %}
+                    <span class="badge bg-secondary">{{ type }}</span>
+                {% endfor %}
+            </p>
+            <p>
+                {% for region in project.regions.all %}
+                    <span class="badge bg-secondary">{{ region }}</span>
+                {% endfor %}
+            </p>
+            {% if project.is_service %}
+                <p><span class="badge bg-danger">служебный</span></p>
+            {% endif %}
         </div>
     </div>
 
@@ -25,7 +34,9 @@
 
     <p>
         <b>CRM: </b>
-        <a href="">Подключить</a>
+        {% if project.author_id == user.pk %}
+            <a href="{% url 'project_connect_crm' pk=project.id %}">Подключить</a>
+        {% endif %}
     </p>
 
     <hr>
@@ -41,7 +52,9 @@
                 <li>...</li>
             </ul>
 
-            <a href="">Добавить</a>
+            {% if project.author_id == user.pk %}
+            <a href="{% url 'project_invite' pk=project.id %}">Пригласить</a>
+            {% endif %}
         </div>
 
         <div class="col-4">
