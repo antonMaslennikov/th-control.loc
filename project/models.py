@@ -51,5 +51,9 @@ class Invite(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     email = models.CharField(max_length=255)
     code = models.CharField(max_length=30)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='created_by')
     created_at = models.DateTimeField(default=timezone.now)
+    accepted = models.BooleanField(default=0)
+    accepted_at = models.DateTimeField(blank=True)
+    created_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='created_user', blank=True)
 
