@@ -4,7 +4,7 @@ from django.utils import timezone
 
 # Create your models here.
 
-# --------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 
 class Type(models.Model):
     name = models.CharField(max_length=70)
@@ -12,7 +12,7 @@ class Type(models.Model):
     def __str__(self):
         return self.name
 
-# --------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 
 class Region(models.Model):
     name = models.CharField(max_length=255)
@@ -20,7 +20,7 @@ class Region(models.Model):
     def __str__(self):
         return self.name
 
-# --------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 
 class Project(models.Model):
 
@@ -39,9 +39,17 @@ class Project(models.Model):
         return self.name
 
 
-# --------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 
 class UsersRelation(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     created_at = models.DateTimeField(default=timezone.now)
+
+# ----------------------------------------------------------------------------------------------------------------------
+class Invite(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    email = models.CharField(max_length=255)
+    code = models.CharField(max_length=30)
+    created_at = models.DateTimeField(default=timezone.now)
+

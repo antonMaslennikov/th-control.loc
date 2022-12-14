@@ -14,3 +14,12 @@ class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
         fields = ['name', 'url', 'types', 'regions', 'is_service']
+
+class InviteForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    class Meta:
+        model = Project
+        fields = ['name', 'url', 'types', 'regions', 'is_service']
