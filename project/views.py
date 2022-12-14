@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
-from project.models import Project
+from project.models import Project, Invite
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
+from django.utils import timezone
 from .forms import ProjectForm, InviteForm
 import random, string
 from django.contrib import messages
@@ -17,6 +18,12 @@ def getmyprojects(request):
     # print(str(projects.query))
 
     return projects
+
+
+def generate_random_string(length):
+    letters_and_digits = string.ascii_letters + string.digits
+    rand_string = ''.join(random.sample(letters_and_digits, length))
+    return rand_string
 
 
 @login_required
@@ -155,7 +162,31 @@ def invite(request, pk):
 
 
 def invite_accept(request, pk, code):
-    pass
+
+    try:
+
+        invite = Invite.objects.get(
+            code=code,
+            accepted=0,
+            project_id=pk
+        )
+
+        # TODO создаём нового пользователя в системе
+
+        # TODO отправляем ему сгенерированные регистрационные данные на почту
+
+        # помечаем инвайт как использованный
+        invite.accepted = True
+        invite.accepted_at = timezone.datetime.now()
+        invite.save()
+
+        # set flash message
+        messages.success(request, 'Инвайт был успешно принят. Данные для входа отправлены на Ваш email ' + invite.email)
+
+    except Invite.DoesNotExist:
+        raise Http404('The invitation is no longer available')
+
+    return redirect('project_detail', pk=invite.project.id)
 
 @login_required
 def connect_crm(request):
@@ -170,9 +201,3 @@ def connect_crm(request):
         'projects': getmyprojects(request),
         # 'form': form
     })
-
-
-def generate_random_string(length):
-    letters_and_digits = string.ascii_letters + string.digits
-    rand_string = ''.join(random.sample(letters_and_digits, length))
-    return rand_string
