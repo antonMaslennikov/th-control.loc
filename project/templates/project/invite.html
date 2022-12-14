@@ -10,6 +10,21 @@
 
 {% block content_projects %}
 
-  invite
+    <form action="" method="post">
+        {% csrf_token %}
+
+        <div class="form-outline form-white mb-4">
+            <label class="form-label" for="{{ form.email.id_for_label }}"><b>Email</b></label>
+            {{ form.email }}
+            {{ form.email.errors }}
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <button class="btn btn-success px-5" type="submit">Отправить</button>
+            </div>
+        </div>
+
+  </form>
 
 {% endblock %}

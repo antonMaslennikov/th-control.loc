@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect
 from project.models import Project
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
-from .forms import ProjectForm
+from .forms import ProjectForm, InviteForm
+import random, string
+from django.contrib import messages
 
 
 def getmyprojects(request):
@@ -92,6 +94,7 @@ def update(request, pk):
         'form': form
     })
 
+
 @login_required
 def delete(request, pk):
     try:
@@ -109,6 +112,7 @@ def delete(request, pk):
 
     return redirect('index')
 
+
 @login_required
 def invite(request, pk):
     try:
@@ -118,16 +122,40 @@ def invite(request, pk):
             is_deleted=False
         )
 
-        print(project)
-
     except Project.DoesNotExist:
         raise Http404('No access')
+
+    if request.method == 'POST':
+        form = InviteForm(request.POST)
+
+        if form.is_valid():
+
+            inv = form.save(commit=False)
+
+            inv.code = generate_random_string(20)
+            inv.created_by_id = request.user.id
+            inv.project_id = project.id
+
+            inv.save()
+
+            form.send_email(inv, request)
+
+            # set flash message
+            messages.success(request, 'Инвайт был успешно отправлен на ' + inv.email)
+
+            return redirect('project_detail', pk=project.id)
+    else:
+        form = InviteForm()
 
     return render(request, 'project/invite.html', {
         'projects': getmyprojects(request),
         'project': project,
-        # 'form': form
+        'form': form,
     })
+
+
+def invite_accept(request, pk, code):
+    pass
 
 @login_required
 def connect_crm(request):
@@ -142,3 +170,9 @@ def connect_crm(request):
         'projects': getmyprojects(request),
         # 'form': form
     })
+
+
+def generate_random_string(length):
+    letters_and_digits = string.ascii_letters + string.digits
+    rand_string = ''.join(random.sample(letters_and_digits, length))
+    return rand_string

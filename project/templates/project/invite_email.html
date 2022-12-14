@@ -1,0 +1,2 @@
+<p>Вы приглашены для участия в проекте "{{ invite.project }}"</p>
+<p>Для подтверждения пройдите по ссылке https://{{ domain }}{% url 'project_invite_accept' pk=invite.project.id code=invite.code %}</p>

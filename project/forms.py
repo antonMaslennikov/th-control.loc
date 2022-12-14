@@ -1,5 +1,8 @@
 from django import forms
-from .models import Project
+from .models import Project, Invite
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.core.mail import EmailMessage
 
 class ProjectForm(forms.ModelForm): 
 
@@ -19,7 +22,25 @@ class InviteForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['email'].widget.attrs.update({'class': 'form-control'})
 
     class Meta:
-        model = Project
-        fields = ['name', 'url', 'types', 'regions', 'is_service']
+        model = Invite
+        fields = ['email']
+
+    def send_email(self, invite, request):
+
+        current_site = get_current_site(request)
+        mail_subject = 'Invite to project'
+        message = render_to_string('project/invite_email.html', {
+            'invite': invite,
+            'domain': current_site.domain,
+        })
+        to_email = self.cleaned_data.get('email')
+        email = EmailMessage(
+            mail_subject, message, to=[to_email]
+        )
+        email.content_subtype = "html"
+        email.send()
+
+    pass

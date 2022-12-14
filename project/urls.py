@@ -8,5 +8,6 @@ urlpatterns = [
     path('update/<int:pk>/', views.update, name='project_update'),
     path('delete/<int:pk>/', views.delete, name='project_delete'),
     path('invite/<int:pk>/', views.invite, name='project_invite'),
+    path('invite/<int:pk>/accept/<str:code>', views.invite_accept, name='project_invite_accept'),
     path('connect_crm/', views.connect_crm, name='project_connect_crm'),
 ]
