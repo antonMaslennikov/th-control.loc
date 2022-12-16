@@ -1,4 +1,6 @@
 from django import forms
+from django.core.exceptions import ValidationError
+
 from .models import Project, Invite
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
@@ -18,15 +20,41 @@ class ProjectForm(forms.ModelForm):
         model = Project
         fields = ['name', 'url', 'types', 'regions', 'is_service']
 
+
 class InviteForm(forms.ModelForm):
 
+    project = None
+
     def __init__(self, *args, **kwargs):
+
+        self.project = kwargs.pop('project')
+
         super().__init__(*args, **kwargs)
+
         self.fields['email'].widget.attrs.update({'class': 'form-control'})
+
+        print(self.project.users.values())
+
 
     class Meta:
         model = Invite
         fields = ['email']
+
+    def clean_email(self):
+        data = self.cleaned_data['email']
+
+        # проверка, что пользователь с таким мылом уже не привязан к этому проекту
+        for u in self.project.users.values():
+            if u['email'] in data:
+                raise ValidationError("Этот пользователь уже участвует в проекте")
+
+        # и это не сам хозяин проекта
+        if self.project.author.email == data:
+            raise ValidationError("Вы не можете пригласить себя в проект")
+
+        return data
+
+
 
     def send_email(self, invite, request):
 
@@ -42,5 +70,3 @@ class InviteForm(forms.ModelForm):
         )
         email.content_subtype = "html"
         email.send()
-
-    pass

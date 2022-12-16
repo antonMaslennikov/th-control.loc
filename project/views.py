@@ -40,6 +40,8 @@ def detail(request, pk):
             is_deleted=False
         )
 
+        print(project.users)
+
     except Project.DoesNotExist:
         raise Http404('No access')
 
@@ -133,7 +135,7 @@ def invite(request, pk):
         raise Http404('No access')
 
     if request.method == 'POST':
-        form = InviteForm(request.POST)
+        form = InviteForm(request.POST, project=project)
 
         if form.is_valid():
 
@@ -152,7 +154,7 @@ def invite(request, pk):
 
             return redirect('project_detail', pk=project.id)
     else:
-        form = InviteForm()
+        form = InviteForm(project=project)
 
     return render(request, 'project/invite.html', {
         'projects': getmyprojects(request),
@@ -171,9 +173,10 @@ def invite_accept(request, pk, code):
             project_id=pk
         )
 
-        # TODO создаём нового пользователя в системе
+        # TODO создаём нового пользователя в системе (ЕСЛИ ОН УЖЕ НЕ ЗАРЕГИСТРИРОВАН В СИСТЕМЕ)
+        # TODO и отправляем ему сгенерированные регистрационные данные на почту
 
-        # TODO отправляем ему сгенерированные регистрационные данные на почту
+        # TODO подключаем его к проекту
 
         # помечаем инвайт как использованный
         invite.accepted = True

@@ -34,8 +34,23 @@
     <br>
 
     <div class="row">
+        {% if project.author_id == user.pk %}
         <div class="col-4">
             <h5>Пользователи</h5>
+
+            <ul>
+                {% for user in project.users.all %}
+                    <li>{{ user.username }}</li>
+                {% endfor %}
+            </ul>
+
+            <a href="{% url 'project_invite' pk=project.id %}">Пригласить</a>
+        </div>
+        {% endif %}
+
+
+        <div class="col-{% if project.author_id == user.pk %}8{% else %}12{% endif %}">
+            <h5>Сервисы</h5>
 
             <ul>
                 <li>...</li>
@@ -43,21 +58,7 @@
                 <li>...</li>
             </ul>
 
-            {% if project.author_id == user.pk %}
-            <a href="{% url 'project_invite' pk=project.id %}">Пригласить</a>
-            {% endif %}
-        </div>
-
-        <div class="col-4">
-            <h5>Метрики</h5>
-
-
-        </div>
-
-        <div class="col-4">
-            <h5>Задачи</h5>
-
-
+            <a href="{% url 'project_invite' pk=project.id %}">Подключить</a>
         </div>
     </div>
 

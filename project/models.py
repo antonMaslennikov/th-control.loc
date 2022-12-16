@@ -14,6 +14,7 @@ class Type(models.Model):
 
 # ----------------------------------------------------------------------------------------------------------------------
 
+
 class Region(models.Model):
     name = models.CharField(max_length=255)
 
@@ -21,6 +22,7 @@ class Region(models.Model):
         return self.name
 
 # ----------------------------------------------------------------------------------------------------------------------
+
 
 class Project(models.Model):
 
@@ -38,8 +40,8 @@ class Project(models.Model):
     def __str__(self):
         return self.name
 
-
 # ----------------------------------------------------------------------------------------------------------------------
+
 
 class UsersRelation(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
