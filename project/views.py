@@ -16,10 +16,9 @@ def getmyprojects(request):
     projects = Project.objects.filter(
         author_id=request.user.id,
         is_deleted=False
-    )
-    # | Project.objects.filter(author_id = 2)
+    ) | Project.objects.filter(users__id=request.user.id)
 
-    # print(str(projects.query))
+    print(str(projects.query))
 
     return projects
 
@@ -40,14 +39,21 @@ def detail(request, pk):
     try:
         project = Project.objects.get(
             pk=pk,
-            author_id=request.user.id,
-            is_deleted=False
+            is_deleted=False,
         )
 
-        print(project.users)
+        project_users = [];
+
+        for user in project.users.values('id'):
+            project_users.append(user['id'])
+
+        if project.author_id != request.user.id and request.user.id not in project_users:
+            raise Http404('No access')
 
     except Project.DoesNotExist:
         raise Http404('No access')
+
+
 
     return render(request, 'project/detail.html', {
         'projects': getmyprojects(request),

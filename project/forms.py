@@ -33,8 +33,6 @@ class InviteForm(forms.ModelForm):
 
         self.fields['email'].widget.attrs.update({'class': 'form-control'})
 
-        print(self.project.users.values())
-
 
     class Meta:
         model = Invite
