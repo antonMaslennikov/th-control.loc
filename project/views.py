@@ -1,5 +1,9 @@
+from django.contrib.auth import get_user_model, login
+from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import render, redirect
-from project.models import Project, Invite
+from django.template.loader import render_to_string
+from django.core.mail import EmailMessage
+from project.models import Project, Invite, UsersRelation
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.utils import timezone
@@ -173,21 +177,54 @@ def invite_accept(request, pk, code):
             project_id=pk
         )
 
-        # TODO создаём нового пользователя в системе (ЕСЛИ ОН УЖЕ НЕ ЗАРЕГИСТРИРОВАН В СИСТЕМЕ)
-        # TODO и отправляем ему сгенерированные регистрационные данные на почту
-
-        # TODO подключаем его к проекту
-
-        # помечаем инвайт как использованный
-        invite.accepted = True
-        invite.accepted_at = timezone.datetime.now()
-        invite.save()
-
-        # set flash message
-        messages.success(request, 'Инвайт был успешно принят. Данные для входа отправлены на Ваш email ' + invite.email)
-
     except Invite.DoesNotExist:
         raise Http404('The invitation is no longer available')
+
+    # создаём нового пользователя в системе (ЕСЛИ ОН УЖЕ НЕ ЗАРЕГИСТРИРОВАН В СИСТЕМЕ)
+    # и отправляем ему сгенерированные регистрационные данные на почту
+    users = get_user_model()
+
+    password = None
+
+    try:
+        user = users.objects.get(email=invite.email)
+    except users.DoesNotExist:
+
+        password = generate_random_string(10);
+
+        user = users.objects.create_user(
+            invite.email,
+            invite.email,
+            password,
+            is_active=True,
+            last_login=timezone.now()
+        )
+
+        message = render_to_string('project/invite_accepted.html', {
+            'user': user,
+            'password': password,
+            'project': invite.project,
+            'current_site': get_current_site(request)
+        })
+
+        email = EmailMessage('Invite to project accepted', message, to=[user.email])
+        email.content_subtype = "html"
+        email.send()
+
+
+    # подключаем его к проекту
+    if (password):
+        UsersRelation(user=user, project=invite.project).save()
+
+    login(request, user)
+
+    # помечаем инвайт как использованный
+    invite.accepted = True
+    invite.accepted_at = timezone.datetime.now()
+    invite.save()
+
+    # set flash message
+    messages.success(request, 'Инвайт был успешно принят.' + (' Данные для входа отправлены на Ваш email ' + invite.email if password else ''))
 
     return redirect('project_detail', pk=invite.project.id)
 
