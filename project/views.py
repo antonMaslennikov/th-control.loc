@@ -3,6 +3,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
+from django.db.models import Count
 from project.models import Project, Invite, UsersRelation
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
@@ -16,9 +17,9 @@ def getmyprojects(request):
     projects = Project.objects.filter(
         author_id=request.user.id,
         is_deleted=False
-    ) | Project.objects.filter(users__id=request.user.id)
+    ).annotate(total=Count('id')) | Project.objects.filter(users__id=request.user.id, is_deleted=False)
 
-    print(str(projects.query))
+    # print(str(projects.query))
 
     return projects
 
