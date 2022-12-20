@@ -25,7 +25,6 @@ class Region(models.Model):
 
 
 class Project(models.Model):
-
     name = models.CharField(max_length=255)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='author_id')
     url = models.CharField(max_length=255)
@@ -60,3 +59,14 @@ class Invite(models.Model):
     accepted_at = models.DateTimeField(blank=True, null=True)
     created_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='created_user', blank=True, null=True)
 
+
+# ----------------------------------------------------------------------------------------------------------------------
+class Service(models.Model):
+    name = models.CharField(max_length=255)
+    projects = models.ManyToManyField(Project, blank=True, null=True)
+    pass
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+class Job(models.Model):
+    pass

@@ -3,7 +3,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
-from django.db.models import Count
+from django.db.models import Count, Q
 from project.models import Project, Invite, UsersRelation
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
@@ -15,9 +15,9 @@ from django.contrib import messages
 
 def getmyprojects(request):
     projects = Project.objects.filter(
-        author_id=request.user.id,
+        Q(author_id=request.user.id) | Q(users__id=request.user.id),
         is_deleted=False
-    ).annotate(total=Count('id')) | Project.objects.filter(users__id=request.user.id, is_deleted=False)
+    ).annotate(total=Count('id'))
 
     # print(str(projects.query))
 
@@ -247,4 +247,22 @@ def connect_crm(request):
     return render(request, 'project/connect_crm.html', {
         'projects': getmyprojects(request),
         # 'form': form
+    })
+@login_required
+def connect_service(request, pk):
+    try:
+        project = Project.objects.get(
+            pk=pk,
+            author_id=request.user.id,
+            is_deleted=False
+        )
+    except Project.DoesNotExist:
+        raise Http404('No access')
+
+    # print(project)
+
+    return render(request, 'project/connect_service.html', {
+        'projects': getmyprojects(request),
+        'project': project,
+        # 'form': form,
     })
