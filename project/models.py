@@ -21,9 +21,16 @@ class Region(models.Model):
     def __str__(self):
         return self.name
 
+
 # ----------------------------------------------------------------------------------------------------------------------
+class Service(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
 
 
+# ----------------------------------------------------------------------------------------------------------------------
 class Project(models.Model):
     name = models.CharField(max_length=255)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='author_id')
@@ -33,6 +40,7 @@ class Project(models.Model):
     updated_at = models.DateTimeField(default=timezone.now)
     users = models.ManyToManyField(settings.AUTH_USER_MODEL, through='UsersRelation')
     regions = models.ManyToManyField(Region, blank=True)
+    services = models.ManyToManyField(Service, blank=True)
     types = models.ManyToManyField(Type, blank=True)
     is_deleted = models.BooleanField(default=0)
 
@@ -61,12 +69,14 @@ class Invite(models.Model):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-class Service(models.Model):
-    name = models.CharField(max_length=255)
-    projects = models.ManyToManyField(Project, blank=True, null=True)
-    pass
+class ServiceSettings(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    settings = models.JSONField()
+    accepted_at = models.DateTimeField(default=timezone.now, blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-class Job(models.Model):
-    pass
+# class Job(models.Model):
+#     pass
