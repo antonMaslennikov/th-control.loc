@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from django.db.models import Count, Q
-from project.models import Project, Invite, UsersRelation
+from project.models import Project, Invite, UsersRelation, Service
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.utils import timezone
@@ -259,10 +259,13 @@ def connect_service(request, pk):
     except Project.DoesNotExist:
         raise Http404('No access')
 
-    # print(project)
+    services = Service.objects.all()
+
+    # print(services)
 
     return render(request, 'project/connect_service.html', {
         'projects': getmyprojects(request),
         'project': project,
+        'services': services,
         # 'form': form,
     })

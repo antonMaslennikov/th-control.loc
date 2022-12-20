@@ -53,9 +53,9 @@
             <h5>Сервисы</h5>
 
             <ul>
-                <li>...</li>
-                <li>...</li>
-                <li>...</li>
+                {% for service in project.services.all %}
+                    <li>{{ service.name }}</li>
+                {% endfor %}
             </ul>
 
             <a href="{% url 'project_connect_service' pk=project.id %}">Подключить</a>
