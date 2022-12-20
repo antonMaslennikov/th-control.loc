@@ -235,6 +235,7 @@ def invite_accept(request, pk, code):
 
     return redirect('project_detail', pk=invite.project.id)
 
+
 @login_required
 def connect_crm(request):
     try:
@@ -248,8 +249,9 @@ def connect_crm(request):
         'projects': getmyprojects(request),
         # 'form': form
     })
+
 @login_required
-def connect_service(request, pk):
+def connect_service(request, pk, service_id=None):
     try:
         project = Project.objects.get(
             pk=pk,
@@ -261,11 +263,20 @@ def connect_service(request, pk):
 
     services = Service.objects.all()
 
-    # print(services)
+    if (service_id is None):
+        template = 'project/service/connect.html'
+    else:
+        template = 'project/service/pre_settings.html'
 
-    return render(request, 'project/connect_service.html', {
+
+
+    return render(request, template, {
         'projects': getmyprojects(request),
         'project': project,
         'services': services,
         # 'form': form,
     })
+
+
+def disconnect_service(request, pk, service_id):
+    pass

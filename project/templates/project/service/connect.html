@@ -21,8 +21,11 @@
                 {% if service.description %}
                     <p class="card-text">{{ service.description }}</p>
                 {% endif %}
-                <a href="#" class="btn btn-sm btn-primary btn-block">Подключить</a>
-                <a href="#" class="btn btn-sm btn-danger btn-block">Отключить</a>
+                {% if service in project.services.all %}
+                    <a href="{% url 'project_disconnect_service' pk=project.id service_id=service.id %}" class="btn btn-sm btn-danger btn-block">Отключить</a>
+                {% else %}
+                    <a href="{% url 'project_connect_service' pk=project.id service_id=service.id %}" class="btn btn-sm btn-primary btn-block">Подключить</a>
+                {% endif %}
             </div>
         </div>
     {% endfor %}
