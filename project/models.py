@@ -26,6 +26,7 @@ class Region(models.Model):
 class Service(models.Model):
     name = models.CharField(max_length=255)
     description = models.CharField(max_length=1000, blank=True, null=True)
+    settings = models.JSONField(blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -73,11 +74,22 @@ class Invite(models.Model):
 class ServiceSettings(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
-    settings = models.JSONField()
-    accepted_at = models.DateTimeField(default=timezone.now, blank=True, null=True)
+    settings = models.JSONField(blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now, blank=True, null=True)
     updated_at = models.DateTimeField(blank=True, null=True)
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-# class Job(models.Model):
-#     pass
+class Job(models.Model):
+    STATUS = (
+        (1, 'Запущен'),
+        (2, 'Успешно завершён'),
+        (3, 'Завершился ошибкой'),
+    )
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    data = models.TextField()
+    status = models.IntegerField(choices=STATUS, default=1)
+    result = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now, blank=True)
+    finished_at = models.DateTimeField(blank=True, null=True)
