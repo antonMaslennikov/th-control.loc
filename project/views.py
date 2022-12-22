@@ -250,6 +250,7 @@ def connect_crm(request):
         # 'form': form
     })
 
+
 @login_required
 def connect_service(request, pk, service_id=None):
     try:
@@ -278,5 +279,24 @@ def connect_service(request, pk, service_id=None):
     })
 
 
+@login_required
 def disconnect_service(request, pk, service_id):
+    try:
+        project = Project.objects.get(
+            pk=pk,
+            author_id=request.user.id,
+            is_deleted=False
+        )
+    except Project.DoesNotExist:
+        raise Http404('No access')
+
+    try:
+        service = Service.objects.get(pk=service_id)
+    except Project.DoesNotExist:
+        raise Http404('No access')
+
+    project.services.remove(service)
+
+    return redirect('project_connect_service', pk=pk)
+
     pass
