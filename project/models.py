@@ -23,10 +23,18 @@ class Region(models.Model):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
+class Setting(models.Model):
+    key = models.CharField(max_length=50)
+    description = models.CharField(max_length=1000, blank=True, null=True)
+
+    def __str__(self):
+        return self.key + ' (' + self.description + ')'
+
+# ----------------------------------------------------------------------------------------------------------------------
 class Service(models.Model):
     name = models.CharField(max_length=255)
     description = models.CharField(max_length=1000, blank=True, null=True)
-    settings = models.JSONField(blank=True, null=True)
+    settings = models.ManyToManyField(Setting)
 
     def __str__(self):
         return self.name
@@ -71,10 +79,11 @@ class Invite(models.Model):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-class ServiceSettings(models.Model):
+class ProjectServiceSetting(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
-    settings = models.JSONField(blank=True, null=True)
+    setting = models.ForeignKey(Setting, on_delete=models.CASCADE)
+    value = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now, blank=True, null=True)
     updated_at = models.DateTimeField(blank=True, null=True)
 

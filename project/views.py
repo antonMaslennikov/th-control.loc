@@ -8,7 +8,7 @@ from project.models import Project, Invite, UsersRelation, Service
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.utils import timezone
-from .forms import ProjectForm, InviteForm
+from .forms import ProjectForm, InviteForm, ConnectServiceForm
 import random, string
 from django.contrib import messages
 
@@ -262,22 +262,42 @@ def connect_service(request, pk, service_id=None):
     except Project.DoesNotExist:
         raise Http404('No access')
 
-    services = Service.objects.all()
-
     if (service_id is None):
-        template = 'project/service/connect.html'
+        services = Service.objects.all()
+
+        return render(request, 'project/service/connect.html', {
+            'projects': getmyprojects(request),
+            'project': project,
+            'services': services,
+        })
     else:
-        template = 'project/service/pre_settings.html'
 
+        try:
+            service = Service.objects.get(
+                pk=service_id,
+            )
+        except Project.DoesNotExist:
+            raise Http404('No access')
 
+        if request.method == 'POST':
+            form = ConnectServiceForm(request.POST, project=project, service=service)
 
-    return render(request, template, {
-        'projects': getmyprojects(request),
-        'project': project,
-        'services': services,
-        # 'form': form,
-    })
+            if form.is_valid():
+                # project = form.save(commit=False)
+                # project.author_id = request.user.id
+                # project.save()
+                #
+                # form.save_m2m()
 
+                return redirect('project_detail', pk=project.id)
+        else:
+            form = ConnectServiceForm(project, project=project, service=service)
+
+        return render(request, 'project/service/pre_settings.html', {
+            'projects': getmyprojects(request),
+            'project': project,
+            'form': form
+        })
 
 @login_required
 def disconnect_service(request, pk, service_id):
