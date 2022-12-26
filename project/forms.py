@@ -81,8 +81,8 @@ class ConnectServiceForm(forms.ModelForm):
 
         super().__init__(*args, **kwargs)
 
-        self.fields['settings'].widget.attrs.update({'class': 'form-control'})
+        self.fields['value'].widget.attrs.update({'class': 'form-control'})
 
-    # class Meta:
-    #     model = ProjectServiceSettings
-    #     fields = ['settings']
+    class Meta:
+        model = ProjectServiceSetting
+        fields = ['value']
