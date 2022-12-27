@@ -10,6 +10,24 @@
 
 {% block content_projects %}
 
+    <form action="" method="post">
+        {% csrf_token %}
 
+        {% for setting in service.settings.all %}
+
+            <p>
+                <b>{{ setting.key }}</b>
+                <input type="hidden" name="setting_id" value="{{ setting.id }}">
+                <textarea name="setting_value" class="form-control" rows="6"></textarea>
+                {% if setting.description %}
+                    <small>{{ setting.description }}</small>
+                {% endif %}
+            </p>
+
+        {% endfor %}
+
+        <p><button class="btn btn-success px-5" type="submit">Сохранить</button></p>
+
+    </form>
 
 {% endblock %}

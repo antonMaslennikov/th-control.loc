@@ -4,11 +4,11 @@ from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from django.db.models import Count, Q
-from project.models import Project, Invite, UsersRelation, Service
+from project.models import Project, Invite, UsersRelation, Service, ProjectServiceSetting
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.utils import timezone
-from .forms import ProjectForm, InviteForm, ConnectServiceForm
+from .forms import ProjectForm, InviteForm
 import random, string
 from django.contrib import messages
 
@@ -280,23 +280,31 @@ def connect_service(request, pk, service_id=None):
             raise Http404('No access')
 
         if request.method == 'POST':
-            form = ConnectServiceForm(request.POST, project=project, service=service)
 
-            if form.is_valid():
-                # project = form.save(commit=False)
-                # project.author_id = request.user.id
-                # project.save()
-                #
-                # form.save_m2m()
+            # прикрепляем сервис к проекту
+            project.services.add(service)
 
-                return redirect('project_detail', pk=project.id)
-        else:
-            form = ConnectServiceForm(project, project=project, service=service)
+            # сохраняем настройки
+            values = request.POST.getlist("setting_value")
+
+            for i, sid in enumerate(request.POST.getlist("setting_id")):
+                if values[i]:
+                    ps = ProjectServiceSetting()
+                    ps.project_id = project.id
+                    ps.service_id = service.id
+                    ps.setting_id = sid
+                    ps.value = values[i]
+                    ps.save()
+
+            messages.success(request, 'Сервис ' + service.name + ' успешно подключен')
+
+            return redirect('project_detail', pk=project.id)
+
 
         return render(request, 'project/service/pre_settings.html', {
             'projects': getmyprojects(request),
             'project': project,
-            'form': form
+            'service': service,
         })
 
 @login_required

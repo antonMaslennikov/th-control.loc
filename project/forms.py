@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 
-from .models import Project, Invite, ProjectServiceSetting
+from .models import Project, Invite
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
@@ -68,21 +68,3 @@ class InviteForm(forms.ModelForm):
         )
         email.content_subtype = "html"
         email.send()
-
-class ConnectServiceForm(forms.ModelForm):
-
-    project = None
-    service = None
-
-    def __init__(self, *args, **kwargs):
-
-        self.project = kwargs.pop('project')
-        self.service = kwargs.pop('service')
-
-        super().__init__(*args, **kwargs)
-
-        self.fields['value'].widget.attrs.update({'class': 'form-control'})
-
-    class Meta:
-        model = ProjectServiceSetting
-        fields = ['value']
