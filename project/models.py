@@ -87,6 +87,9 @@ class ProjectServiceSetting(models.Model):
     created_at = models.DateTimeField(default=timezone.now, blank=True, null=True)
     updated_at = models.DateTimeField(blank=True, null=True)
 
+    class Meta:
+        unique_together = ('project', 'service', 'setting',)
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 class Job(models.Model):

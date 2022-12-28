@@ -237,21 +237,6 @@ def invite_accept(request, pk, code):
 
 
 @login_required
-def connect_crm(request):
-    try:
-
-        print('hola')
-
-    except Project.DoesNotExist:
-        raise Http404('No access')
-
-    return render(request, 'project/connect_crm.html', {
-        'projects': getmyprojects(request),
-        # 'form': form
-    })
-
-
-@login_required
 def connect_service(request, pk, service_id=None):
     try:
         project = Project.objects.get(
@@ -288,7 +273,15 @@ def connect_service(request, pk, service_id=None):
             values = request.POST.getlist("setting_value")
 
             for i, sid in enumerate(request.POST.getlist("setting_id")):
-                if values[i]:
+                try:
+                    ps = ProjectServiceSetting.objects.get(
+                        project_id=project.id,
+                        service_id=service.id,
+                        setting_id=sid,
+                    )
+                    ps.value = values[i]
+                    ps.save()
+                except ProjectServiceSetting.DoesNotExist:
                     ps = ProjectServiceSetting()
                     ps.project_id = project.id
                     ps.service_id = service.id
@@ -300,12 +293,12 @@ def connect_service(request, pk, service_id=None):
 
             return redirect('project_detail', pk=project.id)
 
-
         return render(request, 'project/service/pre_settings.html', {
             'projects': getmyprojects(request),
             'project': project,
             'service': service,
         })
+
 
 @login_required
 def disconnect_service(request, pk, service_id):
@@ -328,3 +321,18 @@ def disconnect_service(request, pk, service_id):
     return redirect('project_connect_service', pk=pk)
 
     pass
+
+
+@login_required
+def connect_crm(request):
+    try:
+
+        print('hola')
+
+    except Project.DoesNotExist:
+        raise Http404('No access')
+
+    return render(request, 'project/connect_crm.html', {
+        'projects': getmyprojects(request),
+        # 'form': form
+    })
