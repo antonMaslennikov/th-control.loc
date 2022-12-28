@@ -238,6 +238,7 @@ def invite_accept(request, pk, code):
 
 def remove_from_project(request, pk, user_id):
     # TODO сделать отключение юзера от проекта
+
     pass
 
 
@@ -345,6 +346,28 @@ def run_service(request, pk, service_id):
         raise Http404('No access')
 
     return render(request, 'project/service/run.html', {
+        'projects': getmyprojects(request),
+        'project': project,
+        'service': service,
+    })
+
+def journal_service(request, pk, service_id):
+
+    try:
+        project = Project.objects.get(
+            pk=pk,
+            author_id=request.user.id,
+            is_deleted=False
+        )
+    except Project.DoesNotExist:
+        raise Http404('No access')
+
+    try:
+        service = Service.objects.get(pk=service_id)
+    except Project.DoesNotExist:
+        raise Http404('No access')
+
+    return render(request, 'project/service/journal.html', {
         'projects': getmyprojects(request),
         'project': project,
         'service': service,
