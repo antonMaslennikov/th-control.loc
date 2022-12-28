@@ -36,13 +36,19 @@
     <div class="row">
         {% if project.author_id == user.pk %}
         <div class="col-4">
-            <h5>Пользователи</h5>
+            <h5 class="mb-4">Пользователи</h5>
 
-            <ul>
-                {% for user in project.users.all %}
-                    <li>{{ user.username }}</li>
+            {% for user in project.users.all %}
+                <div class="input-group mb-3">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{{ user.username }}</button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'remove_from_project' pk=project.id user_id=user.id %}" onclick="return confirm('Вы уверены?')"><i class="bi bi-trash"></i> Исключить из проекта</a>
+                        </li>
+                    </ul>
+                </div>
                 {% endfor %}
-            </ul>
+
 
             <a href="{% url 'project_invite' pk=project.id %}">Пригласить</a>
         </div>
@@ -50,13 +56,24 @@
 
 
         <div class="col-{% if project.author_id == user.pk %}8{% else %}12{% endif %}">
-            <h5>Сервисы</h5>
+            <h5 class="mb-4">Сервисы</h5>
 
-            <ul>
                 {% for service in project.services.all %}
-                    <li>{{ service.name }}</li>
+                <div class="input-group mb-3">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{{ service.name }}</button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'project_run_service' pk=project.id service_id=service.id %}"><i class="bi bi-play-circle"></i> Запустить </a>
+                        </li>
+                        {% if project.author_id == user.pk %}
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'project_disconnect_service' pk=project.id service_id=service.id %}" onclick="return confirm('Вы уверены?')"><i class="bi bi-trash"></i> Отключить</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
                 {% endfor %}
-            </ul>
 
             <a href="{% url 'project_connect_service' pk=project.id %}">Подключить</a>
         </div>

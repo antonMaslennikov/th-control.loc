@@ -236,6 +236,11 @@ def invite_accept(request, pk, code):
     return redirect('project_detail', pk=invite.project.id)
 
 
+def remove_from_project(request, pk, user_id):
+    # TODO сделать отключение юзера от проекта
+    pass
+
+
 @login_required
 def connect_service(request, pk, service_id=None):
     try:
@@ -321,6 +326,29 @@ def disconnect_service(request, pk, service_id):
     return redirect('project_connect_service', pk=pk)
 
     pass
+
+
+def run_service(request, pk, service_id):
+
+    try:
+        project = Project.objects.get(
+            pk=pk,
+            author_id=request.user.id,
+            is_deleted=False
+        )
+    except Project.DoesNotExist:
+        raise Http404('No access')
+
+    try:
+        service = Service.objects.get(pk=service_id)
+    except Project.DoesNotExist:
+        raise Http404('No access')
+
+    return render(request, 'project/service/run.html', {
+        'projects': getmyprojects(request),
+        'project': project,
+        'service': service,
+    })
 
 
 @login_required
