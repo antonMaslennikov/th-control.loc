@@ -15,10 +15,11 @@ class ProjectForm(forms.ModelForm):
         self.fields['types'].widget.attrs.update({'class': 'form-control'})
         self.fields['regions'].widget.attrs.update({'class': 'form-control'})
         self.fields['is_service'].widget.attrs.update({'class': 'form-check-input'})
+        self.fields['secret_key'].widget.attrs.update({'class': 'form-control'})
 
     class Meta:
         model = Project
-        fields = ['name', 'url', 'types', 'regions', 'is_service']
+        fields = ['name', 'url', 'types', 'regions', 'is_service', 'secret_key']
 
 
 class InviteForm(forms.ModelForm):

@@ -53,6 +53,7 @@ class Project(models.Model):
     services = models.ManyToManyField(Service, blank=True)
     types = models.ManyToManyField(Type, blank=True)
     is_deleted = models.BooleanField(default=0)
+    secret_key = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return self.name

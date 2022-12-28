@@ -38,11 +38,16 @@
             {{ form.regions.errors }}
         </div>
 
-        
         <div class="form-outline form-white mb-4">
             <label class="form-label" for="{{ form.is_service.id_for_label }}"><b>Служебный</b></label>
             <p>{{ form.is_service }}</p>
             {{ form.is_service.errors }}
+        </div>
+
+        <div class="form-outline form-white mb-4">
+            <label class="form-label" for="{{ form.secret_key.id_for_label }}"><b>Секретный ключ для доступа к Api</b></label>
+            <p>{{ form.secret_key }}</p>
+            {{ form.secret_key.errors }}
         </div>
 
         <br>
