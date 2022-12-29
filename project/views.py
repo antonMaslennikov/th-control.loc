@@ -348,13 +348,17 @@ def disconnect_service(request, pk, service_id):
 
 def run_service(request, pk, service_id):
 
-    try:
-        project = Project.objects.get(
-            pk=pk,
-            author_id=request.user.id,
-            is_deleted=False
-        )
-    except Project.DoesNotExist:
+    project = Project.objects.get(
+        pk=pk,
+        is_deleted=False,
+    )
+
+    project_users = [];
+
+    for user in project.users.values('id'):
+        project_users.append(user['id'])
+
+    if project.author_id != request.user.id and request.user.id not in project_users:
         raise Http404('No access')
 
     try:
@@ -396,6 +400,7 @@ def run_service(request, pk, service_id):
         'form': form,
     })
 
+
 def journal_service(request, pk, service_id):
 
     try:
@@ -412,10 +417,19 @@ def journal_service(request, pk, service_id):
     except Project.DoesNotExist:
         raise Http404('No access')
 
+
+    jobs = Job.objects.filter(
+        project_id=project.id,
+        service_id=service.id,
+    )
+
+    # print(jobs)
+
     return render(request, 'project/service/journal.html', {
         'projects': getmyprojects(request),
         'project': project,
         'service': service,
+        'jobs': jobs,
     })
 
 
