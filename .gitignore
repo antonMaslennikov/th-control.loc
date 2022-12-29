@@ -8,3 +8,4 @@ db.sqlite3
 *.code-workspace
 .idea
 thcontrol/settings.py
+media
