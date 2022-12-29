@@ -1,14 +1,15 @@
 from django.contrib.auth import get_user_model, login
 from django.contrib.sites.shortcuts import get_current_site
+from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from django.db.models import Count, Q
-from project.models import Project, Invite, UsersRelation, Service, ProjectServiceSetting
+from project.models import Project, Invite, UsersRelation, Service, ProjectServiceSetting, Job
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.utils import timezone
-from .forms import ProjectForm, InviteForm
+from .forms import ProjectForm, InviteForm, RunServiceForm
 import random, string
 from django.contrib import messages
 
@@ -237,9 +238,25 @@ def invite_accept(request, pk, code):
 
 
 def remove_from_project(request, pk, user_id):
-    # TODO сделать отключение юзера от проекта
 
-    pass
+    try:
+        project = Project.objects.get(
+            pk=pk,
+            author_id=request.user.id,
+            is_deleted=False
+        )
+    except Project.DoesNotExist:
+        raise Http404('No access')
+
+    try:
+        users = get_user_model()
+        user = users.objects.get(pk=user_id)
+    except users.DoesNotExist:
+        raise Http404('No access')
+
+    project.users.remove(user)
+
+    return redirect('project_detail', pk=project.id)
 
 
 @login_required
@@ -345,10 +362,38 @@ def run_service(request, pk, service_id):
     except Project.DoesNotExist:
         raise Http404('No access')
 
+    if request.method == 'POST':
+
+        form = RunServiceForm(request.POST, request.FILES)
+
+        if form.is_valid():
+
+            myfile = request.FILES['file']
+            fs = FileSystemStorage()
+            filename = fs.save('datafiles/' + myfile.name, myfile)
+
+            J = Job()
+            J.status = 1
+            J.project_id = project.id
+            J.service_id = service.id
+            J.data = fs.url(filename)
+            J.save()
+
+            # отправка запроса диме на запуск сервиса
+
+
+            messages.success(request, 'Сервис ' + service.name + ' успешно запущен.')
+
+            return redirect('project_service_journal', pk=project.id, service_id=service.id)
+    else:
+        form = RunServiceForm()
+
+
     return render(request, 'project/service/run.html', {
         'projects': getmyprojects(request),
         'project': project,
         'service': service,
+        'form': form,
     })
 
 def journal_service(request, pk, service_id):
@@ -372,6 +417,11 @@ def journal_service(request, pk, service_id):
         'project': project,
         'service': service,
     })
+
+
+def journal(request, project_id, service_id, job_id=None):
+    # JobResult.objects.filter(job__id=job_id)
+    pass
 
 
 @login_required

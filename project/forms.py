@@ -1,3 +1,5 @@
+import os
+
 from django import forms
 from django.core.exceptions import ValidationError
 
@@ -53,8 +55,6 @@ class InviteForm(forms.ModelForm):
 
         return data
 
-
-
     def send_email(self, invite, request):
 
         current_site = get_current_site(request)
@@ -69,3 +69,22 @@ class InviteForm(forms.ModelForm):
         )
         email.content_subtype = "html"
         email.send()
+
+
+class RunServiceForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['file'].widget.attrs.update({'class': 'form-control'})
+
+    file = forms.FileField()
+
+    def clean_file(self):
+        data = self.cleaned_data['file']
+
+        valid_extensions = ['.txt', '.xlsx']
+
+        if not os.path.splitext(data.name)[1] in valid_extensions:
+            raise ValidationError("Файл должен иметь расширение txt или xlsx")
+
+        return data

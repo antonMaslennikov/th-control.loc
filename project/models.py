@@ -103,6 +103,12 @@ class Job(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
     data = models.TextField()
     status = models.IntegerField(choices=STATUS, default=1)
-    result = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now, blank=True)
     finished_at = models.DateTimeField(blank=True, null=True)
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+class JobResult(models.Model):
+    job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    result = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now, blank=True)

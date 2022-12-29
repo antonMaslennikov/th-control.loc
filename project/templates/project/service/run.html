@@ -4,12 +4,22 @@
     <h1 class="h2">
         <a href="{% url 'index' %}">Проекты</a> ::
         <a href="{% url 'project_detail' pk=project.id %}">{{ project.name }}</a> ::
-        Запустить сервис
+        {{ service.name }} ::
+        Запустить
     </h1>
 {% endblock %}
 
 {% block content_projects %}
 
-    {{ service.name }}
+    <form method="post" enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        {{ form.file }}
+        {{ form.file.errors }}
+
+        <button class="btn btn-sm btn-success w-100 mt-3">Запустить</button>
+
+    </form>
 
 {% endblock %}
