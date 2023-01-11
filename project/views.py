@@ -473,7 +473,7 @@ def jobinfo(request, job_id):
 
     return JsonResponse({
         'job_id': job.id,
-        'data': job.data
+        'data': job.data,
         'service': {
             'id': job.service.id,
             'name': job.service.name,
