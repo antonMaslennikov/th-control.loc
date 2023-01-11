@@ -14,6 +14,7 @@ urlpatterns = [
     path('connect_service/<int:pk>/<int:service_id>', views.connect_service, name='project_connect_service'),
     path('disconnect_service/<int:pk>/<int:service_id>', views.disconnect_service, name='project_disconnect_service'),
     path('run_service/<int:pk>/<int:service_id>', views.run_service, name='project_run_service'),
+    path('service_settings/<int:pk>/<int:service_id>', views.service_settings, name='project_service_settings'),
     path('journal_service/<int:pk>/<int:service_id>', views.journal_service, name='project_service_journal'),
     path('journal_service/<int:pk>/<int:service_id>/<int:job_id>', views.journal_service, name='project_service_job_journal'),
     path('jobinfo/<int:job_id>', views.jobinfo),

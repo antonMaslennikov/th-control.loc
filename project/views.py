@@ -442,6 +442,8 @@ def journal_service(request, pk, service_id, job_id=None):
         'results': results,
     })
 
+def service_settings(request, pk, service_id):
+    pass
 
 def jobinfo(request, job_id):
 
@@ -449,23 +451,37 @@ def jobinfo(request, job_id):
         job = Job.objects.get(
             pk=job_id,
         )
-
-        print(job)
-        print(job.project)
-        print(job.service)
-
     except Job.DoesNotExist:
+        raise Http404('No access')
+
+    try:
+        ProjectServiceSettings = ProjectServiceSetting.objects.filter(
+            project_id=job.project.id,
+            service_id=job.service.id,
+        )
+
+        settings = []
+
+        for pss in ProjectServiceSettings.all():
+            settings.append({
+                'key': pss.setting.key,
+                'value': pss.value,
+            })
+
+    except ProjectServiceSetting.DoesNotExist:
         raise Http404('No access')
 
     return JsonResponse({
         'job_id': job.id,
+        'data': job.data
         'service': {
             'id': job.service.id,
             'name': job.service.name,
-            'settings':'1111',
+            'settings': settings,
         },
         'project': {
             'id': job.project.id,
+            'name': job.project.name,
         },
     })
 
