@@ -318,11 +318,28 @@ def connect_service(request, pk, service_id=None):
             messages.success(request, 'Сервис ' + service.name + ' успешно подключен')
 
             return redirect('project_detail', pk=project.id)
+        else:
+            ProjectServiceSettings = ProjectServiceSetting.objects.filter(
+                project_id=project.id,
+                service_id=service.id,
+            )
+
+            settings = {}
+
+            for setting in ProjectServiceSettings:
+                settings[setting.setting_id] = setting.value
+
+            # for key, setting in enumerate(service.settings.all()):
+            #     pass
+                # service.settings[key].value = settings[setting.id]
+                # print(service.settings[key])
+
 
         return render(request, 'project/service/pre_settings.html', {
             'projects': getmyprojects(request),
             'project': project,
             'service': service,
+            'settings':settings,
         })
 
 
@@ -442,8 +459,10 @@ def journal_service(request, pk, service_id, job_id=None):
         'results': results,
     })
 
+
 def service_settings(request, pk, service_id):
     pass
+
 
 def jobinfo(request, job_id):
 
@@ -487,6 +506,11 @@ def jobinfo(request, job_id):
             'name': job.project.name,
         },
     })
+
+
+def jobresult(request, job_id):
+    pass
+
 
 @login_required
 def connect_crm(request):

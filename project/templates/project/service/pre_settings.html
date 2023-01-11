@@ -1,4 +1,5 @@
 {% extends 'project/layout.html' %}
+{% load dict_key %}
 
 {% block breadcrumps_projects %}
     <h1 class="h2">
@@ -18,7 +19,7 @@
             <p>
                 <b>{{ setting.key }}</b>
                 <input type="hidden" name="setting_id" value="{{ setting.id }}">
-                <textarea name="setting_value" class="form-control" rows="6"></textarea>
+                <textarea name="setting_value" class="form-control" rows="6">{{ settings|dict_key:setting.id }}</textarea>
                 {% if setting.description %}
                     <small>{{ setting.description }}</small>
                 {% endif %}
