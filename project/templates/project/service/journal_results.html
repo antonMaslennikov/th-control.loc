@@ -1,0 +1,35 @@
+{% extends 'project/layout.html' %}
+
+{% block breadcrumps_projects %}
+    <h1 class="h2">
+        <a href="{% url 'index' %}">Проекты</a> ::
+        <a href="{% url 'project_detail' pk=project.id %}">{{ project.name }}</a> ::
+        {{ service.name }} ::
+        <a href="{% url 'project_service_journal' pk=project.id service_id=service.id %}">Журнал</a>
+    </h1>
+{% endblock %}
+
+{% block content_projects %}
+
+    <table class="table table-striped">
+        <tr>
+            <th>#</th>
+            <th>Дата</th>
+            <th>Результат</th>
+        </tr>
+        {% if results.count > 0 %}
+            {% for r in results %}
+            <tr>
+                <td>{{ r.id }}</td>
+                <td>{{ r.created_at }}</td>
+                <td>{{ r.result }}</td>
+            </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="3">Результаты выполнения отсутствуют</td>
+            </tr>
+        {% endif %}
+    </table>
+
+{% endblock %}

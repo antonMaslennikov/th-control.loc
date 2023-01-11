@@ -1,17 +1,20 @@
+import random
+import string
+
+from django.contrib import messages
 from django.contrib.auth import get_user_model, login
+from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.files.storage import FileSystemStorage
-from django.shortcuts import render, redirect
-from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from django.db.models import Count, Q
-from project.models import Project, Invite, UsersRelation, Service, ProjectServiceSetting, Job
-from django.contrib.auth.decorators import login_required
-from django.http import Http404
+from django.http import Http404, JsonResponse
+from django.shortcuts import render, redirect
+from django.template.loader import render_to_string
 from django.utils import timezone
+
+from project.models import Project, Invite, UsersRelation, Service, ProjectServiceSetting, Job, JobResult
 from .forms import ProjectForm, InviteForm, RunServiceForm
-import random, string
-from django.contrib import messages
 
 
 def getmyprojects(request):
@@ -401,7 +404,7 @@ def run_service(request, pk, service_id):
     })
 
 
-def journal_service(request, pk, service_id):
+def journal_service(request, pk, service_id, job_id=None):
 
     try:
         project = Project.objects.get(
@@ -417,26 +420,54 @@ def journal_service(request, pk, service_id):
     except Project.DoesNotExist:
         raise Http404('No access')
 
+    if (job_id is None):
+        jobs = Job.objects.filter(
+            project_id=project.id,
+            service_id=service.id,
+        ).order_by('-id')
 
-    jobs = Job.objects.filter(
-        project_id=project.id,
-        service_id=service.id,
-    )
+        tpl = 'project/service/journal.html'
+        results = None
+    else:
+        jobs = None
+        tpl = 'project/service/journal_results.html'
+        results = JobResult.objects.filter(job__id=job_id).order_by('-id')
+        pass
 
-    # print(jobs)
-
-    return render(request, 'project/service/journal.html', {
+    return render(request, tpl, {
         'projects': getmyprojects(request),
         'project': project,
         'service': service,
         'jobs': jobs,
+        'results': results,
     })
 
 
-def journal(request, project_id, service_id, job_id=None):
-    # JobResult.objects.filter(job__id=job_id)
-    pass
+def jobinfo(request, job_id):
 
+    try:
+        job = Job.objects.get(
+            pk=job_id,
+        )
+
+        print(job)
+        print(job.project)
+        print(job.service)
+
+    except Job.DoesNotExist:
+        raise Http404('No access')
+
+    return JsonResponse({
+        'job_id': job.id,
+        'service': {
+            'id': job.service.id,
+            'name': job.service.name,
+            'settings':'1111',
+        },
+        'project': {
+            'id': job.project.id,
+        },
+    })
 
 @login_required
 def connect_crm(request):
