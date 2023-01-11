@@ -454,6 +454,9 @@ def jobinfo(request, job_id):
     except Job.DoesNotExist:
         raise Http404('No access')
 
+    if job.project.secret_key and job.project.secret_key != request.headers.get('authorization'):
+        raise Http404('No access: ключ авторизации не указан')
+
     try:
         ProjectServiceSettings = ProjectServiceSetting.objects.filter(
             project_id=job.project.id,
