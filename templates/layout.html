@@ -12,7 +12,9 @@
 
 <body class="gradient-custom">
 
-    {% include "nav.html" %}
+    {% if user.is_authenticated %}
+        {% include "nav.html" %}
+    {% endif %}
 
     <div class="content container">
         <div class="row">
