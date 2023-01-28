@@ -30,6 +30,7 @@ class Setting(models.Model):
     def __str__(self):
         return self.key + ' (' + self.description + ')'
 
+
 # ----------------------------------------------------------------------------------------------------------------------
 class Service(models.Model):
     name = models.CharField(max_length=255)
@@ -98,6 +99,7 @@ class Job(models.Model):
         (1, 'Запущен'),
         (2, 'Успешно завершён'),
         (3, 'Завершился ошибкой'),
+        (4, 'Промежуточный результат'),
     )
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     service = models.ForeignKey(Service, on_delete=models.CASCADE)

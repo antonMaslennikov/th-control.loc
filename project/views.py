@@ -12,6 +12,7 @@ from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.utils import timezone
+from django.views.decorators.http import require_http_methods
 
 from project.models import Project, Invite, UsersRelation, Service, ProjectServiceSetting, Job, JobResult
 from .forms import ProjectForm, InviteForm, RunServiceForm
@@ -508,8 +509,35 @@ def jobinfo(request, job_id):
     })
 
 
+@require_http_methods(["POST"])
 def jobresult(request, job_id):
-    pass
+
+    try:
+        job = Job.objects.get(
+            pk=job_id,
+        )
+    except Job.DoesNotExist:
+        raise Http404('No access')
+
+    if job.project.secret_key and job.project.secret_key != request.headers.get('authorization'):
+        raise Http404('No access: ключ авторизации не указан')
+
+    R = JobResult
+    R.job_id = job_id
+    R.result = request.POST.result
+    R.save()
+
+    if request.POST.status in [2, 3, 4]:
+        job.status = request.POST.status
+
+        if request.POST.status == 2:
+            job.finished_at = timezone.datetime.now()
+
+        job.save()
+
+    return JsonResponse({
+        'status': 'ok'
+    })
 
 
 @login_required
