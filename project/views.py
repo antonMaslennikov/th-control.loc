@@ -318,11 +318,28 @@ def connect_service(request, pk, service_id=None):
             messages.success(request, 'Сервис ' + service.name + ' успешно подключен')
 
             return redirect('project_detail', pk=project.id)
+        else:
+            ProjectServiceSettings = ProjectServiceSetting.objects.filter(
+                project_id=project.id,
+                service_id=service.id,
+            )
+
+            settings = {}
+
+            for setting in ProjectServiceSettings:
+                settings[setting.setting_id] = setting.value
+
+            # for key, setting in enumerate(service.settings.all()):
+            #     pass
+                # service.settings[key].value = settings[setting.id]
+                # print(service.settings[key])
+
 
         return render(request, 'project/service/pre_settings.html', {
             'projects': getmyprojects(request),
             'project': project,
             'service': service,
+            'settings':settings,
         })
 
 
@@ -443,31 +460,57 @@ def journal_service(request, pk, service_id, job_id=None):
     })
 
 
+def service_settings(request, pk, service_id):
+    pass
+
+
 def jobinfo(request, job_id):
 
     try:
         job = Job.objects.get(
             pk=job_id,
         )
-
-        print(job)
-        print(job.project)
-        print(job.service)
-
     except Job.DoesNotExist:
+        raise Http404('No access')
+
+    if job.project.secret_key and job.project.secret_key != request.headers.get('authorization'):
+        raise Http404('No access: ключ авторизации не указан')
+
+    try:
+        ProjectServiceSettings = ProjectServiceSetting.objects.filter(
+            project_id=job.project.id,
+            service_id=job.service.id,
+        )
+
+        settings = []
+
+        for pss in ProjectServiceSettings.all():
+            settings.append({
+                'key': pss.setting.key,
+                'value': pss.value,
+            })
+
+    except ProjectServiceSetting.DoesNotExist:
         raise Http404('No access')
 
     return JsonResponse({
         'job_id': job.id,
+        'data': job.data,
         'service': {
             'id': job.service.id,
             'name': job.service.name,
-            'settings':'1111',
+            'settings': settings,
         },
         'project': {
             'id': job.project.id,
+            'name': job.project.name,
         },
     })
+
+
+def jobresult(request, job_id):
+    pass
+
 
 @login_required
 def connect_crm(request):
