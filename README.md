@@ -1,6 +1,7 @@
 # Инсталяция
 - pip install Django
 - pip install mysql
+- pip install requests
 
 - создать базу с именем th-control
 - файл thcontrol/settings.local.py переименовать в settings.py
@@ -8,6 +9,8 @@
 
 - python manage.py migrate
 - python manage.py createsuperuser
+
+- создать 
 
 # Запуск сервера
 - python manage.py runserver

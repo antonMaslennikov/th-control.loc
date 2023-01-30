@@ -5,7 +5,7 @@
     <h1 class="h2">
         <a href="{% url 'index' %}">Проекты</a> ::
         <a href="{% url 'project_detail' pk=project.id %}">{{ project.name }}</a> ::
-        Первичная настройка
+        Настройка
     </h1>
 {% endblock %}
 
@@ -14,8 +14,15 @@
     <form action="" method="post">
         {% csrf_token %}
 
-        {% for setting in service.settings.all %}
+        <p style="margin-bottom:50px">
+            <b>Url исполнителя сервиса</b>
+            <input type="hidden" name="setting_id" value="{{ url_setting.id }}">
+            <input type="text" class="form-control" name="setting_value" value="{{ settings|dict_key:url_setting.id }}">
+            <small>Полный урл будет иметь значение {урл_внешнего_исполнителя_сервиса}/startjob/{projectId}/{jobId}</small>
+        </p>
 
+
+        {% for setting in service.settings.all %}
             <p>
                 <b>{{ setting.key }}</b>
                 <input type="hidden" name="setting_id" value="{{ setting.id }}">

@@ -1,5 +1,6 @@
 import random
 import string
+import requests
 
 from django.contrib import messages
 from django.contrib.auth import get_user_model, login
@@ -14,7 +15,7 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
-from project.models import Project, Invite, UsersRelation, Service, ProjectServiceSetting, Job, JobResult
+from project.models import Project, Invite, UsersRelation, Service, ProjectServiceSetting, Job, JobResult, Setting
 from .forms import ProjectForm, InviteForm, RunServiceForm
 
 
@@ -320,6 +321,7 @@ def connect_service(request, pk, service_id=None):
 
             return redirect('project_detail', pk=project.id)
         else:
+
             ProjectServiceSettings = ProjectServiceSetting.objects.filter(
                 project_id=project.id,
                 service_id=service.id,
@@ -330,17 +332,21 @@ def connect_service(request, pk, service_id=None):
             for setting in ProjectServiceSettings:
                 settings[setting.setting_id] = setting.value
 
-            # for key, setting in enumerate(service.settings.all()):
-            #     pass
-                # service.settings[key].value = settings[setting.id]
-                # print(service.settings[key])
-
+            # ищем или создаём (при первом запуске приложения) общую настройку "урл запуска"
+            try:
+                S = Setting.objects.get(key=Setting.SERVICE_URL_NAME)
+            except Setting.DoesNotExist:
+                S = Setting()
+                S.key = Setting.SERVICE_URL_NAME
+                S.description = 'Url для запуска сервиса (НЕ УДАЛЯТЬ!!!)'
+                S.save()
 
         return render(request, 'project/service/pre_settings.html', {
             'projects': getmyprojects(request),
             'project': project,
             'service': service,
-            'settings':settings,
+            'settings': settings,
+            'url_setting': S,
         })
 
 
@@ -374,7 +380,7 @@ def run_service(request, pk, service_id):
         is_deleted=False,
     )
 
-    project_users = [];
+    project_users = []
 
     for user in project.users.values('id'):
         project_users.append(user['id'])
@@ -404,8 +410,10 @@ def run_service(request, pk, service_id):
             J.data = fs.url(filename)
             J.save()
 
-            # отправка запроса диме на запуск сервиса
-
+            # отправка запроса внешнему сервису на запуск
+            service_url = ProjectServiceSetting.getone(project.id, service.id, Setting.SERVICE_URL_NAME)
+            if service_url:
+                response = requests.get(service_url.rstrip('/') + '/startjob/' + str(project.id) + '/' + str(service.id))
 
             messages.success(request, 'Сервис ' + service.name + ' успешно запущен.')
 

@@ -24,6 +24,8 @@ class Region(models.Model):
 
 # ----------------------------------------------------------------------------------------------------------------------
 class Setting(models.Model):
+    SERVICE_URL_NAME = 'system_service_url'
+
     key = models.CharField(max_length=50)
     description = models.CharField(max_length=1000, blank=True, null=True)
 
@@ -91,6 +93,34 @@ class ProjectServiceSetting(models.Model):
 
     class Meta:
         unique_together = ('project', 'service', 'setting',)
+
+    @staticmethod
+    def getall(project_id, service_id):
+        ProjectServiceSettings = ProjectServiceSetting.objects.filter(
+            project_id=project_id,
+            service_id=service_id,
+        )
+
+        settings = []
+
+        for pss in ProjectServiceSettings.all():
+            settings.append({
+                'key': pss.setting.key,
+                'value': pss.value,
+            })
+
+        return settings
+
+    @staticmethod
+    def getone(project_id, service_id, key):
+        ProjectServiceSettings = ProjectServiceSetting.objects.filter(
+            project_id=project_id,
+            service_id=service_id,
+        )
+
+        for pss in ProjectServiceSettings.all():
+            if pss.setting.key == key:
+                return pss.value
 
 
 # ----------------------------------------------------------------------------------------------------------------------
