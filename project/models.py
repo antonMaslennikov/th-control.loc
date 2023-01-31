@@ -30,7 +30,7 @@ class Setting(models.Model):
     description = models.CharField(max_length=1000, blank=True, null=True)
 
     def __str__(self):
-        return self.key + ' (' + self.description + ')'
+        return self.key + ' (' + str(self.description) + ')'
 
 
 # ----------------------------------------------------------------------------------------------------------------------
