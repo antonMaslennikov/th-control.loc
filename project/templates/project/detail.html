@@ -12,7 +12,7 @@
     <div class="row">
         <div class="col-12">
             {% if project.url %}
-                <p><a href="{{ project.url }}">{{ project.url }}</a></p>
+                <p><a href="https://{{ project.url|cut:'https://' }}">{{ project.url }}</a></p>
             {% endif %}
             <p>
                 {% for type in project.types.all %}
