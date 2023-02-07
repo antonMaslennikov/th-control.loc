@@ -14,6 +14,7 @@ from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
+from django.urls import reverse
 
 from project.models import Project, Invite, UsersRelation, Service, ProjectServiceSetting, Job, JobResult, Setting
 from .forms import ProjectForm, InviteForm, RunServiceForm
@@ -413,7 +414,7 @@ def run_service(request, pk, service_id):
             # отправка запроса внешнему сервису на запуск
             service_url = ProjectServiceSetting.getone(project.id, service.id, Setting.SERVICE_URL_NAME)
             if service_url:
-                response = requests.get(service_url.rstrip('/') + '/startjob/' + str(project.id) + '/' + str(service.id))
+                response = requests.get(service_url.rstrip('/') + reverse('project_job_run', args=(project.id, service.id,)))
 
             messages.success(request, 'Сервис ' + service.name + ' успешно запущен.')
 
@@ -542,6 +543,15 @@ def jobresult(request, job_id):
             job.finished_at = timezone.datetime.now()
 
         job.save()
+
+    return JsonResponse({
+        'status': 'ok'
+    })
+
+
+def jobrun(request, project_id, job_id):
+
+    print(project_id, job_id)
 
     return JsonResponse({
         'status': 'ok'

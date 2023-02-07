@@ -17,8 +17,10 @@ urlpatterns = [
     path('service_settings/<int:pk>/<int:service_id>', views.service_settings, name='project_service_settings'),
     path('journal_service/<int:pk>/<int:service_id>', views.journal_service, name='project_service_journal'),
     path('journal_service/<int:pk>/<int:service_id>/<int:job_id>', views.journal_service, name='project_service_job_journal'),
-    path('jobinfo/<int:job_id>', views.jobinfo),
-    path('jobresult/<int:job_id>', views.jobresult),
+
+    path('job/info/<int:job_id>', views.jobinfo, name='project_job_info'),
+    path('job/result/<int:job_id>', views.jobresult, name='project_job_result'),
+    path('job/run/<int:project_id>/<int:job_id>/', views.jobrun, name='project_job_run'),
 
     path('connect_crm/', views.connect_crm, name='project_connect_crm'),
 ]
