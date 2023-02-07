@@ -551,7 +551,7 @@ def jobresult(request, job_id):
 
 def jobrun(request, project_id, job_id):
 
-    print(project_id, job_id)
+    # print(project_id, job_id)
 
     return JsonResponse({
         'status': 'ok'

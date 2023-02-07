@@ -11,6 +11,7 @@ pip install google-api-python-client oauth2client
 pip install --upgrade oauth2client
 """
 
+
 def write_result(work_type, url, date):
     if work_type == 'database':
         db = MySQLi(host, user, password, database_home)
