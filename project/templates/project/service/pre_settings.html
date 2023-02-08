@@ -14,12 +14,12 @@
     <form action="" method="post">
         {% csrf_token %}
 
-        <p style="margin-bottom:50px">
-            <b>Url исполнителя сервиса</b>
-            <input type="hidden" name="setting_id" value="{{ url_setting.id }}">
-            <input type="text" class="form-control" name="setting_value" value="{{ settings|dict_key:url_setting.id }}">
-            <small>Не заполнять, если сервис работает локально. Полный урл будет иметь значение {урл_внешнего_исполнителя_сервиса}/job/start/{projectId}/{jobId}</small>
-        </p>
+<!--        <p style="margin-bottom:50px">-->
+<!--            <b>Url исполнителя сервиса</b>-->
+<!--            <input type="hidden" name="setting_id" value="{{ url_setting.id }}">-->
+<!--            <input type="text" class="form-control" name="setting_value" value="{{ settings|dict_key:url_setting.id }}">-->
+<!--            <small>Не заполнять, если сервис работает локально. Полный урл будет иметь значение {урл_внешнего_исполнителя_сервиса}/job/start/{projectId}/{jobId}</small>-->
+<!--        </p>-->
 
         {% for setting in service.settings.all %}
             <p>
