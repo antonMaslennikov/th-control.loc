@@ -12,6 +12,7 @@
 
 - pip install google-api-python-client oauth2client
 - pip install --upgrade oauth2client
+- pip install mysql-connector-python-rf
 
 
 # Запуск сервера

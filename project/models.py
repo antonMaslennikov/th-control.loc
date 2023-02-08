@@ -35,7 +35,12 @@ class Setting(models.Model):
 
 # ----------------------------------------------------------------------------------------------------------------------
 class Service(models.Model):
+    STATUS = (
+        (1, 'GoogleIndexer'),
+    )
+
     name = models.CharField(max_length=255)
+    service_class = models.IntegerField(choices=STATUS, null=True)
     description = models.CharField(max_length=1000, blank=True, null=True)
     settings = models.ManyToManyField(Setting)
 
@@ -101,13 +106,10 @@ class ProjectServiceSetting(models.Model):
             service_id=service_id,
         )
 
-        settings = []
+        settings = {}
 
         for pss in ProjectServiceSettings.all():
-            settings.append({
-                'key': pss.setting.key,
-                'value': pss.value,
-            })
+            settings[pss.setting.key] = pss.value
 
         return settings
 
