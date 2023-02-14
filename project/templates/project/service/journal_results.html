@@ -22,7 +22,7 @@
             <tr>
                 <td>{{ r.id }}</td>
                 <td>{{ r.created_at }}</td>
-                <td>{{ r.result }}</td>
+                <td>{{ r.result|linebreaks }}</td>
             </tr>
             {% endfor %}
         {% else %}

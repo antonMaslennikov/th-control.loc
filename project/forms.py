@@ -82,9 +82,9 @@ class RunServiceForm(forms.Form):
     def clean_file(self):
         data = self.cleaned_data['file']
 
-        valid_extensions = ['.txt', '.xlsx']
+        valid_extensions = ['.txt', '.csv']
 
         if not os.path.splitext(data.name)[1] in valid_extensions:
-            raise ValidationError("Файл должен иметь расширение txt или xlsx")
+            raise ValidationError("Файл должен иметь расширение txt или csv")
 
         return data

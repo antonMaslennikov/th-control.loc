@@ -1,14 +1,13 @@
 import datetime
+import os
+
 import httplib2
 import json
-import os
 
 from oauth2client.service_account import ServiceAccountCredentials
 from .script_mysql import MySQLi
 from .config import *
-
 from ..Service import Service
-
 
 """
 pip install google-api-python-client oauth2client
@@ -17,22 +16,32 @@ pip install --upgrade oauth2client
 
 
 class GoogleIndexer(Service):
-
     json_keys = []
+
+    urls_file = None
 
     SCOPES = ["https://www.googleapis.com/auth/indexing"]
 
     def setSettings(self, settings):
-        print(settings['keys'])
 
-    def write_result(self, work_type, url, date):
-        if work_type == 'database':
-            db = MySQLi(host, user, password, database_home)
-            db.commit("INSERT INTO indexing_api (url, date) VALUES (%s, %s)", url, datetime.date.today())
-        elif work_type == 'txt_file':
-            with open('result.txt', 'a', encoding='utf-8') as result_file:
-                string_write = f"{url};{date}\n"
-                result_file.write(string_write)
+        if not settings['keys']:
+            raise 'Не заданы ключи'
+
+        keys = settings['keys']
+
+        while keys.find('}') > 0:
+            index = keys.find('}') + 1
+            self.json_keys.append(json.loads(keys[0:index].strip()))
+            keys = keys[index:]
+
+        if len(self.json_keys) == 0:
+            raise 'Не удалось получить ключи'
+
+    def setData(self, file):
+
+        self.urls_file = file
+
+        pass
 
     def indexURL2(self, u, http):
         ENDPOINT = "https://indexing.googleapis.com/v3/urlNotifications:publish"
@@ -56,35 +65,51 @@ class GoogleIndexer(Service):
                 result["urlNotificationMetadata"]["latestUpdate"]["notifyTime"]))
             return "OK"
 
+    def resultsToString(self):
+
+        str = ''
+
+        for r in self.results:
+            str += r.get('date') + ": " + r.get('url') + " (успешно отправлен)\n"
+
+        return str
+
     def run(self):
-        count_urls = 0
-        for root, dirs, files in os.walk("json_keys"):
-            for json_key_path_name in files:
-                json_key = 'json_keys/' + json_key_path_name
-                credentials = ServiceAccountCredentials.from_json_keyfile_name(json_key, scopes=self.SCOPES)
-                http = credentials.authorize(httplib2.Http())
-                a_file = open("urls.csv", "r")  # get list of lines
-                urls = a_file.readlines()
-                a_file.close()
-                new_file = open("urls.csv", "w")
-                flag = False
-                request_google_api = ''
-                for url in urls:
-                    url_new = url.rstrip("\n")
-                    if flag:
-                        new_file.write(url)
-                    else:
-                        request_google_api = self.indexURL2(url_new, http)
 
-                    if 'Error' in request_google_api:
-                        flag = True
-                        new_file.write(url)
-                        request_google_api = ''
-                    else:
-                        if not flag:
-                            self.write_result('txt_file', url_new, datetime.date.today())
-                            count_urls += 1
+        for json_key in self.json_keys:
 
-                new_file.close()
+            credentials = ServiceAccountCredentials._from_parsed_json_keyfile(json_key, scopes=self.SCOPES)
 
-        print("Отправлено на индексацию: " + str(count_urls) + " шт.")
+            http = credentials.authorize(httplib2.Http())
+
+            a_file = open(os.getcwd() + self.urls_file, "r")  # get list of lines
+            urls = a_file.readlines()
+            a_file.close()
+
+            new_file = open(os.getcwd() + self.urls_file, "w")
+
+            flag = False
+
+            for url in urls:
+
+                url_new = url.rstrip("\n")
+
+                if flag:
+                    new_file.write(url)
+                else:
+                    request_google_api = self.indexURL2(url_new, http)
+
+                if 'Error' in request_google_api:
+                    flag = True
+                    new_file.write(url)
+                    request_google_api = ''
+                else:
+                    if not flag:
+                        self.results.append({'url': url_new, 'date': str(datetime.date.today())})
+
+            if len(self.results) == len(urls):
+                break
+
+        new_file.close()
+
+        return self.resultsToString()
