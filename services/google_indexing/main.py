@@ -49,28 +49,30 @@ class GoogleIndexer(Service):
         json_ctn = json.dumps(content)
         response, content = http.request(ENDPOINT, method="POST", body=json_ctn)
         result = json.loads(content.decode())
+
+        return result
         # For debug purpose only
-        if "error" in result:
-            print("Error({} - {}): {}".format(result["error"]["code"], result["error"]["status"],
-                                              result["error"]["message"]))
-            return "Error({} - {}): {}".format(result["error"]["code"], result["error"]["status"],
-                                               result["error"]["message"])
-        else:
-            print("urlNotificationMetadata.url: {}".format(result["urlNotificationMetadata"]["url"]))
-            print("urlNotificationMetadata.latestUpdate.url: {}".format(
-                result["urlNotificationMetadata"]["latestUpdate"]["url"]))
-            print("urlNotificationMetadata.latestUpdate.type: {}".format(
-                result["urlNotificationMetadata"]["latestUpdate"]["type"]))
-            print("urlNotificationMetadata.latestUpdate.notifyTime: {}".format(
-                result["urlNotificationMetadata"]["latestUpdate"]["notifyTime"]))
-            return "OK"
+        # if "error" in result:
+        #     print("Error({} - {}): {}".format(result["error"]["code"], result["error"]["status"],
+        #                                       result["error"]["message"]))
+        #     return "Error({} - {}): {}".format(result["error"]["code"], result["error"]["status"],
+        #                                        result["error"]["message"])
+        # else:
+        #     print("urlNotificationMetadata.url: {}".format(result["urlNotificationMetadata"]["url"]))
+        #     print("urlNotificationMetadata.latestUpdate.url: {}".format(
+        #         result["urlNotificationMetadata"]["latestUpdate"]["url"]))
+        #     print("urlNotificationMetadata.latestUpdate.type: {}".format(
+        #         result["urlNotificationMetadata"]["latestUpdate"]["type"]))
+        #     print("urlNotificationMetadata.latestUpdate.notifyTime: {}".format(
+        #         result["urlNotificationMetadata"]["latestUpdate"]["notifyTime"]))
+        #     return "OK"
 
     def resultsToString(self):
 
         str = ''
 
         for r in self.results:
-            str += r.get('date') + ": " + r.get('url') + " (успешно отправлен)\n"
+            str += r.get('date') + ": " + r.get('url') + " (" + r.get('message') + ")\n"
 
         return str
 
@@ -97,18 +99,27 @@ class GoogleIndexer(Service):
                 if flag:
                     new_file.write(url)
                 else:
-                    request_google_api = self.indexURL2(url_new, http)
+                    result = self.indexURL2(url_new, http)
 
-                if 'Error' in request_google_api:
-                    flag = True
-                    new_file.write(url)
-                    request_google_api = ''
+                # print(result)
+
+                if result.get('error'):
+                    err = result.get('error')
+
+                    # PERMISSION_DENIED
+                    if err['code'] == 403:
+                        self.results.append({'url': url_new, 'date': str(datetime.date.today()), 'message': err['message']})
+                    else:
+                        flag = True
+                        new_file.write(url)
+                        result = ''
                 else:
                     if not flag:
-                        self.results.append({'url': url_new, 'date': str(datetime.date.today())})
+                        self.results.append({'url': url_new, 'date': str(datetime.date.today()), 'message': 'успешно отправлен'})
 
-            if len(self.results) == len(urls):
-                break
+            # TODO придумать другое условие выхода из цикла по ключам
+            # if len(self.results) == len(urls):
+            #     break
 
         new_file.close()
 

@@ -146,6 +146,14 @@ class Job(models.Model):
         self.status = 1
         self.save()
 
+    def finish(self, success=True, message=None):
+        if success:
+            self.status = 2
+        else:
+            self.status = 3
+        self.last_result = message
+        self.save()
+
     def error(self, message=None):
         self.status = 3
         self.last_result = message
