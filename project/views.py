@@ -405,7 +405,7 @@ def run_service(request, pk, service_id):
             filename = fs.save('datafiles/' + myfile.name, myfile)
 
             J = Job()
-            J.status = 1
+            J.status = 0
             J.project_id = project.id
             J.service_id = service.id
             J.data = fs.url(filename)

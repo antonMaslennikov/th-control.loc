@@ -11,10 +11,12 @@ class Command(BaseCommand):
         # TODO добавить проверку на запуск не более 3х раз
 
         jobs = Job.objects.filter(
-            status__in=[1, 4]
-        ).all()
+            status__in=[0, 4]
+        ).order_by('id')[:1]
 
         for job in jobs:
+
+            job.start()
 
             if job.service.service_class:
 
@@ -46,3 +48,8 @@ class Command(BaseCommand):
                     R.save()
 
                     # TODO придумать способ определить полное завершение или завершение по ошибке
+
+                else:
+                    job.error('Не обнаружен скрипт сервиса')
+            else:
+                job.error('Не задан скрипт сервиса')

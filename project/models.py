@@ -128,6 +128,7 @@ class ProjectServiceSetting(models.Model):
 # ----------------------------------------------------------------------------------------------------------------------
 class Job(models.Model):
     STATUS = (
+        (0, 'Ожидает запуска'),
         (1, 'Запущен'),
         (2, 'Успешно завершён'),
         (3, 'Завершился ошибкой'),
@@ -137,8 +138,18 @@ class Job(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
     data = models.TextField()
     status = models.IntegerField(choices=STATUS, default=1)
+    last_result = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now, blank=True)
     finished_at = models.DateTimeField(blank=True, null=True)
+
+    def start(self):
+        self.status = 1
+        self.save()
+
+    def error(self, message=None):
+        self.status = 3
+        self.last_result = message
+        self.save()
 
 
 # ----------------------------------------------------------------------------------------------------------------------
