@@ -84,9 +84,13 @@ class GoogleIndexer(Service):
 
             http = credentials.authorize(httplib2.Http())
 
-            a_file = open(os.getcwd() + self.urls_file, "r")  # get list of lines
+            a_file = open(os.getcwd() + self.urls_file, "r")
             urls = a_file.readlines()
             a_file.close()
+
+            if len(urls) == 0:
+                self.full_complite = True
+                break
 
             new_file = open(os.getcwd() + self.urls_file, "w")
 
@@ -113,13 +117,10 @@ class GoogleIndexer(Service):
                         flag = True
                         new_file.write(url)
                         result = ''
+                        self.intermediate_complite = True
                 else:
                     if not flag:
                         self.results.append({'url': url_new, 'date': str(datetime.date.today()), 'message': 'успешно отправлен'})
-
-            # TODO придумать другое условие выхода из цикла по ключам
-            # if len(self.results) == len(urls):
-            #     break
 
         new_file.close()
 

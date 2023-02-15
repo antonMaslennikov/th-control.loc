@@ -146,6 +146,10 @@ class Job(models.Model):
         self.status = 1
         self.save()
 
+    def intermediate(self):
+        self.status = 4
+        self.save()
+
     def finish(self, success=True, message=None):
         if success:
             self.status = 2
