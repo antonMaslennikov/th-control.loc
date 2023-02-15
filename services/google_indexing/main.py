@@ -119,10 +119,10 @@ class GoogleIndexer(Service):
                     if err['code'] == 403:
                         self.results.append({'url': url, 'date': str(datetime.date.today()), 'message': err['message']})
                         processed += 1
+                    # ошибку не удалось определить и выполнение сервиса приостанавливается
                     else:
                         flag = True
                         new_file.write(url)
-                        result = ''
                         self.intermediate_complite = True
                 else:
                     self.results.append({'url': url, 'date': str(datetime.date.today()), 'message': 'успешно отправлен'})
