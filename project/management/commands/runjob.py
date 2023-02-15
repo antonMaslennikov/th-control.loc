@@ -9,6 +9,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         # TODO добавить проверку на запуск не более 3х раз
+        # TODO задания со статусом 4 можно перезапускать только через день после прошлого запуска
 
         jobs = Job.objects.filter(
             status__in=[0, 4]
