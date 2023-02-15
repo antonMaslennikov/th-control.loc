@@ -78,6 +78,14 @@ class GoogleIndexer(Service):
 
     def run(self):
 
+        # кол-во корректно обработанных урлов
+        processed = 0
+
+        a_file = open(os.getcwd() + self.urls_file, "r")
+        urls = a_file.readlines()
+        # общее изначальное кол-во урлов на обработке
+        total_urls = len(urls)
+
         for json_key in self.json_keys:
 
             credentials = ServiceAccountCredentials._from_parsed_json_keyfile(json_key, scopes=self.SCOPES)
@@ -88,22 +96,19 @@ class GoogleIndexer(Service):
             urls = a_file.readlines()
             a_file.close()
 
-            if len(urls) == 0:
-                self.full_complite = True
-                break
-
             new_file = open(os.getcwd() + self.urls_file, "w")
 
             flag = False
 
             for url in urls:
 
-                url_new = url.rstrip("\n")
+                # print(url)
 
                 if flag:
                     new_file.write(url)
+                    continue
                 else:
-                    result = self.indexURL2(url_new, http)
+                    result = self.indexURL2(url.rstrip("\n"), http)
 
                 # print(result)
 
@@ -112,16 +117,20 @@ class GoogleIndexer(Service):
 
                     # PERMISSION_DENIED
                     if err['code'] == 403:
-                        self.results.append({'url': url_new, 'date': str(datetime.date.today()), 'message': err['message']})
+                        self.results.append({'url': url, 'date': str(datetime.date.today()), 'message': err['message']})
+                        processed += 1
                     else:
                         flag = True
                         new_file.write(url)
                         result = ''
                         self.intermediate_complite = True
                 else:
-                    if not flag:
-                        self.results.append({'url': url_new, 'date': str(datetime.date.today()), 'message': 'успешно отправлен'})
+                    self.results.append({'url': url, 'date': str(datetime.date.today()), 'message': 'успешно отправлен'})
+                    processed += 1
 
         new_file.close()
+
+        if processed == total_urls:
+            self.full_complite = True
 
         return self.resultsToString()
