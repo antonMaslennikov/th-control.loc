@@ -1,6 +1,9 @@
 from django.core.management.base import BaseCommand
+from django.utils import timezone
+
 from project.models import Job, ProjectServiceSetting, JobResult
 from services.google_indexing.main import GoogleIndexer
+import datetime
 
 
 class Command(BaseCommand):
@@ -8,11 +11,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        # TODO добавить проверку на запуск не более 3х раз
+        # выбираем задачи со статусом 0 или 4
+        # запускались не более 10х раз
         # TODO задания со статусом 4 можно перезапускать только через день после прошлого запуска
 
         jobs = Job.objects.filter(
-            status__in=[0, 4]
+            status__in=[0, 4],
+            repeats__lt=10
         ).order_by('id')[:1]
 
         for job in jobs:
@@ -28,6 +33,10 @@ class Command(BaseCommand):
                 if Service:
 
                     print(job.id, ': ', job.data, job.project_id, job.service.name, job.service.service_class)
+
+                    job.repeats += 1
+                    job.last_repeat = timezone.now()
+                    job.save()
 
                     # дёргаем настройки сервиса
                     try:

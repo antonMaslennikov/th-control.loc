@@ -138,7 +138,9 @@ class Job(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
     data = models.TextField()
     status = models.IntegerField(choices=STATUS, default=1)
+    last_repeat = models.DateTimeField(blank=True, null=True)
     last_result = models.TextField(blank=True, null=True)
+    repeats = models.IntegerField(default=0)
     created_at = models.DateTimeField(default=timezone.now, blank=True)
     finished_at = models.DateTimeField(blank=True, null=True)
 
