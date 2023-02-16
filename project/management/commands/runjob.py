@@ -60,7 +60,7 @@ class Command(BaseCommand):
 
                         # сервис отработал, но не полностью, задание требует повторного запуска
                         if Service.intermediate_complite:
-                            job.intermediate()
+                            job.intermediate(message=Service.last_error)
                         else:
                             #  сервис отработал полностью и может задание может быть завершено
                             if Service.full_complite:

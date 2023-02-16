@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
@@ -138,6 +140,7 @@ class Job(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
     data = models.TextField()
     status = models.IntegerField(choices=STATUS, default=1)
+    delayed_at = models.DateTimeField(blank=True, null=True)
     last_repeat = models.DateTimeField(blank=True, null=True)
     last_result = models.TextField(blank=True, null=True)
     repeats = models.IntegerField(default=0)
@@ -148,8 +151,19 @@ class Job(models.Model):
         self.status = 1
         self.save()
 
-    def intermediate(self):
+    def intermediate(self, date=None, message=None):
+
+        if date is None:
+            now = datetime.datetime.now(tz=timezone.utc)
+            currentH = int(datetime.datetime.now(tz=timezone.utc).strftime('%H'))
+            date = now + datetime.timedelta(hours=24 - currentH + 8)
+
         self.status = 4
+        self.last_result = message
+
+        if date:
+            self.delayed_at = date.strftime('%Y-%m-%d %H:%M:%S')
+
         self.save()
 
     def finish(self, success=True, message=None):

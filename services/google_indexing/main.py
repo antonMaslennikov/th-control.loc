@@ -22,6 +22,8 @@ class GoogleIndexer(Service):
 
     SCOPES = ["https://www.googleapis.com/auth/indexing"]
 
+    standart_dalay = 24
+
     def setSettings(self, settings):
 
         if not settings['keys']:
@@ -116,7 +118,7 @@ class GoogleIndexer(Service):
                     err = result.get('error')
 
                     # PERMISSION_DENIED
-                    if err['code'] == 403:
+                    if err['code'] == 403 or err['code'] == 301:
                         self.results.append({'url': url, 'date': str(datetime.date.today()), 'message': err['message']})
                         processed += 1
                     # ошибку не удалось определить и выполнение сервиса приостанавливается
@@ -124,6 +126,7 @@ class GoogleIndexer(Service):
                         flag = True
                         new_file.write(url)
                         self.intermediate_complite = True
+                        self.last_error = err['message']
                 else:
                     self.results.append({'url': url, 'date': str(datetime.date.today()), 'message': 'успешно отправлен'})
                     processed += 1
