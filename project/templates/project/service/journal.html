@@ -13,15 +13,16 @@
     <table class="table table-striped">
         <tr>
             <th>#</th>
-            <th>Дата запуска</th>
+            <th>Дата старта</th>
+            <th>Дата последнего запуска</th>
             <th>Статус</th>
-            <th>Дата завершения</th>
             <th width="50">&nbsp;</th>
         </tr>
         {% for job in jobs %}
         <tr>
             <td>{{ job.id }}</td>
             <td>{{ job.created_at }}</td>
+            <td>{% if job.last_repeat %}{{ job.last_repeat }}{% endif %}</td>
             <td>
                 {% if job.status == 0 %}
                     <span class="badge bg-secondary">Поставлен в очередь. Ожидает запуска</span>
@@ -31,11 +32,12 @@
                     <span class="badge bg-success">Успешно завершён</span>
                 {% elif job.status == 3 %}
                     <span class="badge bg-danger">Завершился ошибкой</span>
+                {% elif job.status == 4 %}
+                    <span class="badge bg-warning">Отложено до {{ job.delayed_at }}</span>
                 {% endif %}
 
                 {% if job.last_result %}<div style="margin-top:10px;font-size:12px">{{ job.last_result }}</div>{% endif %}
             </td>
-            <td>{{ job.finihed_at }}</td>
             <td><a href="{% url 'project_service_job_journal' pk=project.id service_id=service.id job_id=job.id %}" class="badge btn-sm bg-warning">Лог</a></td>
         </tr>
         {% endfor %}

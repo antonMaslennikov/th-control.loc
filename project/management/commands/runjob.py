@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand
+from django.db.models import Q
 from django.utils import timezone
 
 from project.models import Job, ProjectServiceSetting, JobResult
@@ -13,10 +14,10 @@ class Command(BaseCommand):
 
         # выбираем задачи со статусом 0 или 4
         # запускались не более 10х раз
-        # TODO задания со статусом 4 можно перезапускать только через день после прошлого запуска
+        # задания со статусом 4 можно перезапускать только через после истечения таймаута
 
         jobs = Job.objects.filter(
-            status__in=[0, 4],
+            Q(status=0) | Q(status=4, delayed_at__lt=timezone.now()),
             repeats__lt=10
         ).order_by('id')[:1]
 
