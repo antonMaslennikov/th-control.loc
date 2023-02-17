@@ -227,8 +227,8 @@ def invite_accept(request, pk, code):
 
 
     # подключаем его к проекту
-    if (password):
-        UsersRelation(user=user, project=invite.project).save()
+    # if password:
+    UsersRelation(user=user, project=invite.project).save()
 
     login(request, user)
 
