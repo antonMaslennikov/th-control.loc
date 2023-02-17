@@ -444,10 +444,18 @@ def journal_service(request, pk, service_id, job_id=None):
     try:
         project = Project.objects.get(
             pk=pk,
-            author_id=request.user.id,
+            # author_id=request.user.id,
             is_deleted=False
         )
     except Project.DoesNotExist:
+        raise Http404('No access')
+
+    project_users = [];
+
+    for user in project.users.values('id'):
+        project_users.append(user['id'])
+
+    if project.author_id != request.user.id and request.user.id not in project_users:
         raise Http404('No access')
 
     try:
