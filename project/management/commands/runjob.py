@@ -7,6 +7,7 @@ from django.utils import timezone
 
 from project.models import Job, ProjectServiceSetting, JobResult
 from services.google_indexing.main import GoogleIndexer
+from django.db import connection
 import datetime
 
 
@@ -58,7 +59,8 @@ class Command(BaseCommand):
                         # results = Service.run()
                         time.sleep(120)
 
-                        close_old_connections()
+                        connection.connection.close()
+                        connection.connection = None
 
                         # пишем результаты в логи
                         R = JobResult()
