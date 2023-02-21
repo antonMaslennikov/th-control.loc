@@ -27,13 +27,15 @@ class Command(BaseCommand):
 
             if job.service.service_class:
 
+                print(job.id, ': ', job.data, job.project_id, job.service.name, job.service.service_class)
+
                 match job.service.service_class:
                     case 1:
                         Service = GoogleIndexer()
 
                 if Service:
 
-                    print(job.id, ': ', job.data, job.project_id, job.service.name, job.service.service_class)
+                    print('run jon')
 
                     job.repeats += 1
                     job.last_repeat = timezone.now()
