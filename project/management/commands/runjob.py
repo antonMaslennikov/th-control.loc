@@ -56,8 +56,8 @@ class Command(BaseCommand):
                             Service.setData(job.data)
 
                         # запускаем сервис
-                        # results = Service.run()
-                        time.sleep(120)
+                        results = Service.run()
+                        # time.sleep(120)
 
                         connection.connection.close()
                         connection.connection = None
@@ -65,8 +65,7 @@ class Command(BaseCommand):
                         # пишем результаты в логи
                         R = JobResult()
                         R.job_id = job.id
-                        # R.result = results
-                        R.result = 'finish'
+                        R.result = results
                         R.save()
 
                         # сервис отработал, но не полностью, задание требует повторного запуска
