@@ -32,45 +32,45 @@ class Command(BaseCommand):
                 if job.service.service_class == 1:
                     Service = GoogleIndexer()
 
-                # if Service:
-                #
-                #     print('run jon')
-                #
-                #     job.repeats += 1
-                #     job.last_repeat = timezone.now()
-                #     job.save()
-                #
-                #     # дёргаем настройки сервиса
-                #     try:
-                #         settings = ProjectServiceSetting.getall(job.project_id, job.service_id)
-                #
-                #         if settings:
-                #             Service.setSettings(settings)
-                #
-                #         # дёргаем данные для обработки
-                #         if job.data:
-                #             Service.setData(job.data)
-                #
-                #         # запускаем сервис
-                #         results = Service.run()
-                #
-                #         # пишем результаты в логи
-                #         R = JobResult()
-                #         R.job_id = job.id
-                #         R.result = results
-                #         R.save()
-                #
-                #         # сервис отработал, но не полностью, задание требует повторного запуска
-                #         if Service.intermediate_complite:
-                #             job.intermediate(message=Service.last_error)
-                #         else:
-                #             #  сервис отработал полностью и может задание может быть завершено
-                #             if Service.full_complite:
-                #                 job.finish()
-                #
-                #     except Exception as e:
-                #         job.error(str(e))
-                # else:
-                #     job.error('Не обнаружен скрипт сервиса')
+                if Service:
+
+                    print('run jon')
+
+                    job.repeats += 1
+                    job.last_repeat = timezone.now()
+                    job.save()
+
+                    # дёргаем настройки сервиса
+                    try:
+                        settings = ProjectServiceSetting.getall(job.project_id, job.service_id)
+
+                        if settings:
+                            Service.setSettings(settings)
+
+                        # дёргаем данные для обработки
+                        if job.data:
+                            Service.setData(job.data)
+
+                        # запускаем сервис
+                        results = Service.run()
+
+                        # пишем результаты в логи
+                        R = JobResult()
+                        R.job_id = job.id
+                        R.result = results
+                        R.save()
+
+                        # сервис отработал, но не полностью, задание требует повторного запуска
+                        if Service.intermediate_complite:
+                            job.intermediate(message=Service.last_error)
+                        else:
+                            #  сервис отработал полностью и может задание может быть завершено
+                            if Service.full_complite:
+                                job.finish()
+
+                    except Exception as e:
+                        job.error(str(e))
+                else:
+                    job.error('Не обнаружен скрипт сервиса')
             else:
                 job.error('Не задан скрипт сервиса')
