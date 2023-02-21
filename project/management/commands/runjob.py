@@ -1,3 +1,5 @@
+import time
+
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 from django.utils import timezone
@@ -52,12 +54,14 @@ class Command(BaseCommand):
                             Service.setData(job.data)
 
                         # запускаем сервис
-                        results = Service.run()
+                        # results = Service.run()
+                        time.sleep(120)
 
                         # пишем результаты в логи
                         R = JobResult()
                         R.job_id = job.id
-                        R.result = results
+                        # R.result = results
+                        R.result = 'finish'
                         R.save()
 
                         # сервис отработал, но не полностью, задание требует повторного запуска
