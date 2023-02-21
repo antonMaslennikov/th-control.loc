@@ -1,6 +1,7 @@
 import time
 
 from django.core.management.base import BaseCommand
+from django.db import close_old_connections
 from django.db.models import Q
 from django.utils import timezone
 
@@ -56,6 +57,8 @@ class Command(BaseCommand):
                         # запускаем сервис
                         # results = Service.run()
                         time.sleep(120)
+
+                        close_old_connections()
 
                         # пишем результаты в логи
                         R = JobResult()
