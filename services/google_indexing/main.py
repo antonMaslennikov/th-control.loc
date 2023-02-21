@@ -105,6 +105,8 @@ class GoogleIndexer(Service):
                 print(url)
 
                 if flag:
+                    # если на предыдущем шаге произошла ошибка, то скидываем все оставшиеся урлы в файл
+                    # и переходим к следующему ключу
                     new_file.write(url)
                     continue
                 else:
@@ -120,11 +122,10 @@ class GoogleIndexer(Service):
                         self.results.append({'url': url, 'date': str(datetime.date.today()), 'message': err['message']})
                         processed += 1
                     # ошибку не удалось определить и выполнение сервиса приостанавливается
+                    # в основном ловим (err['code'] == 429 Quota exceeded)
                     else:
                         flag = True
                         new_file.write(url)
-                        self.intermediate_complite = True
-                        self.last_error = err['message']
                 else:
                     self.results.append({'url': url, 'date': str(datetime.date.today()), 'message': 'успешно отправлен'})
                     processed += 1
@@ -133,5 +134,8 @@ class GoogleIndexer(Service):
 
         if processed == total_urls:
             self.full_complite = True
+        else:
+            self.intermediate_complite = True
+            self.last_error = err['message']
 
         return self.resultsToString()
