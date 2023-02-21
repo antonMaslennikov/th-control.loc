@@ -29,9 +29,8 @@ class Command(BaseCommand):
 
                 print(job.id, ': ', job.data, job.project_id, job.service.name, job.service.service_class)
 
-                match job.service.service_class:
-                    case 1:
-                        Service = GoogleIndexer()
+                if job.service.service_class == 1:
+                    Service = GoogleIndexer()
 
                 # if Service:
                 #
