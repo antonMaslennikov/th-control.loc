@@ -104,7 +104,7 @@ class GoogleIndexer(Service):
 
             for url in urls:
 
-                # print(url)
+                print(url)
 
                 if flag:
                     new_file.write(url)
@@ -112,7 +112,7 @@ class GoogleIndexer(Service):
                 else:
                     result = self.indexURL2(url.rstrip("\n"), http)
 
-                # print(result)
+                print(result)
 
                 if result.get('error'):
                     err = result.get('error')
