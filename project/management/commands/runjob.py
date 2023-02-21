@@ -57,7 +57,7 @@ class Command(BaseCommand):
 
                         # запускаем сервис
                         # results = Service.run()
-                        time.sleep(120)
+                        time.sleep(60)
 
                         connection.connection.close()
                         connection.connection = None
