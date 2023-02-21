@@ -5,8 +5,6 @@ import httplib2
 import json
 
 from oauth2client.service_account import ServiceAccountCredentials
-from .script_mysql import MySQLi
-from .config import *
 from ..Service import Service
 
 """
