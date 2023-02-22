@@ -59,6 +59,7 @@ class Command(BaseCommand):
                         results = Service.run()
                         # time.sleep(120)
 
+                        # за время работы сервиса, джанго гарантированно теряет коннект с базой, переконекчиваемся
                         connection.connection.close()
                         connection.connection = None
 

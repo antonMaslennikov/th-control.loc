@@ -119,7 +119,7 @@ class GoogleIndexer(Service):
 
                     # PERMISSION_DENIED
                     if err['code'] == 403 or err['code'] == 301:
-                        self.results.append({'url': url, 'date': str(datetime.datetime.now()), 'message': err['message']})
+                        self.results.append({'url': url, 'date': str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M')), 'message': err['message']})
                         processed += 1
                     # ошибку не удалось определить и выполнение сервиса приостанавливается
                     # в основном ловим (err['code'] == 429 Quota exceeded)
@@ -127,7 +127,7 @@ class GoogleIndexer(Service):
                         flag = True
                         new_file.write(url)
                 else:
-                    self.results.append({'url': url, 'date': str(datetime.datetime.now()), 'message': 'успешно отправлен'})
+                    self.results.append({'url': url, 'date': str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M')), 'message': 'успешно отправлен'})
                     processed += 1
 
         new_file.close()
