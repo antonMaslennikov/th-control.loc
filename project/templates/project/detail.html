@@ -69,11 +69,11 @@
                         <li>
                             <a class="dropdown-item" href="{% url 'project_service_journal' pk=project.id service_id=service.id %}"><i class="bi bi-journal-check"></i> Журнал</a>
                         </li>
-                        {% if project.author_id == user.pk %}
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item" href="{% url 'project_connect_service' pk=project.id service_id=service.id %}"><i class="bi bi-gear"></i> Настройки</a>
                         </li>
+                        {% if project.author_id == user.pk %}
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item" href="{% url 'project_disconnect_service' pk=project.id service_id=service.id %}" onclick="return confirm('Вы уверены?')"><i class="bi bi-trash"></i> Отключить</a>
