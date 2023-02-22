@@ -38,12 +38,10 @@ class GoogleIndexer(Service):
             raise 'Не удалось получить ключи'
 
     def setData(self, file):
-
         self.urls_file = file
-
         pass
 
-    def indexURL2(self, u, http):
+    def indexURL(self, u, http):
         ENDPOINT = "https://indexing.googleapis.com/v3/urlNotifications:publish"
         content = {'url': u.strip(), 'type': "URL_UPDATED"}
         json_ctn = json.dumps(content)
@@ -51,21 +49,6 @@ class GoogleIndexer(Service):
         result = json.loads(content.decode())
 
         return result
-        # For debug purpose only
-        # if "error" in result:
-        #     print("Error({} - {}): {}".format(result["error"]["code"], result["error"]["status"],
-        #                                       result["error"]["message"]))
-        #     return "Error({} - {}): {}".format(result["error"]["code"], result["error"]["status"],
-        #                                        result["error"]["message"])
-        # else:
-        #     print("urlNotificationMetadata.url: {}".format(result["urlNotificationMetadata"]["url"]))
-        #     print("urlNotificationMetadata.latestUpdate.url: {}".format(
-        #         result["urlNotificationMetadata"]["latestUpdate"]["url"]))
-        #     print("urlNotificationMetadata.latestUpdate.type: {}".format(
-        #         result["urlNotificationMetadata"]["latestUpdate"]["type"]))
-        #     print("urlNotificationMetadata.latestUpdate.notifyTime: {}".format(
-        #         result["urlNotificationMetadata"]["latestUpdate"]["notifyTime"]))
-        #     return "OK"
 
     def resultsToString(self):
 
@@ -110,7 +93,7 @@ class GoogleIndexer(Service):
                     new_file.write(url)
                     continue
                 else:
-                    result = self.indexURL2(url.rstrip("\n"), http)
+                    result = self.indexURL(url.rstrip("\n"), http)
 
                 print(result)
 
