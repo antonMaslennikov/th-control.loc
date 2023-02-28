@@ -75,11 +75,11 @@ class GoogleIndexer(Service):
 
             http = credentials.authorize(httplib2.Http())
 
-            a_file = open(os.getcwd() + self.urls_file, "r")
+            a_file = open(os.getcwd() + self.urls_file, "r", encoding="utf-8")
             urls = a_file.readlines()
             a_file.close()
 
-            new_file = open(os.getcwd() + self.urls_file, "w")
+            new_file = open(os.getcwd() + self.urls_file, "w", encoding="utf-8")
 
             flag = False
 
