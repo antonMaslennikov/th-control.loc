@@ -101,7 +101,6 @@ class GoogleIndexer(Service):
                     # сбрасываем в файл все оставшиеся необработанные урлы
                     else:
                         new_file.writelines(urls[i:])
-                        exit()
                         break
                 else:
                     self.results.append({'url': url, 'date': str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M')), 'message': 'успешно отправлен'})
