@@ -61,24 +61,6 @@ class GoogleIndexer(Service):
 
     def run(self):
 
-        a_file = open(os.getcwd() + self.urls_file, "r", encoding="utf-8")
-        urls = a_file.readlines()
-        a_file.close()
-
-        new_file = open(os.getcwd() + self.urls_file, "w", encoding="utf-8")
-
-        flag = False
-
-        for url in urls:
-            print(url)
-
-            new_file.write(url)
-
-        new_file.close()
-
-        exit()
-
-
         # кол-во корректно обработанных урлов
         processed = 0
 
