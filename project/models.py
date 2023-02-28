@@ -184,4 +184,5 @@ class Job(models.Model):
 class JobResult(models.Model):
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
     result = models.TextField(blank=True, null=True)
+    result_data = models.JSONField(blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now, blank=True)

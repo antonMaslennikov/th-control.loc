@@ -1,14 +1,14 @@
+import os
 import time
 
 from django.core.management.base import BaseCommand
-from django.db import close_old_connections
 from django.db.models import Q
 from django.utils import timezone
 
 from project.models import Job, ProjectServiceSetting, JobResult
 from services.google_indexing.main import GoogleIndexer
 from django.db import connection
-import datetime
+
 
 
 class Command(BaseCommand):
@@ -38,7 +38,7 @@ class Command(BaseCommand):
 
                 if Service:
 
-                    print('run jon')
+                    print('run job')
 
                     job.repeats += 1
                     job.last_repeat = timezone.now()
@@ -56,7 +56,7 @@ class Command(BaseCommand):
                             Service.setData(job.data)
 
                         # запускаем сервис
-                        results = Service.run()
+                        Service.run()
                         # time.sleep(120)
 
                         # за время работы сервиса, джанго гарантированно теряет коннект с базой, переконекчиваемся
@@ -66,7 +66,8 @@ class Command(BaseCommand):
                         # пишем результаты в логи
                         R = JobResult()
                         R.job_id = job.id
-                        R.result = results
+                        R.result = Service.resultsToString()
+                        R.result_data = Service.resultsToJson()
                         R.save()
 
                         # сервис отработал, но не полностью, задание требует повторного запуска

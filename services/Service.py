@@ -1,3 +1,4 @@
+import json
 
 class Service:
 
@@ -22,3 +23,6 @@ class Service:
 
     def resultsToString(self):
         pass
+
+    def resultsToJson(self):
+        return json.dumps(self.results, ensure_ascii=False)
