@@ -65,7 +65,7 @@ class GoogleIndexer(Service):
         urls = a_file.readlines()
         a_file.close()
 
-        new_file = open(os.getcwd() + self.urls_file, "w")
+        new_file = open(os.getcwd() + self.urls_file, "w", encoding="utf-8")
 
         flag = False
 
