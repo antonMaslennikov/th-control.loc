@@ -81,19 +81,11 @@ class GoogleIndexer(Service):
 
             new_file = open(os.getcwd() + self.urls_file, "w", encoding="utf-8")
 
-            flag = False
+            for i, url in enumerate(urls):
 
-            for url in urls:
+                print(i, url)
 
-                print(url)
-
-                if flag:
-                    # если на предыдущем шаге произошла ошибка, то скидываем все оставшиеся урлы в файл
-                    # и переходим к следующему ключу
-                    new_file.write(url)
-                    continue
-                else:
-                    result = self.indexURL(url.rstrip("\n"), http)
+                result = self.indexURL(url.rstrip("\n"), http)
 
                 print(result)
 
@@ -106,9 +98,10 @@ class GoogleIndexer(Service):
                         processed += 1
                     # ошибку не удалось определить и выполнение сервиса приостанавливается
                     # в основном ловим (err['code'] == 429 Quota exceeded)
+                    # сбрасываем в файл все оставшиеся необработанные урлы
                     else:
-                        flag = True
-                        new_file.write(url)
+                        new_file.writelines(urls[i:])
+                        break
                 else:
                     self.results.append({'url': url, 'date': str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M')), 'message': 'успешно отправлен'})
                     processed += 1
