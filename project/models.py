@@ -156,7 +156,10 @@ class Job(models.Model):
         if date is None:
             now = datetime.datetime.now(tz=timezone.utc)
             currentH = int(datetime.datetime.now(tz=timezone.utc).strftime('%H'))
-            date = now + datetime.timedelta(hours=24 - currentH + 8)
+            # на 8 утра следующего дня
+            # date = now + datetime.timedelta(hours=24 - currentH + 8)
+            # на тот же час следующего дня
+            date = now + datetime.timedelta(hours=24)
 
         self.status = 4
         self.last_result = message

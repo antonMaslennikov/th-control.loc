@@ -17,21 +17,18 @@
     {% endif %}
 
     <div class="content container">
-        <div class="row">
-            <div class="col-md-12">
 
-                {% if messages %}
-                <div class="messages">
-                    {% for message in messages %}
-                        <div class="alert  col-12 {% if message.tags == 'success' %}alert-success{% elif message.tags == 'warning' or message.tags == 'error' %}alert-danger{% endif %}">{{ message }}</div>
-                    {% endfor %}
-                </div>
-                {% endif %}
-
-                {% block content %}
-                {% endblock %}
-            </div>
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert  col-12 {% if message.tags == 'success' %}alert-success{% elif message.tags == 'warning' or message.tags == 'error' %}alert-danger{% endif %}">{{ message }}</div>
+            {% endfor %}
         </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+
     </div>
 </body>
 

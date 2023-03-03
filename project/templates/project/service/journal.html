@@ -10,6 +10,8 @@
 
 {% block content_projects %}
 
+    <div class="mb-3"><a href="{% url 'project_service_jobs_log' pk=project.id service_id=service.id %}" class="btn btn-sm bg-warning">Общий лог</a></div>
+
     <table class="table table-striped">
         <tr>
             <th>#</th>
