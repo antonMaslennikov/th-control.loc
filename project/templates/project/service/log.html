@@ -21,7 +21,7 @@
     {% if results|length > 0 %}
 
         <p>
-            <a href="" class="btn btn-sm btn-success">Скачать весь лог в формате CSV</a>
+            <a href="{% url 'project_service_jobs_log_download' pk=project.id service_id=service.id download='download' %}" class="btn btn-sm btn-success">Скачать весь лог в формате CSV</a>
         </p>
 
         <form action="" method="get">

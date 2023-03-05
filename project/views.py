@@ -1,7 +1,9 @@
 import json
+import os
 import random
 import string
 import requests
+import csv
 
 from django.contrib import messages
 from django.contrib.auth import get_user_model, login
@@ -18,6 +20,7 @@ from django.views.decorators.http import require_http_methods
 from django.urls import reverse
 
 from project.models import Project, Invite, UsersRelation, Service, ProjectServiceSetting, Job, JobResult, Setting
+from thcontrol import settings
 from .forms import ProjectForm, InviteForm, RunServiceForm
 
 
@@ -480,7 +483,7 @@ def journal_service(request, pk, service_id, job_id=None):
     })
 
 
-def service_log(request, pk, service_id):
+def service_log(request, pk, service_id, download=None):
     try:
         project = Project.objects.get(
             pk=pk,
@@ -524,14 +527,33 @@ def service_log(request, pk, service_id):
         log_row = json.loads(row.result_data)
 
         for l in log_row:
-            if 'search' in request.GET:
-                keys = l.keys()
 
+            keys = l.keys()
+
+            for k in keys:
+                l[k] = l[k].rstrip("\n")
+
+            if 'search' in request.GET:
                 for k in keys:
                     if request.GET['search'] in l[k]:
                         log.append(l)
             else:
                 log.append(l)
+
+    if download:
+        keys = log[0].keys()
+
+        if not os.path.isdir(os.path.join(settings.MEDIA_ROOT, 'downloads')):
+            os.mkdir(os.path.join(settings.MEDIA_ROOT, 'downloads'))
+
+        filename = os.path.join(settings.MEDIA_ROOT, 'downloads/' + str(random.randint(1, 10000)) + '.csv')
+
+        with open(filename, 'w', newline='') as output_file:
+            dict_writer = csv.DictWriter(output_file, keys)
+            dict_writer.writeheader()
+            dict_writer.writerows(log)
+
+
 
     return render(request, 'project/service/log.html', {
         'project': project,
