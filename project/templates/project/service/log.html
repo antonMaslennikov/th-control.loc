@@ -15,19 +15,36 @@
 
     {% load static %}
 
-    {% if results.count > 0 %}
+<!--    <link rel="stylesheet" href="//cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css">-->
+<!--    <script src="//cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js"></script>-->
+
+    {% if results|length > 0 %}
+
+        <p>
+            <a href="" class="btn btn-sm btn-success">Скачать весь лог в формате CSV</a>
+        </p>
+
+        <form action="" method="get">
+            <div class="input-group">
+                <input type="text" class="form-control" name="search" placeholder="Поиск" value="{{ request.GET.search }}">
+                <button class="btn btn-secondary">Найти</button>
+            </div>
+        </form>
+
         <table class="table table-striped" id="logTable">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>json</th>
+                    <th>date</th>
+                    <th>url</th>
+                    <th>message</th>
                 </tr>
             </thead>
             <tbody>
                 {% for r in results %}
                 <tr>
-                    <td>{{ r.id }}</td>
-                    <td>{{ r.result_data }}</td>
+                    <td>{{ r.date }}</td>
+                    <td>{{ r.url }}</td>
+                    <td>{{ r.message }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -1,3 +1,4 @@
+import json
 import random
 import string
 import requests
@@ -502,20 +503,40 @@ def service_log(request, pk, service_id):
         raise Http404('No access')
 
     jobs = list(Job.objects\
-                .filter(project_id=project.id, service_id=service.id)\
+                .filter(
+                    project_id=project.id,
+                    service_id=service.id
+                )\
                 .order_by('-id')\
                 .values_list('id', flat=True)\
                 .all()[:100])
 
     results = JobResult.objects.filter(job_id__in=jobs).order_by('-id')
 
-    print(jobs)
-    print(results)
+    if 'search' in request.GET:
+        results = results.filter(result__contains=request.GET['search'])
+
+    # print(results.query)
+
+    log = []
+
+    for row in results:
+        log_row = json.loads(row.result_data)
+
+        for l in log_row:
+            if 'search' in request.GET:
+                keys = l.keys()
+
+                for k in keys:
+                    if request.GET['search'] in l[k]:
+                        log.append(l)
+            else:
+                log.append(l)
 
     return render(request, 'project/service/log.html', {
         'project': project,
         'service': service,
-        'results': results,
+        'results': log,
         'projects': getmyprojects(request),
     })
 
