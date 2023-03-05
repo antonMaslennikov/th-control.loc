@@ -1,5 +1,12 @@
 {
-  "dependencies": {
-    "datatables.net-dt": "^1.13.3"
-  }
+ "scripts": {
+  "build": "webpack"
+ },
+ "dependencies": {
+  "datatables.net-dt": "^1.13.3"
+ },
+ "devDependencies": {
+  "webpack-cli": "^5.0.1",
+  "webpack": "^5.75.0"
+ }
 }

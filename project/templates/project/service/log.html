@@ -1,5 +1,7 @@
 {% extends 'project/layout.html' %}
 
+{% block page_id %}log{% endblock %}
+
 {% block breadcrumps_projects %}
     <h1 class="h2">
         <a href="{% url 'index' %}">Проекты</a> ::
@@ -11,23 +13,27 @@
 
 {% block content_projects %}
 
-    <table class="table table-striped">
-        <tr>
-            <th>#</th>
-        </tr>
-        {% if results.count > 0 %}
-            {% for r in results %}
-            <tr>
-                <td>{{ r.id }}</td>
-            </tr>
-            {% endfor %}
-        {% else %}
-            <tr>
-                <td colspan="3">Результаты выполнения отсутствуют</td>
-            </tr>
-        {% endif %}
-    </table>
+    {% load static %}
 
-    <p><small>Выводятся последние 500 записей</small></p>
+    {% if results.count > 0 %}
+        <table class="table table-striped" id="logTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in results %}
+                <tr>
+                    <td>{{ r.id }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <p><small>Выводятся последние 500 записей</small></p>
+    {% else %}
+        <p>Результаты выполнения отсутствуют</p>
+    {% endif %}
 
 {% endblock %}

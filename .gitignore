@@ -11,3 +11,4 @@ thcontrol/settings.py
 media
 node_modules
 package-lock.json
+*.bundle.*
