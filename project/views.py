@@ -12,7 +12,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.core.files.storage import FileSystemStorage
 from django.core.mail import EmailMessage
 from django.db.models import Count, Q
-from django.http import Http404, JsonResponse
+from django.http import Http404, JsonResponse, HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.utils import timezone
@@ -546,14 +546,24 @@ def service_log(request, pk, service_id, download=None):
         if not os.path.isdir(os.path.join(settings.MEDIA_ROOT, 'downloads')):
             os.mkdir(os.path.join(settings.MEDIA_ROOT, 'downloads'))
 
-        filename = os.path.join(settings.MEDIA_ROOT, 'downloads/' + str(random.randint(1, 10000)) + '.csv')
+        file_location = os.path.join(settings.MEDIA_ROOT, 'downloads/' + str(random.randint(1, 10000)) + '.csv')
 
-        with open(filename, 'w', newline='') as output_file:
+        with open(file_location, 'w', newline='') as output_file:
             dict_writer = csv.DictWriter(output_file, keys)
             dict_writer.writeheader()
             dict_writer.writerows(log)
 
+        try:
+            with open(file_location, 'r') as f:
+                file_data = f.read()
 
+            response = HttpResponse(file_data, content_type='text/csv; charset=windows-1251')
+            response['Content-Disposition'] = 'attachment; filename="' + os.path.basename(file_location) + '"'
+
+        except IOError:
+            response = HttpResponseNotFound('<h1>File not exist</h1>')
+
+        return response
 
     return render(request, 'project/service/log.html', {
         'project': project,
