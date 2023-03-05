@@ -61,8 +61,6 @@ def detail(request, pk):
     except Project.DoesNotExist:
         raise Http404('No access')
 
-
-
     return render(request, 'project/detail.html', {
         'projects': getmyprojects(request),
         'project': project,
@@ -156,7 +154,6 @@ def invite(request, pk):
         form = InviteForm(request.POST, project=project)
 
         if form.is_valid():
-
             inv = form.save(commit=False)
 
             inv.code = generate_random_string(20)
@@ -182,7 +179,6 @@ def invite(request, pk):
 
 
 def invite_accept(request, pk, code):
-
     try:
 
         invite = Invite.objects.get(
@@ -225,7 +221,6 @@ def invite_accept(request, pk, code):
         email.content_subtype = "html"
         email.send()
 
-
     # подключаем его к проекту
     # if password:
     UsersRelation(user=user, project=invite.project).save()
@@ -238,13 +233,13 @@ def invite_accept(request, pk, code):
     invite.save()
 
     # set flash message
-    messages.success(request, 'Инвайт был успешно принят.' + (' Данные для входа отправлены на Ваш email ' + invite.email if password else ''))
+    messages.success(request, 'Инвайт был успешно принят.' + (
+        ' Данные для входа отправлены на Ваш email ' + invite.email if password else ''))
 
     return redirect('project_detail', pk=invite.project.id)
 
 
 def remove_from_project(request, pk, user_id):
-
     try:
         project = Project.objects.get(
             pk=pk,
@@ -383,7 +378,6 @@ def disconnect_service(request, pk, service_id):
 
 
 def run_service(request, pk, service_id):
-
     project = Project.objects.get(
         pk=pk,
         is_deleted=False,
@@ -422,14 +416,14 @@ def run_service(request, pk, service_id):
             # отправка запроса внешнему сервису на запуск
             service_url = ProjectServiceSetting.getone(project.id, service.id, Setting.SERVICE_URL_NAME)
             if service_url:
-                response = requests.get(service_url.rstrip('/') + reverse('project_job_run', args=(project.id, service.id,)))
+                response = requests.get(
+                    service_url.rstrip('/') + reverse('project_job_run', args=(project.id, service.id,)))
 
             messages.success(request, 'Сервис ' + service.name + ' успешно запущен.')
 
             return redirect('project_service_journal', pk=project.id, service_id=service.id)
     else:
         form = RunServiceForm()
-
 
     return render(request, 'project/service/run.html', {
         'projects': getmyprojects(request),
@@ -440,7 +434,6 @@ def run_service(request, pk, service_id):
 
 
 def journal_service(request, pk, service_id, job_id=None):
-
     try:
         project = Project.objects.get(
             pk=pk,
@@ -487,7 +480,6 @@ def journal_service(request, pk, service_id, job_id=None):
 
 
 def service_log(request, pk, service_id):
-
     try:
         project = Project.objects.get(
             pk=pk,
@@ -509,19 +501,26 @@ def service_log(request, pk, service_id):
     except Project.DoesNotExist:
         raise Http404('No access')
 
+    jobs = list(Job.objects\
+                .filter(project_id=project.id, service_id=service.id)\
+                .order_by('-id')\
+                .values_list('id', flat=True)\
+                .all()[:100])
 
+    results = JobResult.objects.filter(job_id__in=jobs).order_by('-id')
 
-
+    print(jobs)
+    print(results)
 
     return render(request, 'project/service/log.html', {
         'project': project,
         'service': service,
+        'results': results,
         'projects': getmyprojects(request),
     })
 
 
 def jobinfo(request, job_id):
-
     try:
         job = Job.objects.get(
             pk=job_id,
@@ -566,7 +565,6 @@ def jobinfo(request, job_id):
 
 @require_http_methods(["POST"])
 def jobresult(request, job_id):
-
     try:
         job = Job.objects.get(
             pk=job_id,
@@ -596,7 +594,6 @@ def jobresult(request, job_id):
 
 
 def jobrun(request, project_id, job_id):
-
     # print(project_id, job_id)
 
     return JsonResponse({

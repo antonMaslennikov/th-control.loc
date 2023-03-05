@@ -20,12 +20,14 @@
             <thead>
                 <tr>
                     <th>#</th>
+                    <th>json</th>
                 </tr>
             </thead>
             <tbody>
                 {% for r in results %}
                 <tr>
                     <td>{{ r.id }}</td>
+                    <td>{{ r.result_data }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
