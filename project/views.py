@@ -524,21 +524,22 @@ def service_log(request, pk, service_id, download=None):
     log = []
 
     for row in results:
-        log_row = json.loads(row.result_data)
+        if row.result_data:
+            log_row = json.loads(row.result_data)
 
-        for l in log_row:
+            for l in log_row:
 
-            keys = l.keys()
+                keys = l.keys()
 
-            for k in keys:
-                l[k] = l[k].rstrip("\n")
-
-            if 'search' in request.GET:
                 for k in keys:
-                    if request.GET['search'] in l[k]:
-                        log.append(l)
-            else:
-                log.append(l)
+                    l[k] = l[k].rstrip("\n")
+
+                if 'search' in request.GET:
+                    for k in keys:
+                        if request.GET['search'] in l[k]:
+                            log.append(l)
+                else:
+                    log.append(l)
 
     if download:
         keys = log[0].keys()
