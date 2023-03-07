@@ -4,6 +4,7 @@ import random
 import string
 import requests
 import csv
+import codecs
 
 from django.contrib import messages
 from django.contrib.auth import get_user_model, login
@@ -572,6 +573,8 @@ def service_log(request, pk, service_id, job_id=None, download=None):
             # response = HttpResponse(file_data, content_type='text/csv; charset=windows-1251')
             response = HttpResponse(file_data, content_type='text/csv')
             response['Content-Disposition'] = 'attachment; filename="' + os.path.basename(file_location) + '"'
+
+            response.write(codecs.BOM_UTF8)
 
         except IOError:
             response = HttpResponseNotFound('<h1>File not exist</h1>')
