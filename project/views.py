@@ -437,7 +437,7 @@ def run_service(request, pk, service_id):
     })
 
 
-def journal_service(request, pk, service_id, job_id=None):
+def journal_service(request, pk, service_id):
     try:
         project = Project.objects.get(
             pk=pk,
@@ -460,19 +460,14 @@ def journal_service(request, pk, service_id, job_id=None):
     except Project.DoesNotExist:
         raise Http404('No access')
 
-    if (job_id is None):
-        jobs = Job.objects.filter(
-            project_id=project.id,
-            service_id=service.id,
-        ).order_by('-id')
 
-        tpl = 'project/service/journal.html'
-        results = None
-    else:
-        jobs = None
-        tpl = 'project/service/journal_results.html'
-        results = JobResult.objects.filter(job__id=job_id).order_by('-id')
-        pass
+    jobs = Job.objects.filter(
+        project_id=project.id,
+        service_id=service.id,
+    ).order_by('-id')
+
+    tpl = 'project/service/journal.html'
+    results = None
 
     return render(request, tpl, {
         'projects': getmyprojects(request),
@@ -483,7 +478,7 @@ def journal_service(request, pk, service_id, job_id=None):
     })
 
 
-def service_log(request, pk, service_id, download=None):
+def service_log(request, pk, service_id, job_id=None, download=None):
     try:
         project = Project.objects.get(
             pk=pk,
@@ -505,14 +500,18 @@ def service_log(request, pk, service_id, download=None):
     except Project.DoesNotExist:
         raise Http404('No access')
 
-    jobs = list(Job.objects\
-                .filter(
-                    project_id=project.id,
-                    service_id=service.id
-                )\
-                .order_by('-id')\
-                .values_list('id', flat=True)\
-                .all()[:100])
+    if job_id is None:
+        jobs = list(Job.objects\
+                    .filter(
+                        project_id=project.id,
+                        service_id=service.id
+                    )\
+                    .order_by('-id')\
+                    .values_list('id', flat=True)\
+                    .all()[:100])
+    else:
+        jobs = Job.objects.filter(pk=job_id)
+        pass
 
     results = JobResult.objects.filter(job_id__in=jobs).order_by('-id')
 
