@@ -556,25 +556,31 @@ def service_log(request, pk, service_id, job_id=None, download=None):
     if download:
         keys = log[0].keys()
 
-        if not os.path.isdir(os.path.join(settings.MEDIA_ROOT, 'downloads')):
-            os.mkdir(os.path.join(settings.MEDIA_ROOT, 'downloads'))
+        # if not os.path.isdir(os.path.join(settings.MEDIA_ROOT, 'downloads')):
+        #     os.mkdir(os.path.join(settings.MEDIA_ROOT, 'downloads'))
+        #
+        # file_location = os.path.join(settings.MEDIA_ROOT, 'downloads/' + str(random.randint(1, 10000)) + '.csv')
 
-        file_location = os.path.join(settings.MEDIA_ROOT, 'downloads/' + str(random.randint(1, 10000)) + '.csv')
-
-        with open(file_location, 'w', newline='') as output_file:
-            dict_writer = csv.DictWriter(output_file, keys)
-            dict_writer.writeheader()
-            dict_writer.writerows(log)
+        # with open(file_location, 'w', encoding='utf-8', newline='') as output_file:
+        #     dict_writer = csv.DictWriter(output_file, keys)
+        #     dict_writer.writeheader()
+        #     dict_writer.writerows(log)
 
         try:
-            with open(file_location, 'r') as f:
-                file_data = f.read()
+            # with open(file_location, 'r') as f:
+            #     file_data = f.read()
 
             # response = HttpResponse(file_data, content_type='text/csv; charset=windows-1251')
-            response = HttpResponse(file_data, content_type='text/csv')
+
+            response = HttpResponse(content_type='text/csv')
+
             response['Content-Disposition'] = 'attachment; filename="' + os.path.basename(file_location) + '"'
 
             response.write(codecs.BOM_UTF8)
+
+            dict_writer = csv.DictWriter(response, fieldnames=keys)
+            dict_writer.writeheader()
+            dict_writer.writerows(log)
 
         except IOError:
             response = HttpResponseNotFound('<h1>File not exist</h1>')
