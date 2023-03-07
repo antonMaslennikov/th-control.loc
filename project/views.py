@@ -500,6 +500,11 @@ def service_log(request, pk, service_id, job_id=None, download=None):
     except Project.DoesNotExist:
         raise Http404('No access')
 
+    if download:
+        limit = 500000
+    else:
+        limit = 100
+
     if job_id is None:
         jobs = list(Job.objects\
                     .filter(
@@ -508,7 +513,7 @@ def service_log(request, pk, service_id, job_id=None, download=None):
                     )\
                     .order_by('-id')\
                     .values_list('id', flat=True)\
-                    .all()[:100])
+                    .all()[:limit])
     else:
         jobs = Job.objects.filter(pk=job_id)
         pass
@@ -539,6 +544,9 @@ def service_log(request, pk, service_id, job_id=None, download=None):
                             log.append(l)
                 else:
                     log.append(l)
+
+        if len(log) > 500 and not job_id and not download:
+            break
 
     if download:
         keys = log[0].keys()
