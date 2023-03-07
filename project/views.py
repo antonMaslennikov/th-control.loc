@@ -545,10 +545,10 @@ def service_log(request, pk, service_id, job_id=None, download=None):
                 else:
                     log.append(l)
 
-                if len(log) > 500 and not job_id and not download:
+                if len(log) >= 500 and not job_id and not download:
                     break
 
-        if len(log) > 500 and not job_id and not download:
+        if len(log) >= 500 and not job_id and not download:
             break
 
 
