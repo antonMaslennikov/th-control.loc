@@ -569,7 +569,8 @@ def service_log(request, pk, service_id, job_id=None, download=None):
             with open(file_location, 'r') as f:
                 file_data = f.read()
 
-            response = HttpResponse(file_data, content_type='text/csv; charset=windows-1251')
+            # response = HttpResponse(file_data, content_type='text/csv; charset=windows-1251')
+            response = HttpResponse(file_data, content_type='text/csv')
             response['Content-Disposition'] = 'attachment; filename="' + os.path.basename(file_location) + '"'
 
         except IOError:
