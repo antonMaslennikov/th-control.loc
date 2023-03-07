@@ -34,6 +34,7 @@
         <table class="table table-striped" id="logTable">
             <thead>
                 <tr>
+                    <th>#</th>
                     <th>date</th>
                     <th>url</th>
                     <th>message</th>
@@ -42,6 +43,7 @@
             <tbody>
                 {% for r in results %}
                 <tr>
+                    <td>{{ forloop.counter }}</td>
                     <td>{{ r.date }}</td>
                     <td>{{ r.url }}</td>
                     <td>{{ r.message }}</td>
