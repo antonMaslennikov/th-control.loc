@@ -560,7 +560,7 @@ def service_log(request, pk, service_id, job_id=None, download=None):
 
         file_location = os.path.join(settings.MEDIA_ROOT, 'downloads/' + str(random.randint(1, 10000)) + '.csv')
 
-        with open(file_location, 'w', newline='') as output_file:
+        with open(file_location, 'w', encoding='utf-8', newline='') as output_file:
             dict_writer = csv.DictWriter(output_file, keys)
             dict_writer.writeheader()
             dict_writer.writerows(log)
