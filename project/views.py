@@ -575,7 +575,7 @@ def service_log(request, pk, service_id, job_id=None, download=None):
 
             response = HttpResponse(content_type='text/csv')
 
-            response['Content-Disposition'] = 'attachment; filename="' + str(random.randint(1, 10000)) + '"'
+            response['Content-Disposition'] = 'attachment; filename="' + str(random.randint(1, 10000)) + '.csv"'
 
             response.write(codecs.BOM_UTF8)
 
