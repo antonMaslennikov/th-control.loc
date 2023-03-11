@@ -98,8 +98,8 @@ class ProjectServiceSetting(models.Model):
     created_at = models.DateTimeField(default=timezone.now, blank=True, null=True)
     updated_at = models.DateTimeField(blank=True, null=True)
 
-    class Meta:
-        unique_together = ('project', 'service', 'setting',)
+    # class Meta:
+    #     unique_together = ('project', 'service', 'setting',)
 
     @staticmethod
     def getall(project_id, service_id):

@@ -339,7 +339,12 @@ def connect_service(request, pk, service_id=None):
             settings = {}
 
             for setting in ProjectServiceSettings:
-                settings[setting.setting_id] = setting.value
+                if not settings.get(setting.setting_id):
+                    settings[setting.setting_id] = []
+
+                settings[setting.setting_id].append(setting.value)
+
+            print(settings)
 
             # ищем или создаём (при первом запуске приложения) общую настройку "урл запуска"
             try:
