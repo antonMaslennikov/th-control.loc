@@ -3,6 +3,9 @@ const initDefaultModule = module => module.default.init();
 const routes = {
   log: () => {
     import("/static/js/log.js");
+  },
+  settings: () => {
+    import("/static/js/settings.js");
   }
 };
 

@@ -1,6 +1,8 @@
 {% extends 'project/layout.html' %}
 {% load dict_key %}
 
+{% block page_id %}settings{% endblock %}
+
 {% block breadcrumps_projects %}
     <h1 class="h2">
         <a href="{% url 'index' %}">Проекты</a> ::
@@ -11,7 +13,7 @@
 
 {% block content_projects %}
 
-    <form action="" method="post">
+    <form action="" method="post" class="list-group list-group-flush">
         {% csrf_token %}
 
 <!--        <p style="margin-bottom:50px">-->
@@ -22,20 +24,27 @@
 <!--        </p>-->
 
         {% for setting in service.settings.all %}
-            <p>
-                <b>{{ setting.key }}</b>
-
-                {% if setting.description %}
-                    <small>{{ setting.description }}</small>
-                {% endif %}
+            <div class="settings-row list-group-item">
+                <p>
+                    <b>{{ setting.key }}</b>
+                    {% if setting.description %}
+                        <br><small>{{ setting.description }}</small>
+                    {% endif %}
+                </p>
 
                 <input type="hidden" name="setting_id" value="{{ setting.id }}">
 
                 {% for setting_value in settings|dict_key:setting.id %}
                     <p><textarea name="setting_value" class="form-control" rows="6">{{ setting_value }}</textarea></p>
                 {% endfor %}
-            </p>
+
+                <p class="settings-row--value hidden"><textarea name="setting_value" class="form-control" rows="6"></textarea></p>
+
+                <a href="#" class="btn btn-sm mb-3 btn-outline-secondary add-settings-value">Добавить</a>
+            </div>
         {% endfor %}
+
+        <br>
 
         <p><button class="btn btn-success px-5" type="submit">Сохранить</button></p>
 
