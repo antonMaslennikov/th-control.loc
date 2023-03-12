@@ -594,6 +594,7 @@ def service_log(request, pk, service_id, job_id=None, download=None):
     return render(request, 'project/service/log.html', {
         'project': project,
         'service': service,
+        'job_id': job_id,
         'results': log,
         'projects': getmyprojects(request),
     })
