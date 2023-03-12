@@ -299,13 +299,14 @@ def connect_service(request, pk, service_id=None):
                 pk=service_id,
             )
         except Project.DoesNotExist:
-            raise Http404('No access')
+            raise Http404('Service not founded')
 
         if request.method == 'POST':
 
             # прикрепляем сервис к проекту
             project.services.add(service)
 
+            # удаляем все предыдущие настройки
             pass_s = ProjectServiceSetting.objects.filter(
                 project_id=project.id,
                 service_id=service.id,
@@ -313,11 +314,16 @@ def connect_service(request, pk, service_id=None):
 
             pass_s.delete()
 
+            # myfile = request.FILES['file']
+            # fs = FileSystemStorage()
+            # filename = fs.save('datafiles/' + myfile.name, myfile)
+
             # сохраняем настройки
             for i, sid in enumerate(request.POST.getlist("setting_id")):
 
-                for value in request.POST.getlist("setting_value_" + sid):
+                Sett = Setting.objects.get(pk=sid)
 
+                for value in request.POST.getlist("setting_value_" + sid):
                     if value:
                         ps = ProjectServiceSetting()
                         ps.project_id = project.id
@@ -325,6 +331,21 @@ def connect_service(request, pk, service_id=None):
                         ps.setting_id = sid
                         ps.value = value.strip()
                         ps.save()
+
+                # File
+                if Sett.type == 2:
+                    for i, sid in enumerate(request.POST.getlist("setting_id")):
+                        file = request.FILES.get("setting_value_" + sid)
+                        if file:
+                            value = file.read()
+
+                            if value:
+                                ps = ProjectServiceSetting()
+                                ps.project_id = project.id
+                                ps.service_id = service.id
+                                ps.setting_id = sid
+                                ps.value = value.strip()
+                                ps.save()
 
             messages.success(request, 'Сервис ' + service.name + ' успешно подключен')
 

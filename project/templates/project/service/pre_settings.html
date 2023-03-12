@@ -13,7 +13,7 @@
 
 {% block content_projects %}
 
-    <form action="" method="post" class="list-group list-group-flush">
+    <form action="" method="post" class="list-group list-group-flush" enctype="multipart/form-data">
         {% csrf_token %}
 
 <!--        <p style="margin-bottom:50px">-->
@@ -38,7 +38,13 @@
                     <p><textarea name="setting_value_{{setting.id}}" class="form-control" rows="6">{{ setting_value }}</textarea></p>
                 {% endfor %}
 
-                <p class="settings-row--value hidden"><textarea name="setting_value_{{setting.id}}" class="form-control" rows="6"></textarea></p>
+                <p class="settings-row--value hidden">
+                    {% if setting.type == 2 %}
+                        <input type="file" name="setting_value_{{setting.id}}" class="form-control">
+                    {% else %}
+                        <textarea name="setting_value_{{setting.id}}" class="form-control" rows="6"></textarea>
+                    {% endif %}
+                </p>
 
                 <a href="#" class="btn btn-sm mb-3 btn-outline-secondary add-settings-value">Добавить</a>
             </div>
