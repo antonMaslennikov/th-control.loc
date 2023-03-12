@@ -323,7 +323,7 @@ def connect_service(request, pk, service_id=None):
                         ps.project_id = project.id
                         ps.service_id = service.id
                         ps.setting_id = sid
-                        ps.value = value
+                        ps.value = value.strip()
                         ps.save()
 
             messages.success(request, 'Сервис ' + service.name + ' успешно подключен')
