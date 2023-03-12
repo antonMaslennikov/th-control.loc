@@ -35,10 +35,10 @@
                 <input type="hidden" name="setting_id" value="{{ setting.id }}">
 
                 {% for setting_value in settings|dict_key:setting.id %}
-                    <p><textarea name="setting_value" class="form-control" rows="6">{{ setting_value }}</textarea></p>
+                    <p><textarea name="setting_value_{{setting.id}}" class="form-control" rows="6">{{ setting_value }}</textarea></p>
                 {% endfor %}
 
-                <p class="settings-row--value hidden"><textarea name="setting_value" class="form-control" rows="6"></textarea></p>
+                <p class="settings-row--value hidden"><textarea name="setting_value_{{setting.id}}" class="form-control" rows="6"></textarea></p>
 
                 <a href="#" class="btn btn-sm mb-3 btn-outline-secondary add-settings-value">Добавить</a>
             </div>

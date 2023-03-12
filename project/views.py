@@ -306,25 +306,25 @@ def connect_service(request, pk, service_id=None):
             # прикрепляем сервис к проекту
             project.services.add(service)
 
-            # сохраняем настройки
-            values = request.POST.getlist("setting_value")
+            pass_s = ProjectServiceSetting.objects.filter(
+                project_id=project.id,
+                service_id=service.id,
+            )
 
+            pass_s.delete()
+
+            # сохраняем настройки
             for i, sid in enumerate(request.POST.getlist("setting_id")):
-                try:
-                    ps = ProjectServiceSetting.objects.get(
-                        project_id=project.id,
-                        service_id=service.id,
-                        setting_id=sid,
-                    )
-                    ps.value = values[i]
-                    ps.save()
-                except ProjectServiceSetting.DoesNotExist:
-                    ps = ProjectServiceSetting()
-                    ps.project_id = project.id
-                    ps.service_id = service.id
-                    ps.setting_id = sid
-                    ps.value = values[i]
-                    ps.save()
+
+                for value in request.POST.getlist("setting_value_" + sid):
+
+                    if value:
+                        ps = ProjectServiceSetting()
+                        ps.project_id = project.id
+                        ps.service_id = service.id
+                        ps.setting_id = sid
+                        ps.value = value
+                        ps.save()
 
             messages.success(request, 'Сервис ' + service.name + ' успешно подключен')
 
@@ -343,8 +343,6 @@ def connect_service(request, pk, service_id=None):
                     settings[setting.setting_id] = []
 
                 settings[setting.setting_id].append(setting.value)
-
-            print(settings)
 
             # ищем или создаём (при первом запуске приложения) общую настройку "урл запуска"
             try:

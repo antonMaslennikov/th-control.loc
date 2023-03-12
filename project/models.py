@@ -28,7 +28,13 @@ class Region(models.Model):
 class Setting(models.Model):
     SERVICE_URL_NAME = 'system_service_url'
 
+    TYPES = (
+        (1, 'Text'),
+        (2, 'File'),
+    )
+
     key = models.CharField(max_length=50)
+    type = models.IntegerField(choices=TYPES, null=True)
     description = models.CharField(max_length=1000, blank=True, null=True)
 
     def __str__(self):
