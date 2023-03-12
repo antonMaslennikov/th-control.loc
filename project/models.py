@@ -117,7 +117,11 @@ class ProjectServiceSetting(models.Model):
         settings = {}
 
         for pss in ProjectServiceSettings.all():
-            settings[pss.setting.key] = pss.value
+
+            if not settings.get(pss.setting.key):
+                settings[pss.setting.key] = []
+
+            settings[pss.setting.key].append(pss.value)
 
         return settings
 

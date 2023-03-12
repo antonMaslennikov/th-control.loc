@@ -27,12 +27,8 @@ class GoogleIndexer(Service):
         if not settings['keys']:
             raise 'Не заданы ключи'
 
-        keys = settings['keys']
-
-        while keys.find('}') > 0:
-            index = keys.find('}') + 1
-            self.json_keys.append(json.loads(keys[0:index].strip()))
-            keys = keys[index:]
+        for key in settings['keys']:
+            self.json_keys.append(json.loads(key.strip()))
 
         if len(self.json_keys) == 0:
             raise 'Не удалось получить ключи'
