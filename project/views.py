@@ -337,7 +337,7 @@ def connect_service(request, pk, service_id=None):
                     for i, sid in enumerate(request.POST.getlist("setting_id")):
                         file = request.FILES.get("setting_value_" + sid)
                         if file:
-                            value = file.read()
+                            value = file.read().decode("utf-8")
 
                             if value:
                                 ps = ProjectServiceSetting()
