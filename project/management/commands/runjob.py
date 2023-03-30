@@ -7,6 +7,7 @@ from django.utils import timezone
 
 from project.models import Job, ProjectServiceSetting, JobResult
 from services.google_indexing.main import GoogleIndexer
+from services.ahrefs_analysis.main import AhrefsAnalysis
 from django.db import connection
 
 
@@ -35,6 +36,10 @@ class Command(BaseCommand):
 
                 if job.service.service_class == 1:
                     Service = GoogleIndexer()
+                elif job.service.service_class == 2:
+                    Service = AhrefsAnalysis()
+                else:
+                    Service = None
 
                 if Service:
 
