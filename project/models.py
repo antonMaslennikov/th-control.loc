@@ -45,12 +45,13 @@ class Setting(models.Model):
 class Service(models.Model):
     STATUS = (
         (1, 'GoogleIndexer'),
+        (2, 'AhrefsAnalysis'),
     )
 
     name = models.CharField(max_length=255)
     service_class = models.IntegerField(choices=STATUS, null=True)
     description = models.CharField(max_length=1000, blank=True, null=True)
-    settings = models.ManyToManyField(Setting)
+    settings = models.ManyToManyField(Setting, blank=True, null=True)
 
     def __str__(self):
         return self.name

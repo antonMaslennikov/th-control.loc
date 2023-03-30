@@ -301,11 +301,15 @@ def connect_service(request, pk, service_id=None):
         except Project.DoesNotExist:
             raise Http404('Service not founded')
 
+        # service_settings_count = len(service.settings.all())
+
+        # if request.method == 'POST' or service_settings_count == 0:
         if request.method == 'POST':
 
             # прикрепляем сервис к проекту
             project.services.add(service)
 
+            # if service_settings_count > 0:
             # удаляем все предыдущие настройки
             pass_s = ProjectServiceSetting.objects.filter(
                 project_id=project.id,

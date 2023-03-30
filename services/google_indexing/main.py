@@ -35,7 +35,6 @@ class GoogleIndexer(Service):
 
     def setData(self, file):
         self.urls_file = file
-        pass
 
     def indexURL(self, u, http):
         ENDPOINT = "https://indexing.googleapis.com/v3/urlNotifications:publish"

@@ -23,32 +23,40 @@
 <!--            <small>Не заполнять, если сервис работает локально. Полный урл будет иметь значение {урл_внешнего_исполнителя_сервиса}/job/start/{projectId}/{jobId}</small>-->
 <!--        </p>-->
 
-        {% for setting in service.settings.all %}
-            <div class="settings-row list-group-item">
-                <p>
-                    <b>{{ setting.key }}</b>
-                    {% if setting.description %}
-                        <br><small>{{ setting.description }}</small>
-                    {% endif %}
-                </p>
+        {% if not service.settings.all %}
 
-                <input type="hidden" name="setting_id" value="{{ setting.id }}">
+            <p>Сервис не имеет настроек</p>
 
-                {% for setting_value in settings|dict_key:setting.id %}
-                    <p><textarea name="setting_value_{{setting.id}}" class="form-control" rows="6">{{ setting_value }}</textarea></p>
-                {% endfor %}
+        {% else %}
 
-                <p class="settings-row--value hidden">
-                    {% if setting.type == 2 %}
-                        <input type="file" name="setting_value_{{setting.id}}" class="form-control">
-                    {% else %}
-                        <textarea name="setting_value_{{setting.id}}" class="form-control" rows="6"></textarea>
-                    {% endif %}
-                </p>
+            {% for setting in service.settings.all %}
+                <div class="settings-row list-group-item">
+                    <p>
+                        <b>{{ setting.key }}</b>
+                        {% if setting.description %}
+                            <br><small>{{ setting.description }}</small>
+                        {% endif %}
+                    </p>
 
-                <a href="#" class="btn btn-sm mb-3 btn-outline-secondary add-settings-value">Добавить</a>
-            </div>
-        {% endfor %}
+                    <input type="hidden" name="setting_id" value="{{ setting.id }}">
+
+                    {% for setting_value in settings|dict_key:setting.id %}
+                        <p><textarea name="setting_value_{{setting.id}}" class="form-control" rows="6">{{ setting_value }}</textarea></p>
+                    {% endfor %}
+
+                    <p class="settings-row--value hidden">
+                        {% if setting.type == 2 %}
+                            <input type="file" name="setting_value_{{setting.id}}" class="form-control">
+                        {% else %}
+                            <textarea name="setting_value_{{setting.id}}" class="form-control" rows="6"></textarea>
+                        {% endif %}
+                    </p>
+
+                    <a href="#" class="btn btn-sm mb-3 btn-outline-secondary add-settings-value">Добавить</a>
+                </div>
+            {% endfor %}
+
+        {% endif %}
 
         <br>
 
