@@ -1,16 +1,12 @@
-# import time
-import time
-
-from ahrefs_analytics import AhrefsAnalytics
+from .ahrefs_analytics import AhrefsAnalytics
 import os
-# import spacy
 import ru_core_news_md
 
 nlp = ru_core_news_md.load()
 import pandas as pd
 
 
-class AnchorsReport():
+class AnchorsReport:
     def __init__(self):
         self.ahrefs_reports_path = 'AhrefsReports/'
 

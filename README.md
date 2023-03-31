@@ -8,12 +8,18 @@
 - python manage.py migrate
 - python manage.py createsuperuser
  
-для локального выполенения сервисов:
+### Для локального выполенения сервисов
 
+#### google_indexing
 - pip install google-api-python-client oauth2client
 - pip install --upgrade oauth2client
 - pip install mysql-connector-python-rf
 
+#### ahrefs_analysis
+
+- pip install spacy
+- python -m spacy download ru_core_news_md
+- pip install pandas
 
 # Запуск сервера
 - python manage.py runserver

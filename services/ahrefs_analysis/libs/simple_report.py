@@ -1,6 +1,6 @@
 import os
 from itertools import zip_longest
-from ahrefs_analytics import AhrefsAnalytics
+from .ahrefs_analytics import AhrefsAnalytics
 import re
 import csv
 

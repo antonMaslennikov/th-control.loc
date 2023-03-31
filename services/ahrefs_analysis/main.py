@@ -2,8 +2,8 @@ from ..Service import Service
 
 import datetime
 
-from anchors_report import AnchorsReport
-from simple_report import main
+from .libs.anchors_report import AnchorsReport
+from .libs.simple_report import main
 
 class AhrefsAnalysis(Service):
 
