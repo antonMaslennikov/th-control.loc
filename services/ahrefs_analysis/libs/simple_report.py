@@ -320,11 +320,11 @@ class CalculateDataSimple():
 def main():
     simple_report = {}
 
-    crnt_dir = os.path.dirname(os.path.abspath(__file__))
+    crnt_dir = os.path.dirname(os.path.abspath(__file__)) + '/../'
 
-    for name in os.listdir(crnt_dir + '/../AhrefsReports'):
+    for name in os.listdir(crnt_dir + 'AhrefsReports'):
         if '.csv' in str(name):
-            file_path = crnt_dir + '/../AhrefsReports/' + str(name)
+            file_path = crnt_dir + 'AhrefsReports/' + str(name)
 
             ObjAhrefs = AhrefsAnalytics(file_path)
 
@@ -364,11 +364,11 @@ def main():
 
     export_data = zip_longest(*all_data, fillvalue='')
 
-    f = open("res_simple_report.csv", "w")
+    f = open(crnt_dir + "res_simple_report.csv", "w")
     f.truncate()
     f.close()
 
-    with open('res_simple_report.csv', 'a+', encoding="ISO-8859-1", newline='') as myfile:
+    with open(crnt_dir + 'res_simple_report.csv', 'a+', encoding="ISO-8859-1", newline='') as myfile:
         wr = csv.writer(myfile)
         wr.writerow((file_names))
         wr.writerows(export_data)
