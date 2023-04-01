@@ -319,14 +319,20 @@ class CalculateDataSimple():
 
 def main():
     simple_report = {}
-    for name in os.listdir('AhrefsReports/'):
+
+    crnt_dir = os.path.dirname(os.path.abspath(__file__))
+
+    for name in os.listdir(crnt_dir + '/../AhrefsReports'):
         if '.csv' in str(name):
-            file_path = 'AhrefsReports/' + str(name)
+            file_path = crnt_dir + '/../AhrefsReports/' + str(name)
+
             ObjAhrefs = AhrefsAnalytics(file_path)
+
             data_domains = ObjAhrefs.data_domains()
             data_links = ObjAhrefs.data_links()
             ObjCalculateDataSimple = CalculateDataSimple(data_links=data_links, data_domains=data_domains)
             ObjCalculateDataSimple.prepare_simple_report(val_report=simple_report, name_report=name)
+
     all_data = []
     file_names = ['Parameters \ Domains']
     row_names = ['Quantity domains pcs', 'Quantity domains NOFOLLOW pcs',
