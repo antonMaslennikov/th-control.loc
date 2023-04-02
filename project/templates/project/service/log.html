@@ -36,7 +36,11 @@
                 <tr>
                     <th>#</th>
                     <th>date</th>
-                    <th>url</th>
+                    {% if service.service_class == 1 %}
+                        <th>url</th>
+                    {% elif service.service_class == 2 %}
+                        <th>Результат</th>
+                    {% endif %}
                     <th>message</th>
                 </tr>
             </thead>
@@ -45,7 +49,11 @@
                 <tr>
                     <td>{{ forloop.counter }}</td>
                     <td>{{ r.date }}</td>
-                    <td>{{ r.url }}</td>
+                    {% if service.service_class == 1 %}
+                        <td>{{ r.url }}</td>
+                    {% elif service.service_class == 2 %}
+                        <td><a href="/{{ r.simple_report }}">{{ r.simple_report }}</a></td>
+                    {% endif %}
                     <td>{{ r.message }}</td>
                 </tr>
                 {% endfor %}

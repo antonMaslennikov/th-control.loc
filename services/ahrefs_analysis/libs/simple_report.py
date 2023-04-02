@@ -1,4 +1,5 @@
 import os
+import time
 from itertools import zip_longest
 from .ahrefs_analytics import AhrefsAnalytics
 import re
@@ -238,22 +239,24 @@ class CalculateDataSimple():
             sum_cnt_links_other_month_anchors += data_month[i]['cnt_links_other_month_anchors']
             sum_cnt_links_other_month_none_anchors += data_month[i]['cnt_links_other_month_none_anchors']
 
-        avg_sum_cnt_links_main_month = sum_cnt_links_main_month / len(data_month)
-        avg_sum_cnt_links_other_month = sum_cnt_links_other_month / len(data_month)
-        avg_sum_cnt_links_main_month_anchors = sum_cnt_links_main_month_anchors / len(data_month)
-        avg_sum_cnt_links_main_month_none_anchors = sum_cnt_links_main_month_none_anchors / len(data_month)
-        avg_sum_cnt_links_other_month_anchors = sum_cnt_links_other_month_anchors / len(data_month)
-        avg_sum_cnt_links_other_month_none_anchors = sum_cnt_links_other_month_none_anchors / len(data_month)
+        if len(data_month) > 0:
+            avg_sum_cnt_links_main_month = sum_cnt_links_main_month / len(data_month)
+            avg_sum_cnt_links_other_month = sum_cnt_links_other_month / len(data_month)
+            avg_sum_cnt_links_main_month_anchors = sum_cnt_links_main_month_anchors / len(data_month)
+            avg_sum_cnt_links_main_month_none_anchors = sum_cnt_links_main_month_none_anchors / len(data_month)
+            avg_sum_cnt_links_other_month_anchors = sum_cnt_links_other_month_anchors / len(data_month)
+            avg_sum_cnt_links_other_month_none_anchors = sum_cnt_links_other_month_none_anchors / len(data_month)
 
-        data_month['stat'] = {
-            'avg_sum_cnt_links_main_month': avg_sum_cnt_links_main_month,
-            'avg_sum_cnt_links_other_month': avg_sum_cnt_links_other_month,
-            'avg_sum_cnt_links_main_month_anchors': avg_sum_cnt_links_main_month_anchors,
-            'avg_sum_cnt_links_main_month_none_anchors': avg_sum_cnt_links_main_month_none_anchors,
-            'avg_sum_cnt_links_other_month_anchors': avg_sum_cnt_links_other_month_anchors,
-            'avg_sum_cnt_links_other_month_none_anchors': avg_sum_cnt_links_other_month_none_anchors,
-            'cnt_month': len(data_month)
-        }
+            data_month['stat'] = {
+                'avg_sum_cnt_links_main_month': avg_sum_cnt_links_main_month,
+                'avg_sum_cnt_links_other_month': avg_sum_cnt_links_other_month,
+                'avg_sum_cnt_links_main_month_anchors': avg_sum_cnt_links_main_month_anchors,
+                'avg_sum_cnt_links_main_month_none_anchors': avg_sum_cnt_links_main_month_none_anchors,
+                'avg_sum_cnt_links_other_month_anchors': avg_sum_cnt_links_other_month_anchors,
+                'avg_sum_cnt_links_other_month_none_anchors': avg_sum_cnt_links_other_month_none_anchors,
+                'cnt_month': len(data_month)
+            }
+
         # print(data_month)
         return data_month
 
@@ -294,19 +297,13 @@ class CalculateDataSimple():
                                    'Среднее значение DR': round(domains_rating['mean_domains_rating']),
                                    'Количество gov/edu ссылок': count_gov_edu_links_domains['count_gov_edu_links'],
                                    'Количество gov/edu доменов': count_gov_edu_links_domains['count_gov_edu_domains'],
-                                   'Среднее кол-во обратных ссылок в месяц на морду': round(
-                                       stat_cnt_links['stat']['avg_sum_cnt_links_main_month']),
-                                   'Среднее кол-во обратных ссылок в месяц на прочие страницы': round(
-                                       stat_cnt_links['stat']['avg_sum_cnt_links_other_month']),
-                                   'Среднее кол-во АНКОРНЫХ обратных ссылок в месяц на морду': round(stat_cnt_links['stat'][
-                                       'avg_sum_cnt_links_main_month_anchors']),
-                                   'Среднее кол-во Б/АНКОРНЫХ обратных ссылок в месяц на морду': round(stat_cnt_links['stat'][
-                                       'avg_sum_cnt_links_main_month_none_anchors']),
-                                   'Среднее кол-во АНКОРНЫХ обратных ссылок в месяц на прочие страницы':
-                                       round(stat_cnt_links['stat']['avg_sum_cnt_links_other_month_anchors']),
-                                   'Среднее кол-во Б/АНКОРНЫХ обратных ссылок в месяц на прочие страницы':
-                                       round(stat_cnt_links['stat']['avg_sum_cnt_links_other_month_none_anchors']),
-                                   'Длительность работы с ссылками, лет': round(stat_cnt_links['stat']['cnt_month'] / 12),
+                                   'Среднее кол-во обратных ссылок в месяц на морду': round(stat_cnt_links['stat']['avg_sum_cnt_links_main_month']) if stat_cnt_links else 0,
+                                   'Среднее кол-во обратных ссылок в месяц на прочие страницы': round(stat_cnt_links['stat']['avg_sum_cnt_links_other_month']) if stat_cnt_links else 0,
+                                   'Среднее кол-во АНКОРНЫХ обратных ссылок в месяц на морду': round(stat_cnt_links['stat']['avg_sum_cnt_links_main_month_anchors']) if stat_cnt_links else 0,
+                                   'Среднее кол-во Б/АНКОРНЫХ обратных ссылок в месяц на морду': round(stat_cnt_links['stat']['avg_sum_cnt_links_main_month_none_anchors']) if stat_cnt_links else 0,
+                                   'Среднее кол-во АНКОРНЫХ обратных ссылок в месяц на прочие страницы': round(stat_cnt_links['stat']['avg_sum_cnt_links_other_month_anchors']) if stat_cnt_links else 0,
+                                   'Среднее кол-во Б/АНКОРНЫХ обратных ссылок в месяц на прочие страницы': round(stat_cnt_links['stat']['avg_sum_cnt_links_other_month_none_anchors']) if stat_cnt_links else 0,
+                                   'Длительность работы с ссылками, лет': round(stat_cnt_links['stat']['cnt_month'] / 12) if stat_cnt_links else 0,
                                    }
         return val_report
         # TODO: Кол-во ссылок на бирже
@@ -317,63 +314,67 @@ class CalculateDataSimple():
         pass
 
 
-def main():
-    simple_report = {}
+class SimpleReport:
 
-    crnt_dir = os.path.dirname(os.path.abspath(__file__)) + '/../'
+    results_folder = 'media/ahref_analysis_results'
 
-    for name in os.listdir(crnt_dir + 'AhrefsReports'):
-        if '.csv' in str(name):
-            file_path = crnt_dir + 'AhrefsReports/' + str(name)
+    files = []
 
-            ObjAhrefs = AhrefsAnalytics(file_path)
+    def __init__(self, files):
+        self.files = files
 
-            data_domains = ObjAhrefs.data_domains()
-            data_links = ObjAhrefs.data_links()
-            ObjCalculateDataSimple = CalculateDataSimple(data_links=data_links, data_domains=data_domains)
-            ObjCalculateDataSimple.prepare_simple_report(val_report=simple_report, name_report=name)
+        if not os.path.exists(self.results_folder):
+            os.makedirs(self.results_folder)
 
-    all_data = []
-    file_names = ['Parameters \ Domains']
-    row_names = ['Quantity domains pcs', 'Quantity domains NOFOLLOW pcs',
-                 'Quantity backlinks pcs', 'Quantity backlinks NOFOLLOW pcs',
-                 'Quantity anchor links pcs', 'Quantity anchor links NOFOLLOW pcs',
-                 'Quantity without anchor links pcs', 'Quantity without anchor links NOFOLLOW pcs',
-                 'Quantity links main page pcs', 'Quantity links NOFOLLOW main page pcs',
-                 'Quantity links other pages pcs', 'Quantity links NOFOLLOW other pages pcs',
-                 'Quantity links without traffic pcs', 'Quantity links with traffic pcs',
-                 'Quantity message boards links pcs',
-                 'Median URL Rating', 'AVG URL Rating', 'Median DR',
-                 'AVG DR', 'Quantity gov edu links pcs', 'Quantity gov edu domains pcs',
-                 'AVG quantity backlinks to MAIN page per MONTH pcs',
-                 'AVG quantity backlinks to OTHER pages per MONTH pcs',
-                 'AVG quantity anchor backlinks to MAIN page per MONTH pcs',
-                 'AVG quantity without anchor backlinks to MAIN page per MONTH pcs',
-                 'AVG quantity anchor backlinks to OTHER page per MONTH pcs',
-                 'AVG quantity without anchor backlinks to OTHER page per MONTH pcs',
-                 'Duration of work with links years'
-                 ]
+    def create(self):
+        simple_report = {}
 
-    all_data.append(row_names)
-    for i in simple_report:
-        column_x = []
-        file_names.append(i)
-        for a in simple_report[i]:
-            column_x.append(simple_report[i][a])
-        all_data.append(column_x)
+        for name in self.files:
+            if '.csv' in str(name):
+                ObjAhrefs = AhrefsAnalytics(os.getcwd() + str(name))
+                data_domains = ObjAhrefs.data_domains()
+                data_links = ObjAhrefs.data_links()
+                ObjCalculateDataSimple = CalculateDataSimple(data_links=data_links, data_domains=data_domains)
+                ObjCalculateDataSimple.prepare_simple_report(val_report=simple_report, name_report=name)
 
-    export_data = zip_longest(*all_data, fillvalue='')
+        all_data = []
+        file_names = ['Parameters \ Domains']
+        row_names = ['Quantity domains pcs', 'Quantity domains NOFOLLOW pcs',
+                     'Quantity backlinks pcs', 'Quantity backlinks NOFOLLOW pcs',
+                     'Quantity anchor links pcs', 'Quantity anchor links NOFOLLOW pcs',
+                     'Quantity without anchor links pcs', 'Quantity without anchor links NOFOLLOW pcs',
+                     'Quantity links main page pcs', 'Quantity links NOFOLLOW main page pcs',
+                     'Quantity links other pages pcs', 'Quantity links NOFOLLOW other pages pcs',
+                     'Quantity links without traffic pcs', 'Quantity links with traffic pcs',
+                     'Quantity message boards links pcs',
+                     'Median URL Rating', 'AVG URL Rating', 'Median DR',
+                     'AVG DR', 'Quantity gov edu links pcs', 'Quantity gov edu domains pcs',
+                     'AVG quantity backlinks to MAIN page per MONTH pcs',
+                     'AVG quantity backlinks to OTHER pages per MONTH pcs',
+                     'AVG quantity anchor backlinks to MAIN page per MONTH pcs',
+                     'AVG quantity without anchor backlinks to MAIN page per MONTH pcs',
+                     'AVG quantity anchor backlinks to OTHER page per MONTH pcs',
+                     'AVG quantity without anchor backlinks to OTHER page per MONTH pcs',
+                     'Duration of work with links years'
+                     ]
 
-    f = open(crnt_dir + "res_simple_report.csv", "w")
-    f.truncate()
-    f.close()
+        all_data.append(row_names)
+        for i in simple_report:
+            column_x = []
+            file_names.append(i)
+            for a in simple_report[i]:
+                column_x.append(simple_report[i][a])
+            all_data.append(column_x)
 
-    with open(crnt_dir + 'res_simple_report.csv', 'a+', encoding="ISO-8859-1", newline='') as myfile:
-        wr = csv.writer(myfile)
-        wr.writerow((file_names))
-        wr.writerows(export_data)
-    myfile.close()
+        export_data = zip_longest(*all_data, fillvalue='')
 
+        output_file = self.results_folder + "/res_simple_report_" + str(time.time()) + ".csv"
 
-if __name__ == '__main__':
-    main()
+        with open(output_file, 'a+', encoding="ISO-8859-1", newline='') as myfile:
+            wr = csv.writer(myfile)
+            wr.writerow(file_names)
+            wr.writerows(export_data)
+
+        myfile.close()
+
+        return output_file

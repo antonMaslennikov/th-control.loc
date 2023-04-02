@@ -81,8 +81,8 @@ class AhrefsAnalytics:
             return False
 
     def read_file(self):
-        print(self.file_path)
-        file = open(self.file_path)
+        # print(self.file_path)
+        file = open(self.file_path, encoding='utf-8')
         csvreader = csv.reader(file)
         return csvreader
 

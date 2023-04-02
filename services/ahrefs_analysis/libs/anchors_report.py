@@ -7,8 +7,10 @@ import pandas as pd
 
 
 class AnchorsReport:
+
     def __init__(self):
-        self.ahrefs_reports_path = 'AhrefsReports/'
+        self.crnt_dir = os.path.dirname(os.path.abspath(__file__)) + '/../'
+        self.ahrefs_reports_path = self.crnt_dir + 'AhrefsReports/'
 
     def project_names(self):
         """
@@ -67,7 +69,7 @@ class AnchorsReport:
         return all_projects_anchors
 
     def dataframe_simple_create(self):
-        f = open("res_simple_anchors_report.csv", "w")
+        f = open(self.crnt_dir + "res_simple_anchors_report.csv", "w")
         f.truncate()
         f.close()
 
@@ -92,7 +94,7 @@ class AnchorsReport:
                     list_elem.append(all_projects_anchors[word].get(project))
             dataframe_list.append(list_elem)
         res_simple_anchors_report = pd.DataFrame(dataframe_list, columns=columns_list)
-        res_simple_anchors_report.to_csv('res_simple_anchors_report.csv', encoding='utf-8-sig')
+        res_simple_anchors_report.to_csv(self.crnt_dir + 'res_simple_anchors_report.csv', encoding='utf-8-sig')
         return True
 
     def segment_dr(self, domain_rating):
@@ -114,7 +116,7 @@ class AnchorsReport:
             return "Error"
 
     def dataframe_detailed_create(self):
-        f = open("res_detailed_anchors_report.csv", "w")
+        f = open(self.crnt_dir + "res_detailed_anchors_report.csv", "w")
         f.truncate()
         f.close()
 
@@ -149,5 +151,5 @@ class AnchorsReport:
                                     dataframe_list.append(list_elem)
 
         res_detailed_anchors_report = pd.DataFrame(dataframe_list, columns=columns_list)
-        res_detailed_anchors_report.to_csv('res_detailed_anchors_report.csv', encoding='utf-8-sig')
+        res_detailed_anchors_report.to_csv(self.crnt_dir + 'res_detailed_anchors_report.csv', encoding='utf-8-sig')
         return True
