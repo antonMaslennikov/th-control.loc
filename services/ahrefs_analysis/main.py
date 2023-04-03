@@ -1,3 +1,4 @@
+import json
 import os
 
 from ..Service import Service
@@ -14,15 +15,15 @@ class AhrefsAnalysis(Service):
 
     def setSettings(self, settings):
         pass
+
     def setData(self, files):
-        self.files = files
-        pass
+        self.files = json.loads(files)
 
     def run(self):
         print(f"Запущено формирование файла: res_simple_report.csv\n"
               f"Время старта: {datetime.datetime.now()}")
 
-        ObjSimpleReport = SimpleReport([self.files])
+        ObjSimpleReport = SimpleReport(self.files)
         res = ObjSimpleReport.create()
 
         self.results.append({'simple_report': res,

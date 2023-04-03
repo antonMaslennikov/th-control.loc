@@ -22,7 +22,7 @@ from django.urls import reverse
 
 from project.models import Project, Invite, UsersRelation, Service, ProjectServiceSetting, Job, JobResult, Setting
 from thcontrol import settings
-from .forms import ProjectForm, InviteForm, RunServiceForm
+from .forms import ProjectForm, InviteForm, RunServiceForm, RunService2Form
 
 
 def getmyprojects(request):
@@ -431,19 +431,32 @@ def run_service(request, pk, service_id):
 
     if request.method == 'POST':
 
-        form = RunServiceForm(request.POST, request.FILES)
+        if service.service_class == 2:
+            form = RunService2Form(request.POST, request.FILES)
+        else:
+            form = RunServiceForm(request.POST, request.FILES)
 
         if form.is_valid():
 
-            myfile = request.FILES['file']
             fs = FileSystemStorage()
-            filename = fs.save('datafiles/' + myfile.name, myfile)
+
+            if service.service_class == 2:
+                data = []
+                for f in request.FILES.getlist('file'):
+                    filename = fs.save('datafiles/' + f.name, f)
+                    data.append(fs.url(filename))
+
+                data = json.dumps(data)
+            else:
+                f = request.FILES['file']
+                filename = fs.save('datafiles/' + f.name, f)
+                data = fs.url(filename)
 
             J = Job()
             J.status = 0
             J.project_id = project.id
             J.service_id = service.id
-            J.data = fs.url(filename)
+            J.data = data
             J.save()
 
             # отправка запроса внешнему сервису на запуск
@@ -456,7 +469,10 @@ def run_service(request, pk, service_id):
 
             return redirect('project_service_journal', pk=project.id, service_id=service.id)
     else:
-        form = RunServiceForm()
+        if service.service_class == 2:
+            form = RunService2Form()
+        else:
+            form = RunServiceForm()
 
     return render(request, 'project/service/run.html', {
         'projects': getmyprojects(request),

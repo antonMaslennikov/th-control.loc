@@ -73,11 +73,11 @@ class InviteForm(forms.ModelForm):
 
 class RunServiceForm(forms.Form):
 
+    file = forms.FileField()
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['file'].widget.attrs.update({'class': 'form-control'})
-
-    file = forms.FileField()
 
     def clean_file(self):
         data = self.cleaned_data['file']
@@ -86,5 +86,23 @@ class RunServiceForm(forms.Form):
 
         if not os.path.splitext(data.name)[1] in valid_extensions:
             raise ValidationError("Файл должен иметь расширение txt или csv")
+
+        return data
+
+    def save(self):
+        pass
+
+
+class RunService2Form(RunServiceForm):
+
+    file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+
+    def clean_file(self):
+        data = self.cleaned_data['file']
+
+        valid_extensions = ['.csv']
+
+        if not os.path.splitext(data.name)[1] in valid_extensions:
+            raise ValidationError("Файл должен иметь расширение csv")
 
         return data
