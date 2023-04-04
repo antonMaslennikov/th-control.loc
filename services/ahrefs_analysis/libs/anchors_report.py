@@ -34,11 +34,13 @@ class AnchorsReport:
 
         all_projects_anchors = {}
 
-        for name in self.files:
+        for file in self.files:
             anchors_qty = {}
-            if '.csv' in str(name):
-                ObjAhrefs = AhrefsAnalytics(os.getcwd() + name)
+            if '.csv' in str(file):
+                ObjAhrefs = AhrefsAnalytics(os.getcwd() + file)
                 data_links = ObjAhrefs.data_links()
+
+                name = os.path.basename(file)
 
                 for i in data_links:
 
@@ -71,6 +73,7 @@ class AnchorsReport:
                             all_projects_anchors[word] = {name: qnty_word}
                         else:
                             all_projects_anchors[word][name] = qnty_word
+
         return all_projects_anchors
 
     def dataframe_simple_create(self):
@@ -126,10 +129,13 @@ class AnchorsReport:
                         'dr', 'dr_segment', 'qty']
 
         dataframe_list = []
-        for name in self.files:
-            if '.csv' in str(name):
-                ObjAhrefs = AhrefsAnalytics(os.getcwd() + str(name))
+
+        for file in self.files:
+            if '.csv' in str(file):
+                ObjAhrefs = AhrefsAnalytics(os.getcwd() + str(file))
                 data_links = ObjAhrefs.data_links()
+
+                name = os.path.basename(file)
 
                 for i in data_links:
                     if not data_links[i]['type_anchor']:  # Проверка на безанкор (True/False)
