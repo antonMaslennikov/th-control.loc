@@ -1,5 +1,6 @@
 from .ahrefs_analytics import AhrefsAnalytics
 import os
+import time
 import ru_core_news_md
 
 nlp = ru_core_news_md.load()
@@ -8,9 +9,12 @@ import pandas as pd
 
 class AnchorsReport:
 
-    def __init__(self):
-        self.crnt_dir = os.path.dirname(os.path.abspath(__file__)) + '/../'
-        self.ahrefs_reports_path = self.crnt_dir + 'AhrefsReports/'
+    results_folder = 'media/ahref_analysis_results'
+
+    files = []
+
+    def __init__(self, files):
+        self.files = files
 
     def project_names(self):
         """
@@ -20,7 +24,8 @@ class AnchorsReport:
         """
         projects = {}
         position_project = 0
-        for name_project in os.listdir(self.ahrefs_reports_path):
+        for file in self.files:
+            name_project = os.path.basename(file)
             projects[name_project] = position_project
             position_project += 1
         return projects
@@ -28,11 +33,11 @@ class AnchorsReport:
     def anchors_list_lemma(self):
 
         all_projects_anchors = {}
-        for name in os.listdir(self.ahrefs_reports_path):
+
+        for name in self.files:
             anchors_qty = {}
             if '.csv' in str(name):
-                file_path = self.ahrefs_reports_path + str(name)
-                ObjAhrefs = AhrefsAnalytics(file_path)
+                ObjAhrefs = AhrefsAnalytics(os.getcwd() + name)
                 data_links = ObjAhrefs.data_links()
 
                 for i in data_links:
@@ -69,10 +74,6 @@ class AnchorsReport:
         return all_projects_anchors
 
     def dataframe_simple_create(self):
-        f = open(self.crnt_dir + "res_simple_anchors_report.csv", "w")
-        f.truncate()
-        f.close()
-
 
         position_project = self.project_names()
         dataframe_list = []
@@ -83,8 +84,6 @@ class AnchorsReport:
 
         all_projects_anchors = self.anchors_list_lemma()
 
-
-
         for word in all_projects_anchors:
             list_elem = [word]
             for project in position_project:
@@ -93,9 +92,13 @@ class AnchorsReport:
                 else:
                     list_elem.append(all_projects_anchors[word].get(project))
             dataframe_list.append(list_elem)
+
+        output_file = self.results_folder + "/res_simple_anchors_report_" + str(time.time_ns()) + ".csv"
+
         res_simple_anchors_report = pd.DataFrame(dataframe_list, columns=columns_list)
-        res_simple_anchors_report.to_csv(self.crnt_dir + 'res_simple_anchors_report.csv', encoding='utf-8-sig')
-        return True
+        res_simple_anchors_report.to_csv(output_file, encoding='utf-8-sig')
+
+        return output_file
 
     def segment_dr(self, domain_rating):
         try:
@@ -116,9 +119,6 @@ class AnchorsReport:
             return "Error"
 
     def dataframe_detailed_create(self):
-        f = open(self.crnt_dir + "res_detailed_anchors_report.csv", "w")
-        f.truncate()
-        f.close()
 
         columns_list = ['lemma', 'reffering_page_url',
                         'target_url', 'project_name',
@@ -126,10 +126,9 @@ class AnchorsReport:
                         'dr', 'dr_segment', 'qty']
 
         dataframe_list = []
-        for name in os.listdir(self.ahrefs_reports_path):
+        for name in self.files:
             if '.csv' in str(name):
-                file_path = self.ahrefs_reports_path + str(name)
-                ObjAhrefs = AhrefsAnalytics(file_path)
+                ObjAhrefs = AhrefsAnalytics(os.getcwd() + str(name))
                 data_links = ObjAhrefs.data_links()
 
                 for i in data_links:
@@ -150,6 +149,9 @@ class AnchorsReport:
                                 if list_elem not in dataframe_list:
                                     dataframe_list.append(list_elem)
 
+        output_file = self.results_folder + "/res_detailed_anchors_report_" + str(time.time_ns()) + ".csv"
+
         res_detailed_anchors_report = pd.DataFrame(dataframe_list, columns=columns_list)
-        res_detailed_anchors_report.to_csv(self.crnt_dir + 'res_detailed_anchors_report.csv', encoding='utf-8-sig')
-        return True
+        res_detailed_anchors_report.to_csv(output_file, encoding='utf-8-sig')
+
+        return output_file

@@ -2,6 +2,8 @@ import json
 import os
 import random
 import string
+import time
+
 import requests
 import csv
 import codecs
@@ -442,8 +444,10 @@ def run_service(request, pk, service_id):
 
             if service.service_class == 2:
                 data = []
+                folder = 'datafiles/' + str(time.time_ns()) + '/'
+                os.makedirs(folder)
                 for f in request.FILES.getlist('file'):
-                    filename = fs.save('datafiles/' + f.name, f)
+                    filename = fs.save(folder + f.name, f)
                     data.append(fs.url(filename))
 
                 data = json.dumps(data)

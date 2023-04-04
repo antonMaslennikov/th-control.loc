@@ -24,27 +24,40 @@ class AhrefsAnalysis(Service):
               f"Время старта: {datetime.datetime.now()}")
 
         ObjSimpleReport = SimpleReport(self.files)
-        res = ObjSimpleReport.create()
-
-        self.results.append({'simple_report': res,
-                             'date': str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M')),
-                             'message': 'успешно создан'})
+        res1 = ObjSimpleReport.create()
 
         print(f"Формирование файла завершено."
-              f"Время окончания: {datetime.datetime.now()}\n"
-              f"Запущено формирование файла: res_simple_anchors_report.csv\n"
+              f"Время окончания: {datetime.datetime.now()}\n")
+
+        # ---------------------------------------------------------------------
+
+        print(f"Запущено формирование файла: res_simple_anchors_report.csv\n"
               f"Время старта: {datetime.datetime.now()}")
 
-        # ObjAnchorsReport = AnchorsReport()
-        # ObjAnchorsReport.dataframe_simple_create()  # res_simple_anchors_report.csv
-        # print(f"Формирование файла завершено."
-        #       f"Время окончания: {datetime.datetime.now()}\n")
-        # print(f"Запущено формирование файла: res_detailed_anchors_report.csv\n"
-        #       f"Время старта: {datetime.datetime.now()}")
-        # ObjAnchorsReport = AnchorsReport()
-        # ObjAnchorsReport.dataframe_detailed_create()  # res_simple_anchors_report.csv
-        # print(f"Формирование файла завершено."
-        #       f"Время окончания: {datetime.datetime.now()}\n")
+        ObjAnchorsReport = AnchorsReport(self.files)
+        res2 = ObjAnchorsReport.dataframe_simple_create()
+
+        print(f"Формирование файла завершено."
+              f"Время окончания: {datetime.datetime.now()}\n")
+
+        # ---------------------------------------------------------------------
+
+        print(f"Запущено формирование файла: res_detailed_anchors_report.csv\n"
+              f"Время старта: {datetime.datetime.now()}")
+
+        ObjAnchorsReport = AnchorsReport(self.files)
+        res3 = ObjAnchorsReport.dataframe_detailed_create()
+
+        print(f"Формирование файла завершено."
+              f"Время окончания: {datetime.datetime.now()}\n")
+
+        # ---------------------------------------------------------------------
+
+        self.results.append({'simple_report': res1,
+                             'simple_anchors_report': res2,
+                             'detailed_anchors_report': res3,
+                             'date': str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M')),
+                             'message': 'успешно создан'})
 
         self.full_complite = True
 

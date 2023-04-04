@@ -51,44 +51,44 @@ class Command(BaseCommand):
                     job.save()
 
                     # дёргаем настройки сервиса
-                    try:
-                        settings = ProjectServiceSetting.getall(job.project_id, job.service_id)
+                    # try:
+                    settings = ProjectServiceSetting.getall(job.project_id, job.service_id)
 
-                        if settings:
-                            Service.setSettings(settings)
+                    if settings:
+                        Service.setSettings(settings)
 
-                        # дёргаем данные для обработки
-                        if job.data:
-                            Service.setData(job.data)
+                    # дёргаем данные для обработки
+                    if job.data:
+                        Service.setData(job.data)
 
-                        # запускаем сервис
-                        Service.run()
-                        # time.sleep(120)
+                    # запускаем сервис
+                    Service.run()
+                    # time.sleep(120)
 
-                        # за время работы сервиса, джанго гарантированно теряет коннект с базой, переконекчиваемся
-                        connection.connection.close()
-                        connection.connection = None
+                    # за время работы сервиса, джанго гарантированно теряет коннект с базой, переконекчиваемся
+                    connection.connection.close()
+                    connection.connection = None
 
-                        # пишем результаты в логи
-                        R = JobResult()
-                        R.job_id = job.id
-                        R.result = Service.resultsToString()
-                        R.result_data = Service.resultsToJson()
-                        R.save()
+                    # пишем результаты в логи
+                    R = JobResult()
+                    R.job_id = job.id
+                    R.result = Service.resultsToString()
+                    R.result_data = Service.resultsToJson()
+                    R.save()
 
-                        # сервис отработал, но не полностью, задание требует повторного запуска
-                        if Service.intermediate_complite:
-                            job.intermediate(message=Service.last_error)
-                        else:
-                            #  сервис отработал полностью и может задание может быть завершено
-                            if Service.full_complite:
-                                job.finish()
+                    # сервис отработал, но не полностью, задание требует повторного запуска
+                    if Service.intermediate_complite:
+                        job.intermediate(message=Service.last_error)
+                    else:
+                        #  сервис отработал полностью и может задание может быть завершено
+                        if Service.full_complite:
+                            job.finish()
 
-                    except Exception as e:
-                        job.error(str(e))
-                        exc_type, exc_obj, exc_tb = sys.exc_info()
-                        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                        print(exc_type, fname, exc_tb.tb_lineno)
+                    # except Exception as e:
+                    #     job.error(str(e))
+                    #     exc_type, exc_obj, exc_tb = sys.exc_info()
+                    #     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                    #     print(exc_type, fname, exc_tb.tb_lineno)
                 else:
                     job.error('Не обнаружен скрипт сервиса')
             else:

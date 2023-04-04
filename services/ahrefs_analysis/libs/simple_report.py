@@ -335,7 +335,7 @@ class SimpleReport:
                 data_domains = ObjAhrefs.data_domains()
                 data_links = ObjAhrefs.data_links()
                 ObjCalculateDataSimple = CalculateDataSimple(data_links=data_links, data_domains=data_domains)
-                ObjCalculateDataSimple.prepare_simple_report(val_report=simple_report, name_report=name)
+                ObjCalculateDataSimple.prepare_simple_report(val_report=simple_report, name_report=os.path.basename(name))
 
         all_data = []
         file_names = ['Parameters \ Domains']
@@ -359,6 +359,7 @@ class SimpleReport:
                      ]
 
         all_data.append(row_names)
+
         for i in simple_report:
             column_x = []
             file_names.append(i)
@@ -368,7 +369,7 @@ class SimpleReport:
 
         export_data = zip_longest(*all_data, fillvalue='')
 
-        output_file = self.results_folder + "/res_simple_report_" + str(time.time()) + ".csv"
+        output_file = self.results_folder + "/res_simple_report_" + str(time.time_ns()) + ".csv"
 
         with open(output_file, 'a+', encoding="ISO-8859-1", newline='') as myfile:
             wr = csv.writer(myfile)
