@@ -15,8 +15,12 @@
 
         {% csrf_token %}
 
+        {{ form.file.label }}
         {{ form.file }}
+        <small>{{ form.file.help_text }}</small>
+
         {{ form.file.errors }}
+
 
         <button class="btn btn-sm btn-success w-100 mt-3">Запустить</button>
 

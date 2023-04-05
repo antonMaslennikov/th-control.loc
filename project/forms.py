@@ -73,7 +73,7 @@ class InviteForm(forms.ModelForm):
 
 class RunServiceForm(forms.Form):
 
-    file = forms.FileField()
+    file = forms.FileField(help_text='В формате csv или txt', label='Файл')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -94,8 +94,7 @@ class RunServiceForm(forms.Form):
 
 
 class RunService2Form(RunServiceForm):
-
-    file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    file = forms.FileField(help_text='В формате csv, несколько файлов выбирать с ctrl', label='Файлы', widget=forms.ClearableFileInput(attrs={'multiple': True}))
 
     def clean_file(self):
         data = self.cleaned_data['file']
