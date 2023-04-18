@@ -114,8 +114,12 @@ class CalculateDataSimple():
         numbers = []
         for domain in self.data_domains:
             numbers.append(self.data_domains[domain]['dr_domain'])
-        avg_domains_ratings = self.mean(numbers)
-        median_domains_ratings = self.median(numbers)
+        if (len(numbers) > 0):
+            avg_domains_ratings = self.mean(numbers)
+            median_domains_ratings = self.median(numbers)
+        else:
+            avg_domains_ratings = 0
+            median_domains_ratings = 0
         return {'mean_domains_rating': avg_domains_ratings,
                 'median_domains_rating': median_domains_ratings
                 }
