@@ -448,13 +448,13 @@ def run_service(request, pk, service_id):
                 os.makedirs(folder)
                 for f in request.FILES.getlist('file'):
                     filename = fs.save(folder + f.name, f)
-                    data.append(fs.url(filename))
+                    data.append(fs.path(filename))
 
                 data = json.dumps(data)
             else:
                 f = request.FILES['file']
                 filename = fs.save('datafiles/' + f.name, f)
-                data = fs.url(filename)
+                data = fs.path(filename)
 
             J = Job()
             J.status = 0
