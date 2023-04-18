@@ -580,22 +580,39 @@ def service_log(request, pk, service_id, job_id=None, download=None):
         if row.result_data:
             log_row = json.loads(row.result_data)
 
-            for l in log_row:
+            if type(log_row) == list:
+                for l in log_row:
 
-                keys = l.keys()
+                    keys = l.keys()
+
+                    for k in keys:
+                        l[k] = l[k].rstrip("\n")
+
+                    if 'search' in request.GET:
+                        for k in keys:
+                            if request.GET['search'] in l[k]:
+                                log.append(l)
+                    else:
+                        log.append(l)
+
+                    if len(log) >= 500 and not job_id and not download:
+                        break
+            else:
+                keys = log_row.keys()
 
                 for k in keys:
-                    l[k] = l[k].rstrip("\n")
+                    log_row[k] = log_row[k].rstrip("\n")
 
                 if 'search' in request.GET:
                     for k in keys:
-                        if request.GET['search'] in l[k]:
-                            log.append(l)
+                        if request.GET['search'] in log_row[k]:
+                            log.append(log_row)
                 else:
-                    log.append(l)
+                    log.append(log_row)
 
                 if len(log) >= 500 and not job_id and not download:
                     break
+
 
         if len(log) >= 500 and not job_id and not download:
             break
@@ -635,6 +652,8 @@ def service_log(request, pk, service_id, job_id=None, download=None):
             response = HttpResponseNotFound('<h1>File not exist</h1>')
 
         return response
+
+    print(log)
 
     return render(request, 'project/service/log.html', {
         'project': project,

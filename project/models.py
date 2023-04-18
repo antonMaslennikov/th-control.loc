@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from django.db import models
 from django.conf import settings
@@ -192,6 +193,12 @@ class Job(models.Model):
         self.status = 3
         self.last_result = message
         self.save()
+
+    def appendResults(self, data):
+        R = JobResult()
+        R.job_id = self.id
+        R.result_data = json.dumps(data, ensure_ascii=False)
+        R.save()
 
 
 # ----------------------------------------------------------------------------------------------------------------------

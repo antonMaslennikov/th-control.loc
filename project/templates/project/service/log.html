@@ -54,13 +54,13 @@
                     {% elif service.service_class == 2 %}
                         <td>
                             {% if r.simple_report %}
-                                <a href="/{{ r.simple_report }}">{{ r.simple_report }}</a>
+                                simple_report: <a href="/{{ r.simple_report }}">{{ r.simple_report }}</a>
                             {% endif %}
                             {% if r.simple_anchors_report %}
-                                <br><a href="/{{ r.simple_anchors_report }}">{{ r.simple_anchors_report }}</a>
+                                <br>simple_anchors_report: <a href="/{{ r.simple_anchors_report }}">{{ r.simple_anchors_report }}</a>
                             {% endif %}
                             {% if r.detailed_anchors_report %}
-                                <br><a href="/{{ r.detailed_anchors_report }}">{{ r.detailed_anchors_report }}</a>
+                                <br>detailed_anchors_report: <a href="/{{ r.detailed_anchors_report }}">{{ r.detailed_anchors_report }}</a>
                             {% endif %}
                         </td>
                     {% endif %}

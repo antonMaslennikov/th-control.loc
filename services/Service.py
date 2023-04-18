@@ -15,11 +15,16 @@ class Service:
 
     last_error = None
 
+    Job = None
+
     def setSettings(self, settings):
         pass
 
     def setData(self, data):
         pass
+
+    def setJob(self, Job):
+        self.Job = Job
 
     def resultsToString(self):
         pass

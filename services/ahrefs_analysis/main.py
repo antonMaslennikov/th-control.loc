@@ -29,6 +29,10 @@ class AhrefsAnalysis(Service):
         print(f"Формирование файла завершено."
               f"Время окончания: {datetime.datetime.now()}\n")
 
+        self.Job.appendResults([{'simple_report': res1,
+                             'date': str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M')),
+                             'message': 'успешно создан'}])
+
         # ---------------------------------------------------------------------
 
         print(f"Запущено формирование файла: res_simple_anchors_report.csv\n"
@@ -39,6 +43,10 @@ class AhrefsAnalysis(Service):
 
         print(f"Формирование файла завершено."
               f"Время окончания: {datetime.datetime.now()}\n")
+
+        self.Job.appendResults([{'simple_anchors_report': res2,
+                             'date': str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M')),
+                             'message': 'успешно создан'}])
 
         # ---------------------------------------------------------------------
 
@@ -51,14 +59,15 @@ class AhrefsAnalysis(Service):
         print(f"Формирование файла завершено."
               f"Время окончания: {datetime.datetime.now()}\n")
 
-        # ---------------------------------------------------------------------
-
-        self.results.append({'simple_report': res1,
-                             'simple_anchors_report': res2,
-                             'detailed_anchors_report': res3,
+        self.Job.appendResults([{'detailed_anchors_report': res3,
                              'date': str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M')),
-                             'message': 'успешно создан'})
+                             'message': 'успешно создан'}])
+
+        # ---------------------------------------------------------------------
 
         self.full_complite = True
 
-        return self.results
+        return self.results.append({
+            'date': str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M')),
+            'message': 'полностью завершено'}
+        )
