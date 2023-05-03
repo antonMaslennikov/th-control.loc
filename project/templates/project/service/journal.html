@@ -38,7 +38,7 @@
                     <span class="badge bg-warning">Отложено до {{ job.delayed_at }}</span>
                 {% endif %}
 
-                {% if job.last_result %}<div style="margin-top:10px;font-size:12px">{{ job.last_result }}</div>{% endif %}
+                {% if job.last_result %}<div style="margin-top:10px;font-size:12px;word-wrap: break-word;max-width:470px;">{{ job.last_result }}</div>{% endif %}
             </td>
             <td><a href="{% url 'project_service_job_journal' pk=project.id service_id=service.id job_id=job.id %}" class="badge btn-sm bg-warning">Лог</a></td>
         </tr>
