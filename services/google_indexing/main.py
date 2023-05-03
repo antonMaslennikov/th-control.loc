@@ -64,6 +64,7 @@ class GoogleIndexer(Service):
         # общее изначальное кол-во урлов на обработке
         total_urls = len(urls)
 
+
         for json_key in self.json_keys:
 
             credentials = ServiceAccountCredentials._from_parsed_json_keyfile(json_key, scopes=self.SCOPES)
@@ -80,9 +81,7 @@ class GoogleIndexer(Service):
 
                 print(i, url)
 
-                result = self.indexURL(url.rstrip("\n"), http)
-
-                print(result)
+                result = self.indexURL(url[url.find('http'):].rstrip("\n"), http)
 
                 if result.get('error'):
                     err = result.get('error')
@@ -91,10 +90,16 @@ class GoogleIndexer(Service):
                     if err['code'] == 403 or err['code'] == 301:
                         self.results.append({'url': url, 'date': str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M')), 'message': err['message']})
                         processed += 1
-                    # ошибку не удалось определить и выполнение сервиса приостанавливается
-                    # в основном ловим (err['code'] == 429 Quota exceeded)
-                    # сбрасываем в файл все оставшиеся необработанные урлы
+                    # Unknown Error
+                    elif err['code'] == 500:
+                        new_file.writeline(url)
+                        self.results.append(
+                            {'url': url, 'date': str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M')),
+                             'message': err['message']})
                     else:
+                        # ошибку не удалось определить и выполнение сервиса приостанавливается
+                        # в основном ловим (err['code'] == 429 Quota exceeded)
+                        # сбрасываем в файл все оставшиеся необработанные урлы
                         new_file.writelines(urls[i:])
                         break
                 else:
