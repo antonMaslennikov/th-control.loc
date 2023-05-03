@@ -449,15 +449,13 @@ def run_service(request, pk, service_id):
                 for f in request.FILES.getlist('file'):
                     filename = fs.save(folder + f.name, f)
                     # data.append(fs.url(filename))
-                    data.append(filename)
+                    data.append(settings.MEDIA_URL + filename)
 
                 data = json.dumps(data)
             else:
                 f = request.FILES['file']
                 filename = fs.save('datafiles/' + f.name, f)
-                data = filename
-
-            data = settings.MEDIA_URL + data
+                data = settings.MEDIA_URL + filename
 
             J = Job()
             J.status = 0
