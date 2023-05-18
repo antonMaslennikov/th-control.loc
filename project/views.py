@@ -287,7 +287,13 @@ def connect_service(request, pk, service_id=None):
         raise Http404('No access')
 
     if (service_id is None):
-        services = Service.objects.all()
+
+        if "traffic-hunters" not in request.user.email and request.user.id != 1:
+            services = Service.objects.filter(
+                service_class=1,
+            ).all()
+        else:
+            services = Service.objects.all()
 
         return render(request, 'project/service/connect.html', {
             'projects': getmyprojects(request),
