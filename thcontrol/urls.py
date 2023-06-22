@@ -19,11 +19,9 @@ from pages import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    
+
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/', include('accounts.urls')),
-
     path('', include('project.urls')),
-
-    # path('', views.index, name='index'),
+    path('sites/', include('sites.urls')),
 ]
