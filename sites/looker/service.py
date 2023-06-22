@@ -34,3 +34,5 @@ def get_publications_by_client(client_id=None):
         params = [client_id]
     sql_query += ' GROUP BY c.id, publication_date ORDER BY c.id, publication_date DESC'
     return execute_select_query(sql_query, params)
+
+

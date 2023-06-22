@@ -2,8 +2,6 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from .service import get_domain_and_pbn_publications, get_publications_by_client
-from . import models
-from .serializers import serialize
 from .models import Clients, LinksAllAnchors, Servers
 from .settings import DB
 
@@ -33,9 +31,9 @@ def domain_pbn_and_publications(request, client_id):
 
 
 @csrf_exempt
-def get_publications_chart(request):
+def get_publications_chart(request, client_id=None):
     if request.method == 'GET':
-        data = get_publications_by_client()
+        data = get_publications_by_client(client_id)
         return JsonResponse(data, safe=False)
 
 
