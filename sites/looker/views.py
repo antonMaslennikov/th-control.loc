@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.views import View
 from .models import (
     LinksAllDomains, LinksAllUrls, LinksCheckDonorAcceptor, PbnSites,
-    RelationPbnSitesLinksAllDomains, MoneySites, PbnArticles,
+    RelationPbnSitesLinksAllDomains, MoneySites, PbnArticles, Servers, Clients,
 )
 from .settings import DB
 
@@ -98,6 +98,36 @@ class MoneySitesAPIView(View):
         else:
             money_sites = MoneySites.objects.using(DB).all()
             data = [money_site.to_json() for money_site in money_sites]
+
+        return JsonResponse(data, safe=False)
+
+
+class ClientsAPIView(View):
+    def get(self, request, client_id=None):
+        if client_id:
+            client = Clients.objects.using(DB).filter(id=client_id).first()
+            if client:
+                data = client.to_json()
+            else:
+                data = {}
+        else:
+            clients = Clients.objects.using(DB).all()
+            data = [client.to_json() for client in clients]
+
+        return JsonResponse(data, safe=False)
+
+
+class ServersAPIView(View):
+    def get(self, request, server_id=None):
+        if server_id:
+            server = Servers.objects.using(DB).filter(id=server_id).first()
+            if server:
+                data = server.to_json()
+            else:
+                data = {}
+        else:
+            servers = Servers.objects.using(DB).all()
+            data = [server.to_json() for server in servers]
 
         return JsonResponse(data, safe=False)
 
