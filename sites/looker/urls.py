@@ -2,12 +2,14 @@ from django.urls import path
 from .views import (
     LinksAllDomainsAPIView, LinksAllUrlsAPIView, LinksCheckDonorAcceptorAPIView,
     PbnSitesAPIView, RelationPbnSitesLinksAllDomainsAPIView, MoneySitesAPIView, ClientsAPIView, ServersAPIView,
-    PbnArticlesAPIView, get_publications_chart, domain_pbn_and_publications
+    PbnArticlesAPIView, get_publications_chart, FilterAPIView, index,
+    DomainAndPublicationAPIView, LinksToMoneySitesAPIView, AnchorCounterByUrlAPIView
 )
 
 app_name = 'looker'
 
 urlpatterns = [
+    path('', index),
     path('api/clients/', ClientsAPIView.as_view(), name='clients_api'),
     path('api/client/<int:client_id>', ClientsAPIView.as_view(), name='client_detail_api'),
     path('api/servers/', ServersAPIView.as_view(), name='servers_api'),
@@ -34,5 +36,9 @@ urlpatterns = [
     path('api/pbn-articles/', PbnArticlesAPIView.as_view(), name='pbn_articles_api'),
     path('api/pbn-article/<int:article_id>/', PbnArticlesAPIView.as_view(), name='pbn_articles_detail_api'),
     path('api/get-publications-chart', get_publications_chart),
-    path('api/domain-pbn-and-publications', domain_pbn_and_publications),
+    path('api/domain-pbn-and-publications', DomainAndPublicationAPIView.as_view(), name='domain_and_publications'),
+    path('api/links-to-money-sites', LinksToMoneySitesAPIView.as_view(), name='links_to_money_sites'),
+    path('api/anchor-counter', AnchorCounterByUrlAPIView.as_view(), name='links_to_money_sites'),
+    path('api/filter/<str:model_name>/', FilterAPIView.as_view(), name='filter_api'),
+
 ]

@@ -1,8 +1,9 @@
-from django.http import JsonResponse
+from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 
-from .service import get_domain_and_pbn_publications, get_publications_by_client
-
+import services.Service
+from .service import get_domain_and_pbn_publications, get_publications_by_client, filter_objects, \
+    get_links_to_money_sites, get_count_anchor_by_url
 from django.http import JsonResponse
 from django.views import View
 from .models import (
@@ -10,6 +11,12 @@ from .models import (
     RelationPbnSitesLinksAllDomains, MoneySites, PbnArticles, Servers, Clients,
 )
 from .settings import DB
+from django.db.models import Count, Max, DurationField, ExpressionWrapper, IntegerField, F
+from django.utils.timezone import now
+
+
+def index(request):
+    return render(request, 'looker/index.html')
 
 
 class LinksAllDomainsAPIView(View):
@@ -147,15 +154,112 @@ class PbnArticlesAPIView(View):
         return JsonResponse(data, safe=False)
 
 
-@csrf_exempt
-def domain_pbn_and_publications(request, client_id):
-    if request.method == 'GET':
-        try:
-            data = get_domain_and_pbn_publications()
-            return JsonResponse(data, safe=False)
-            # Return the data as JSON response
-        except Exception:
-            return JsonResponse({'status': 'error'})
+class FilterAPIView(View):
+    def get(self, request, model_name):
+        model_mapping = {
+            'clients': Clients,
+            'servers': Servers,
+            'links_all_domains': LinksAllDomains,
+            'links_all_urls': LinksAllUrls,
+            'links_check_donor_acceptor': LinksCheckDonorAcceptor,
+            'pbn_sites': PbnSites,
+            'relation_pbn_sites_links_all_domains': RelationPbnSitesLinksAllDomains,
+            'money_sites': MoneySites,
+            'pbn_articles': PbnArticles,
+        }
+
+        filters = request.GET.dict()
+        if model_name in model_mapping:
+            model = model_mapping[model_name]
+            data = filter_objects(model, filters)
+        else:
+            data = []
+
+        return JsonResponse(data, safe=False)
+
+
+class DomainAndPublicationAPIView(View):
+    def get(self, request, client_id=None):
+        if request.method == 'GET':
+            try:
+                page_number = request.GET.get('page', 1)
+                items_per_page = request.GET.get('per_page', 5)
+                page = get_domain_and_pbn_publications(page_number, items_per_page)
+                links = []
+                for link in page.object_list:
+                    link_dict = {
+                        'client_name': link[0],
+                        'pbn_domain': link[1],
+                        'date_create': link[2],
+                        'total_publications': link[3],
+                        'last_post': link[4],
+                        'day_since_last_publication': link[5],
+                    }
+                    links.append(link_dict)
+                response = {
+                    'links': links,
+                    'page_number': page_number,
+                    'total_pages': page.paginator.num_pages,
+                    'has_previous': page.has_previous(),
+                    'has_next': page.has_next(),
+                }
+                return JsonResponse(response, safe=False)
+                # Return the data as JSON response
+            except Exception:
+                return JsonResponse({'status': 'error'})
+
+
+class LinksToMoneySitesAPIView(View):
+    def get(self, request, client_id=None):
+        page_number = request.GET.get('page', 1)
+        items_per_page = request.GET.get('per_page', 10)
+        page = get_links_to_money_sites(page_number, items_per_page)
+        links = []
+        for link in page.object_list:
+            link_dict = {
+                'link_id': link[0],
+                'donor_url': link[1],
+                'acceptor_url': link[2],
+                'anchor': link[3],
+            }
+            links.append(link_dict)
+        response = {
+            'links': links,
+            'page_number': page_number,
+            'total_pages': page.paginator.num_pages,
+            'has_previous': page.has_previous(),
+            'has_next': page.has_next(),
+        }
+
+        return JsonResponse(response)
+
+
+class AnchorCounterByUrlAPIView(View):
+    def get(self, request, client_id=None):
+        if request.method == 'GET':
+            try:
+                page_number = request.GET.get('page', 1)
+                items_per_page = request.GET.get('per_page', 5)
+                page = get_count_anchor_by_url(page_number, items_per_page)
+                links = []
+                for link in page.object_list:
+                    link_dict = {
+                        'anchor_value': link[0],
+                        'accepted_domain': link[1],
+                        'url_count': link[2]
+                    }
+                    links.append(link_dict)
+                response = {
+                    'links': links,
+                    'total_pages': page.paginator.num_pages,
+                    'page_number': page_number,
+                    'has_previous': page.has_previous(),
+                    'has_next': page.has_next(),
+                }
+                return JsonResponse(response, safe=False)
+                # Return the data as JSON response
+            except Exception:
+                return JsonResponse({'status': 'error'})
 
 
 @csrf_exempt
