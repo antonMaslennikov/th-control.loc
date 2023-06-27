@@ -3,18 +3,165 @@
 <head>
     <title>TH Control</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="{% static 'package/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
-    <script src="{% static 'package/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="{% static 'js/jquery.js' %}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/js/select2.min.js"></script>
     <script src="{% static 'js/looker.js' %}"></script>
+    <link href="{% static 'css/base.css' %}" rel="stylesheet"/>
+    <style>
+        /* Add border to selected options */
+.select2-container--bootstrap .select2-selection--multiple {
+  border: 1px solid #ced4da; /* Replace #ced4da with your desired border color */
+  border-radius: 0.25rem; /* Replace 0.25rem with your desired border radius */
+  outline: none;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+/* Add border color when the select input is focused */
+.select2-container--bootstrap .select2-selection--multiple:focus {
+  border-color: #80bdff; /* Replace #80bdff with your desired border color for focus state */
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Replace rgba(0, 123, 255, 0.25) with your desired box shadow */
+}
+
+/* Add border to selected option */
+.select2-container--bootstrap .select2-selection--single {
+  border: 1px solid #ced4da; /* Replace #ced4da with your desired border color */
+  border-radius: 0.25rem; /* Replace 0.25rem with your desired border radius */
+  outline: none;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+/* Add border color when the select input is focused */
+.select2-container--bootstrap .select2-selection--single:focus {
+  border-color: #80bdff; /* Replace #80bdff with your desired border color for focus state */
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Replace rgba(0, 123, 255, 0.25) with your desired box shadow */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </style>
 </head>
 
 <body>
-<div class="content ">
-    {% block content %}
-    {% endblock %}
-</div>
 </body>
-<canvas id="publicationChart"></canvas>
+<div class="container">
+    <div class="row">
+        <div class="col-4">
+            <div class="form-group">
+                <label for="clients">Клиенты
+                    <select class="js-example-basic-single js-states  form-control" id="clients"></select>
+                </label>
+
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                <label for="clients">Money Sites
+                    <select multiple="multiple" class="js-example-basic-multiple js-states form-select"
+                            id="money_sites"></select>
+                </label>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                <label for="start-date">Start Date</label>
+                <input type="date" id="start-date" class="form-control" placeholder="Start Date">
+                <label for="end-date">End Date</label>
+                <input type="date" id="end-date" class="form-control" placeholder="End Date">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h2 class="text-center">Клиенты и публикации</h2>
+            <canvas id="publicationChart"></canvas>
+
+        </div>
+    </div>
+    <div class="row pt-5">
+        <div class="col">
+            <h2 class="text-center">Домены PBN и публикации</h2>
+            <table id="table_domain_and_pbn" class="table table-bordered table-striped table-hover">
+                <thead>
+                <tr>
+                    <th>Клиент</th>
+                    <th>Домен PBN</th>
+                    <th>Дата создания</th>
+                    <th>Всего публикаций</th>
+                    <th>Последняя публикациия</th>
+                    <th>Дней с последней публикации</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <nav id="pagination_domain_and_pbn" aria-label="Page navigation">
+                <ul class="pagination"></ul>
+            </nav>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h2 class="text-center">Ссылки на money-site</h2>
+            <table id="table_links_to_money_sites" class="table table-bordered table-striped table-hover">
+                <thead>
+                <tr>
+                    <th>Ссылка-донор</th>
+                    <th>Акнкор</th>
+                    <th>Ссылка на money-site</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+            <nav id="pagination_links_to_money_sites" aria-label="Page navigation">
+                <ul class="pagination"></ul>
+            </nav>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h2 class="text-center">Анкоры</h2>
+            <table id="table_anchor_counter" class="table table-bordered table-striped table-hover">
+                <thead>
+                <tr>
+                    <th>Акнкор</th>
+                    <th>Domain Acceptor</th>
+                    <th>Количество ссылок с анкор</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+            <nav id="pagination_anchor_counter" aria-label="Page navigation">
+                <ul class="pagination"></ul>
+            </nav>
+        </div>
+    </div>
+</div>
 
 </html>
