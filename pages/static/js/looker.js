@@ -402,6 +402,9 @@ function createPagination(el, data) {
 	const pagination = document.querySelector(`#${el} ul`);
 	pagination.innerHTML = ""; // Clear existing links
 	console.log('create_pagination');
+	if(!(data!=undefined && data.total_pages!=undefined&&data.total_pages>1)){
+	    return;
+	}
 
 	let startPage = Math.max(1, data.page_number - 2);
 	if (isNaN(startPage)) {
