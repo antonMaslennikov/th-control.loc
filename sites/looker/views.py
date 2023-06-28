@@ -269,5 +269,7 @@ class AnchorCounterByUrlAPIView(View):
 def get_publications_chart(request):
     if request.method == 'GET':
         client_id = request.GET.get('client_id', None)
-        data = get_publications_by_client(client_id)
+        start_date = request.GET.get('start_date', None)
+        end_date = request.GET.get('end_date', None)
+        data = get_publications_by_client(client_id,start_date,end_date)
         return JsonResponse(data, safe=False)

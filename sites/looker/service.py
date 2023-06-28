@@ -49,14 +49,29 @@ def get_domain_and_pbn_publications(page_number, items_per_page=10, client_id=No
     return get_paginator(sql_query, params, page_number, items_per_page)
 
 
-def get_publications_by_client(client_id=None):
-    sql_query = "SELECT c.id as client_id, c.client_name, DATE(a.date_modified) AS publication_date, COUNT(a.id_row) AS publication_count FROM pbn_articles a INNER JOIN pbn_sites s ON a.id_pbn_site = s.id INNER JOIN servers srv ON srv.id = s.id_server INNER JOIN clients c ON c.id = srv.client_id"
-    params = None
+def get_publications_by_client(client_id=None, start_date=None, end_date=None):
+    sql_query = "SELECT c.id as client_id, c.client_name, DATE(a.date_modified) AS publication_date, COUNT(a.id_row) AS publication_count FROM pbn_articles a INNER JOIN pbn_sites s ON a.id_pbn_site = s.id INNER JOIN servers srv ON srv.id = s.id_server INNER JOIN clients c ON c.id = srv.client_id  :where "
+    where_and = []
+    param = []
     if client_id is not None:
-        sql_query += " where c.id= %s"
-        params = [int(client_id)]
+        where_and.append('c.id = %s')
+        param.append(int(client_id))
+
+    if start_date is not None:
+        where_and.append(' a.date_modified >= %s')
+        param.append(start_date)
+
+    if end_date is not None:
+        where_and.append(' a.date_modified <= %s')
+        param.append(end_date)
+
+    if len(where_and) > 0:
+        sp = ' and '.join(where_and)
+        sql_query = sql_query.replace(':where', ' where ' + sp + ' ')
+    else:
+        sql_query = sql_query.replace(':where', ' ')
     sql_query += ' GROUP BY c.id, publication_date ORDER BY  c.id, publication_date ASC'
-    return execute_select_query(sql_query, params)
+    return execute_select_query(sql_query, param)
 
 
 def get_links_to_money_sites(page_number, items_per_page=10, client_id=None, money_site_ids=None):
@@ -77,7 +92,6 @@ def get_links_to_money_sites(page_number, items_per_page=10, client_id=None, mon
     else:
         sql_query = sql_query.replace(':where', ' ')
 
-    print(sql_query)
     return get_paginator(sql_query, param, page_number, items_per_page)
 
 

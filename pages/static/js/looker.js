@@ -15,75 +15,90 @@ $(document).ready(function() {
 	});
 
 	function fillTableLinksToMoneySites(pageNumber = DEFAULT_PAGE_NUM, perPage = DEFAULT_PER_PAGE_COUNT) {
-	    var client_id=getCurrentClientId();
-	    var url=`${LINKS_TO_MONEY_SITES_URL}?page=${pageNumber}&per_page=${perPage}&client_id=${client_id}`;
+		var url=`${LINKS_TO_MONEY_SITES_URL}?page=${pageNumber}&per_page=${perPage}`;
+		var client_id=getCurrentClientId();
+	    if(client_id&&client_id!='all'){
+	        url+=`&client_id=${client_id}`;
+	    }
 		fetchData(url).then(data => {
+
 			const tbody = document.querySelector("table#table_links_to_money_sites tbody");
 			tbody.innerHTML = "";
 			createPagination('pagination_links_to_money_sites', data);
-			data['links'].forEach((item) => {
-				const row = document.createElement("tr");
-				Object.values(item).forEach((value) => {
-					const td = document.createElement("td");
-					td.textContent = value;
-					row.appendChild(td);
-				});
-				tbody.appendChild(row);
-			});
+			if(data['links']!=undefined){
+                data['links'].forEach((item) => {
+                    const row = document.createElement("tr");
+                    Object.values(item).forEach((value) => {
 
-
+                        const td = document.createElement("td");
+                        td.textContent = value;
+                        row.appendChild(td);
+                    });
+                    tbody.appendChild(row);
+                });
+          }
 		});
 	}
 
 	function fillTableAnchorCounter(pageNumber = DEFAULT_PAGE_NUM, perPage = DEFAULT_PER_PAGE_COUNT) {
+		var url=`${LINKS_ANCHOR_COUNTER_URL}?page=${pageNumber}&per_page=${perPage}`;
 		var client_id=getCurrentClientId();
-		fetchData(`${LINKS_ANCHOR_COUNTER_URL}?page=${pageNumber}&per_page=${perPage}&client_id=${client_id}`).then(data => {
+	    if(client_id&&client_id!='all'){
+	        url+=`&client_id=${client_id}`;
+	    }
+		fetchData(url).then(data => {
 			const tbody = document.querySelector("table#table_anchor_counter tbody");
 			tbody.innerHTML = "";
 			createPagination('pagination_anchor_counter', data);
-			data['links'].forEach((item) => {
-				const row = document.createElement("tr");
-				Object.values(item).forEach((value) => {
-					const td = document.createElement("td");
-					td.textContent = value;
-					row.appendChild(td);
-				});
-				tbody.appendChild(row);
-			});
-
-
+			if(data['links']!=undefined){
+                data['links'].forEach((item) => {
+                    const row = document.createElement("tr");
+                    Object.values(item).forEach((value) => {
+                        const td = document.createElement("td");
+                        td.textContent = value;
+                        row.appendChild(td);
+                    });
+                    tbody.appendChild(row);
+                });
+			}
 		});
 	}
 
 	function fillTablePbnAndPublications(pageNumber = DEFAULT_PAGE_NUM, perPage = DEFAULT_PER_PAGE_COUNT) {
+	    var url=`${DOMAIN_PBN_AND_PUBLICATIONS_URL}?page=${pageNumber}&per_page=${perPage}`;
 	    var client_id=getCurrentClientId();
-		fetchData(`${DOMAIN_PBN_AND_PUBLICATIONS_URL}?page=${pageNumber}&per_page=${perPage}&client_id=${client_id}`).then(data => {
+	    if(client_id&&client_id!='all'){
+	        url+=`&client_id=${client_id}`;
+	    }
+		fetchData(url).then(data => {
 			const tbody = document.querySelector("table#table_domain_and_pbn tbody");
 			tbody.innerHTML = "";
 			createPagination('pagination_domain_and_pbn', data);
-			data['links'].forEach((item) => {
-				const row = document.createElement("tr");
-				const options = {
-					year: 'numeric',
-					month: 'long',
-					day: 'numeric',
-					timeZone: 'Europe/Moscow', // Set the desired time zone
-					hour12: false, // Use 24-hour format
-				};
-				item['date_create'] = new Date(item['date_create']).toLocaleString('ru-RU', options);
-				item['last_post'] = new Date(item['last_post']).toLocaleString('ru-RU', options);
-				Object.values(item).forEach((value) => {
-					const td = document.createElement("td");
-					td.textContent = value;
-					row.appendChild(td);
-				});
-				tbody.appendChild(row);
-			});
+			if(data['links']!=undefined){
+                data['links'].forEach((item) => {
+                    const row = document.createElement("tr");
+                    const options = {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        timeZone: 'Europe/Moscow', // Set the desired time zone
+                        hour12: false, // Use 24-hour format
+                    };
+                    item['date_create'] = new Date(item['date_create']).toLocaleString('ru-RU', options);
+                    item['last_post'] = new Date(item['last_post']).toLocaleString('ru-RU', options);
+                    Object.values(item).forEach((value) => {
+                        const td = document.createElement("td");
+                        td.textContent = value;
+                        row.appendChild(td);
+                    });
+                    tbody.appendChild(row);
+                });
+			}
 		});
 	}
 	function fetchClients() {
 		fetchData(CLIENTS_URL).then(data => {
-				var options = '';
+				var options = '<option value="all">All</option>';
 				for (var item of data) {
 					var option = '<option value=":val">:name</option>';
 					options += option.replace(':val', item.id).replace(':name', item.name);
@@ -120,8 +135,22 @@ $(document).ready(function() {
 	}
 
 	function fetchChart() {
-    var client_id=getCurrentClientId();
-		fetchData(`${MAIN_CHART_URL}?client_id=${client_id}`).then(data => {
+        var url=`${MAIN_CHART_URL}?up`;
+        var client_id=getCurrentClientId();
+	    if(client_id&&client_id!='all'){
+	        url+=`&client_id=${client_id}`;
+	    }
+	    var start_date=$('#start-date').val();
+	    var end_date=$('#end-date').val();
+	    if(start_date){
+	        url+=`&start_date=${start_date.toString()}`;
+	    }
+	    if(end_date){
+           url+=`&end_date=${end_date.toString()}`;
+	    }
+
+
+		fetchData(url).then(data => {
 				const publicationsData = prepareData(data);
 				var datasets = [];
 				var labels = [];
@@ -199,12 +228,7 @@ $(document).ready(function() {
 				console.error('Error fetching data:', error);
 			});
 	}
-
-
-
-
 	//////// fetch client list
-
 	fetchClients();
 	fetchMoneySites();
 	fetchChart();
@@ -216,9 +240,8 @@ $(document).ready(function() {
 	select_clients.change(function() {
 
 		if (has_value_changed('current_client', $(this).val())) {
-			fetchMoneySites();
-			fetchChart();
-				fetchChart();
+	    		fetchMoneySites(DEFAULT_PAGE_NUM,DEFAULT_PER_PAGE_COUNT);
+				fetchChart(DEFAULT_PAGE_NUM,DEFAULT_PER_PAGE_COUNT);
             	fillTablePbnAndPublications(DEFAULT_PAGE_NUM,DEFAULT_PER_PAGE_COUNT);
 	            fillTableLinksToMoneySites(DEFAULT_PAGE_NUM,DEFAULT_PER_PAGE_COUNT);
 	            fillTableAnchorCounter(DEFAULT_PAGE_NUM,DEFAULT_PER_PAGE_COUNT);
@@ -228,6 +251,16 @@ $(document).ready(function() {
 	select_money_sites.change(function() {
 
 	});
+	var start_date =$('#start-date');
+	var end_date =$('#end-date');
+	 start_date.change(function() {
+		fetchChart(DEFAULT_PAGE_NUM,DEFAULT_PER_PAGE_COUNT);
+	 });
+	 end_date.change(function() {
+				fetchChart(DEFAULT_PAGE_NUM,DEFAULT_PER_PAGE_COUNT);
+	   });
+
+
 
 	document.querySelector("#pagination_links_to_money_sites").addEventListener("click", function(event) {
 		event.preventDefault();
@@ -388,13 +421,8 @@ function retrieveLargeDataFromLocalStorage(keyPrefix) {
 }
 
 function getCurrentClientId() {
-	if (!localStorage.hasOwnProperty("current_client")) {
-		return null;
-	} else {
-		var current_client = parseInt(localStorage.getItem("current_client"));
-		return isNaN(current_client) ? null : current_client;
-	}
-	return null;
+   var client_id= parseInt($("#clients").val());
+    return isNaN(client_id) ? null : client_id>0 ?client_id : null;
 }
 
 // Function to create pagination links
@@ -411,10 +439,6 @@ function createPagination(el, data) {
 		startPage = 1;
 	}
 	let endPage = Math.min(startPage + 4, data.total_pages);
-
-
-
-	console.log(endPage);
 	if (startPage > 1) {
 		const firstLink = document.createElement("li");
 		const activeClass = (1 === data.page_number) ? "active" : "";
