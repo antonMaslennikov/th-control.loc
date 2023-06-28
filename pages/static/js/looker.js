@@ -4,7 +4,8 @@ const MONEY_SITES_URL = '/sites/looker/api/money-sites';
 const DOMAIN_PBN_AND_PUBLICATIONS_URL = '/sites/looker/api/domain-pbn-and-publications';
 const LINKS_TO_MONEY_SITES_URL = '/sites/looker/api/links-to-money-sites';
 const LINKS_ANCHOR_COUNTER_URL = '/sites/looker/api/anchor-counter';
-
+const DEFAULT_PAGE_NUM=1;
+const DEFAULT_PER_PAGE_COUNT=24;
 $(document).ready(function() {
 
 	$('select').select2({
@@ -13,8 +14,10 @@ $(document).ready(function() {
 		width: '100%'
 	});
 
-	function fillTableLinksToMoneySites(pageNumber = 1, perPage = 20) {
-		fetchData(`${LINKS_TO_MONEY_SITES_URL}?page=${pageNumber}&per_page=${perPage}`).then(data => {
+	function fillTableLinksToMoneySites(pageNumber = DEFAULT_PAGE_NUM, perPage = DEFAULT_PER_PAGE_COUNT) {
+	    var client_id=getCurrentClientId();
+	    var url=`${LINKS_TO_MONEY_SITES_URL}?page=${pageNumber}&per_page=${perPage}&client_id=${client_id}`;
+		fetchData(url).then(data => {
 			const tbody = document.querySelector("table#table_links_to_money_sites tbody");
 			tbody.innerHTML = "";
 			createPagination('pagination_links_to_money_sites', data);
@@ -32,8 +35,9 @@ $(document).ready(function() {
 		});
 	}
 
-	function fillTableAnchorCounter(pageNumber = 1, perPage = 20) {
-		fetchData(`${LINKS_ANCHOR_COUNTER_URL}?page=${pageNumber}&per_page=${perPage}`).then(data => {
+	function fillTableAnchorCounter(pageNumber = DEFAULT_PAGE_NUM, perPage = DEFAULT_PER_PAGE_COUNT) {
+		var client_id=getCurrentClientId();
+		fetchData(`${LINKS_ANCHOR_COUNTER_URL}?page=${pageNumber}&per_page=${perPage}&client_id=${client_id}`).then(data => {
 			const tbody = document.querySelector("table#table_anchor_counter tbody");
 			tbody.innerHTML = "";
 			createPagination('pagination_anchor_counter', data);
@@ -51,8 +55,9 @@ $(document).ready(function() {
 		});
 	}
 
-	function fillTablePbnAndPublications(pageNumber = 1, perPage = 5) {
-		fetchData(`${DOMAIN_PBN_AND_PUBLICATIONS_URL}?page=${pageNumber}&per_page=${perPage}`).then(data => {
+	function fillTablePbnAndPublications(pageNumber = DEFAULT_PAGE_NUM, perPage = DEFAULT_PER_PAGE_COUNT) {
+	    var client_id=getCurrentClientId();
+		fetchData(`${DOMAIN_PBN_AND_PUBLICATIONS_URL}?page=${pageNumber}&per_page=${perPage}&client_id=${client_id}`).then(data => {
 			const tbody = document.querySelector("table#table_domain_and_pbn tbody");
 			tbody.innerHTML = "";
 			createPagination('pagination_domain_and_pbn', data);
@@ -76,30 +81,22 @@ $(document).ready(function() {
 			});
 		});
 	}
-
-
-
-
-
-
 	function fetchClients() {
 		fetchData(CLIENTS_URL).then(data => {
 				var options = '';
-
 				for (var item of data) {
 					var option = '<option value=":val">:name</option>';
 					options += option.replace(':val', item.id).replace(':name', item.name);
 				}
 				var clients = document.querySelector("select#clients");
 				clients.innerHTML = options;
-
 			})
 			.catch(error => {
 				console.error('Error fetching data:', error);
 			});
 	}
-
-	function fetchMoneySites() {
+	function fetchMoneySites()
+	{
 		fetchData(MONEY_SITES_URL).then(data => {
 				var options = '';
 				for (var item of data) {
@@ -123,7 +120,8 @@ $(document).ready(function() {
 	}
 
 	function fetchChart() {
-		fetchData(MAIN_CHART_URL).then(data => {
+    var client_id=getCurrentClientId();
+		fetchData(`${MAIN_CHART_URL}?client_id=${client_id}`).then(data => {
 				const publicationsData = prepareData(data);
 				var datasets = [];
 				var labels = [];
@@ -220,14 +218,16 @@ $(document).ready(function() {
 		if (has_value_changed('current_client', $(this).val())) {
 			fetchMoneySites();
 			fetchChart();
+				fetchChart();
+            	fillTablePbnAndPublications(DEFAULT_PAGE_NUM,DEFAULT_PER_PAGE_COUNT);
+	            fillTableLinksToMoneySites(DEFAULT_PAGE_NUM,DEFAULT_PER_PAGE_COUNT);
+	            fillTableAnchorCounter(DEFAULT_PAGE_NUM,DEFAULT_PER_PAGE_COUNT);
 		}
 	});
-
 	var select_money_sites = $("select#money_sites");
 	select_money_sites.change(function() {
 
 	});
-
 
 	document.querySelector("#pagination_links_to_money_sites").addEventListener("click", function(event) {
 		event.preventDefault();
