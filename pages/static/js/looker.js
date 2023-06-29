@@ -15,11 +15,9 @@ $(document).ready(function() {
 	});
 
 	function fillTableLinksToMoneySites(pageNumber = DEFAULT_PAGE_NUM, perPage = DEFAULT_PER_PAGE_COUNT) {
-		var url=`${LINKS_TO_MONEY_SITES_URL}?page=${pageNumber}&per_page=${perPage}`;
-		var client_id=getCurrentClientId();
-	    if(client_id&&client_id!='all'){
-	        url+=`&client_id=${client_id}`;
-	    }
+		var url=`${LINKS_TO_MONEY_SITES_URL}?page=${pageNumber}&per_page=${perPage}&`;
+		url+=add_client_id_in_query();
+	    url+=add_money_sites_in_query();
 		fetchData(url).then(data => {
 
 			const tbody = document.querySelector("table#table_links_to_money_sites tbody");
@@ -42,10 +40,8 @@ $(document).ready(function() {
 
 	function fillTableAnchorCounter(pageNumber = DEFAULT_PAGE_NUM, perPage = DEFAULT_PER_PAGE_COUNT) {
 		var url=`${LINKS_ANCHOR_COUNTER_URL}?page=${pageNumber}&per_page=${perPage}`;
-		var client_id=getCurrentClientId();
-	    if(client_id&&client_id!='all'){
-	        url+=`&client_id=${client_id}`;
-	    }
+		url+=add_client_id_in_query();
+	    url+=add_money_sites_in_query();
 		fetchData(url).then(data => {
 			const tbody = document.querySelector("table#table_anchor_counter tbody");
 			tbody.innerHTML = "";
@@ -65,11 +61,9 @@ $(document).ready(function() {
 	}
 
 	function fillTablePbnAndPublications(pageNumber = DEFAULT_PAGE_NUM, perPage = DEFAULT_PER_PAGE_COUNT) {
-	    var url=`${DOMAIN_PBN_AND_PUBLICATIONS_URL}?page=${pageNumber}&per_page=${perPage}`;
-	    var client_id=getCurrentClientId();
-	    if(client_id&&client_id!='all'){
-	        url+=`&client_id=${client_id}`;
-	    }
+	    var url=`${DOMAIN_PBN_AND_PUBLICATIONS_URL}?page=${pageNumber}&per_page=${perPage}&`;
+	    url+=add_client_id_in_query();
+	    url+=add_money_sites_in_query();
 		fetchData(url).then(data => {
 			const tbody = document.querySelector("table#table_domain_and_pbn tbody");
 			tbody.innerHTML = "";
@@ -135,11 +129,8 @@ $(document).ready(function() {
 	}
 
 	function fetchChart() {
-        var url=`${MAIN_CHART_URL}?up`;
-        var client_id=getCurrentClientId();
-	    if(client_id&&client_id!='all'){
-	        url+=`&client_id=${client_id}`;
-	    }
+        var url=`${MAIN_CHART_URL}?up&`;
+        url+=add_client_id_in_query();
 	    var start_date=$('#start-date').val();
 	    var end_date=$('#end-date').val();
 	    if(start_date){
@@ -249,6 +240,12 @@ $(document).ready(function() {
 	});
 	var select_money_sites = $("select#money_sites");
 	select_money_sites.change(function() {
+			fetchMoneySites(DEFAULT_PAGE_NUM,DEFAULT_PER_PAGE_COUNT);
+				fetchChart(DEFAULT_PAGE_NUM,DEFAULT_PER_PAGE_COUNT);
+            	fillTablePbnAndPublications(DEFAULT_PAGE_NUM,DEFAULT_PER_PAGE_COUNT);
+	            fillTableLinksToMoneySites(DEFAULT_PAGE_NUM,DEFAULT_PER_PAGE_COUNT);
+	            fillTableAnchorCounter(DEFAULT_PAGE_NUM,DEFAULT_PER_PAGE_COUNT);
+
 
 	});
 	var start_date =$('#start-date');
@@ -471,3 +468,21 @@ function createPagination(el, data) {
 		pagination.appendChild(lastLink);
 	}
 }
+
+function add_money_sites_in_query(){
+	   var money_sites_query="money_sites=";
+	   var money_sites = $('#money_sites').select2('data').map( (item)=> {return item.id});
+	   if(money_sites.length>0){
+	        return money_sites_query+=money_sites.join(',')+'&';
+	   }
+	   return '';
+}
+
+function add_client_id_in_query(){
+		var client_id=getCurrentClientId();
+	    if(client_id&&client_id!='all'){
+	       return `client_id=${client_id}&`;
+	    }
+	    return '';
+}
+

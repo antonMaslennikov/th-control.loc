@@ -185,7 +185,8 @@ class DomainAndPublicationAPIView(View):
                 page_number = request.GET.get('page', 1)
                 items_per_page = request.GET.get('per_page', 5)
                 client_id = request.GET.get('client_id', None)
-                page = get_domain_and_pbn_publications(page_number, items_per_page, client_id)
+                money_sites = request.GET.get('money_sites', None)
+                page = get_domain_and_pbn_publications(page_number, items_per_page, client_id, money_sites)
                 links = []
                 for link in page.object_list:
                     link_dict = {
@@ -215,7 +216,8 @@ class LinksToMoneySitesAPIView(View):
         page_number = request.GET.get('page', 1)
         items_per_page = request.GET.get('per_page', 10)
         client_id = request.GET.get('client_id', None)
-        page = get_links_to_money_sites(page_number, items_per_page, client_id)
+        money_sites = request.GET.get('money_sites', None)
+        page = get_links_to_money_sites(page_number, items_per_page, client_id, money_sites)
         links = []
         for link in page.object_list:
             link_dict = {
@@ -243,7 +245,8 @@ class AnchorCounterByUrlAPIView(View):
                 page_number = request.GET.get('page', 1)
                 items_per_page = request.GET.get('per_page', 5)
                 client_id = request.GET.get('client_id', None)
-                page = get_count_anchor_by_url(page_number, items_per_page, client_id)
+                money_sites = request.GET.get('money_sites', None)
+                page = get_count_anchor_by_url(page_number, items_per_page, client_id, money_sites)
                 links = []
                 for link in page.object_list:
                     link_dict = {
@@ -271,5 +274,5 @@ def get_publications_chart(request):
         client_id = request.GET.get('client_id', None)
         start_date = request.GET.get('start_date', None)
         end_date = request.GET.get('end_date', None)
-        data = get_publications_by_client(client_id,start_date,end_date)
+        data = get_publications_by_client(client_id, start_date, end_date)
         return JsonResponse(data, safe=False)

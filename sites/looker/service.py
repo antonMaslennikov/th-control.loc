@@ -38,15 +38,24 @@ def get_paginator(sql_query, params, current_page=1, items_per_page=20):
     return page
 
 
-def get_domain_and_pbn_publications(page_number, items_per_page=10, client_id=None):
+def get_domain_and_pbn_publications(page_number, items_per_page=10, client_id=None, money_site_ids=None):
     sql_query = "SELECT c.client_name AS client_name, d.domain_name AS pbn_domain, date(s.date_create) as date_create, COUNT(a.id_row) AS total_publications, MAX(date(a.date_modified)) AS last_post, DATEDIFF(CURDATE(), MAX(a.date_modified)) AS day_since_last_publication FROM links_all_domains d INNER JOIN relation_pbn_sites_links_all_domains r ON d.id = r.id_links_all_domains INNER JOIN pbn_sites s ON r.id_pbn_sites = s.id INNER JOIN pbn_articles a ON s.id = a.id_pbn_site INNER JOIN money_sites m ON s.id = m.id_row INNER JOIN clients c ON m.client_id = c.id :where GROUP BY c.client_name, d.domain_name, s.date_create ORDER BY c.client_name, d.domain_name;"
-    params = None
+    where_and = []
+    param = []
     if client_id is not None:
-        sql_query = sql_query.replace(':where', " where c.id= %s ")
-        params = [int(client_id)]
+        where_and.append('c.id = %s')
+        param.append(int(client_id))
+
+    if money_site_ids is not None:
+        where_and.append(' m.id_row in (%s)')
+        param.append(money_site_ids)
+
+    if len(where_and) > 0:
+        sp = ' and '.join(where_and)
+        sql_query = sql_query.replace(':where', ' where ' + sp + ' ')
     else:
         sql_query = sql_query.replace(':where', ' ')
-    return get_paginator(sql_query, params, page_number, items_per_page)
+    return get_paginator(sql_query, param, page_number, items_per_page)
 
 
 def get_publications_by_client(client_id=None, start_date=None, end_date=None):
@@ -56,7 +65,6 @@ def get_publications_by_client(client_id=None, start_date=None, end_date=None):
     if client_id is not None:
         where_and.append('c.id = %s')
         param.append(int(client_id))
-
     if start_date is not None:
         where_and.append(' a.date_modified >= %s')
         param.append(start_date)
