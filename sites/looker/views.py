@@ -179,12 +179,14 @@ class FilterAPIView(View):
 
 
 class DomainAndPublicationAPIView(View):
-    def get(self, request, client_id=None):
+    def get(self, request):
         if request.method == 'GET':
             try:
                 page_number = request.GET.get('page', 1)
                 items_per_page = request.GET.get('per_page', 5)
-                page = get_domain_and_pbn_publications(page_number, items_per_page)
+                client_id = request.GET.get('client_id', None)
+                money_sites = request.GET.get('money_sites', None)
+                page = get_domain_and_pbn_publications(page_number, items_per_page, client_id, money_sites)
                 links = []
                 for link in page.object_list:
                     link_dict = {
@@ -210,10 +212,12 @@ class DomainAndPublicationAPIView(View):
 
 
 class LinksToMoneySitesAPIView(View):
-    def get(self, request, client_id=None):
+    def get(self, request):
         page_number = request.GET.get('page', 1)
         items_per_page = request.GET.get('per_page', 10)
-        page = get_links_to_money_sites(page_number, items_per_page)
+        client_id = request.GET.get('client_id', None)
+        money_sites = request.GET.get('money_sites', None)
+        page = get_links_to_money_sites(page_number, items_per_page, client_id, money_sites)
         links = []
         for link in page.object_list:
             link_dict = {
@@ -235,12 +239,14 @@ class LinksToMoneySitesAPIView(View):
 
 
 class AnchorCounterByUrlAPIView(View):
-    def get(self, request, client_id=None):
+    def get(self, request):
         if request.method == 'GET':
             try:
                 page_number = request.GET.get('page', 1)
                 items_per_page = request.GET.get('per_page', 5)
-                page = get_count_anchor_by_url(page_number, items_per_page)
+                client_id = request.GET.get('client_id', None)
+                money_sites = request.GET.get('money_sites', None)
+                page = get_count_anchor_by_url(page_number, items_per_page, client_id, money_sites)
                 links = []
                 for link in page.object_list:
                     link_dict = {
@@ -263,7 +269,10 @@ class AnchorCounterByUrlAPIView(View):
 
 
 @csrf_exempt
-def get_publications_chart(request, client_id=None):
+def get_publications_chart(request):
     if request.method == 'GET':
-        data = get_publications_by_client(client_id)
+        client_id = request.GET.get('client_id', None)
+        start_date = request.GET.get('start_date', None)
+        end_date = request.GET.get('end_date', None)
+        data = get_publications_by_client(client_id, start_date, end_date)
         return JsonResponse(data, safe=False)
