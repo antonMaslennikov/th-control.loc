@@ -47,10 +47,12 @@ class Service(models.Model):
     STATUS = (
         (1, 'GoogleIndexer'),
         (2, 'AhrefsAnalysis'),
+        (3, 'LookerStudio'),
     )
 
     name = models.CharField(max_length=255)
     service_class = models.IntegerField(choices=STATUS, null=True)
+    site = models.CharField(max_length=1000, blank=True, null=True)
     description = models.CharField(max_length=1000, blank=True, null=True)
     settings = models.ManyToManyField(Setting, blank=True)
 
