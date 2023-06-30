@@ -1,27 +1,26 @@
 import datetime
 import os
-import json
 
 from ..Service import Service
 from lookerdb import LookerDb
 
+
 class LookerStudio(Service):
     standart_dalay = 24
-
+    api_key = None
     def setSettings(self, settings):
 
-        if not settings['connection_setting']:
-            raise 'Не заданы настройки баз данных'
+        if not settings['api_key']:
+            raise 'Не задан ключ по умолчания для всех пбн сайтов'
 
-        for key in settings['connection_setting']:
-            self.json_keys.append(json.loads(key.strip()))
+        for key in settings['api_key']:
+            self.api_key = key.strip()
 
-        if len(self.json_keys) == 0:
-            raise 'Не удалось получить настройки баз данных'
+        if len(self.api_key) == 0:
+            raise 'Не удалось получить ключ апи'
 
     def setData(self, file):
         self.urls_file = file
-
 
     def run(self):
 
