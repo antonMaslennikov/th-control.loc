@@ -5,7 +5,7 @@ class WordPressAPI:
         self.api_url = api_url
 
     def retrieve_all_publications(self):
-        response = requests.get(f"{self.api_url}/wp/v2/posts")
+        response = requests.get(f"{self.api_url}/wp-json/wp/v2/posts")
         if response.status_code == 200:
             publications = response.json()
             return publications
