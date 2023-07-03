@@ -1,7 +1,17 @@
 from django.db import models
+from django.conf import settings
+
+class LookerBaseModel(models.Model):
+    class Meta:
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        if 'looker_db' in settings.DATABASES:
+            self._state.db = 'looker_db'
+        super().save(*args, **kwargs)
 
 
-class Clients(models.Model):
+class Clients(LookerBaseModel):
     id = models.IntegerField(primary_key=True)
     client_name = models.CharField(max_length=128, null=True, default=None)
     date_add = models.DateField(null=True, default=None)
@@ -17,7 +27,7 @@ class Clients(models.Model):
         db_table = 'clients'
 
 
-class Servers(models.Model):
+class Servers(LookerBaseModel):
     id = models.IntegerField(primary_key=True)
     server_name = models.CharField(max_length=64, null=True, default=None)
     ip_server = models.CharField(max_length=15, null=True, default=None)
@@ -37,7 +47,7 @@ class Servers(models.Model):
         db_table = 'servers'
 
 
-class LinksAllAnchors(models.Model):
+class LinksAllAnchors(LookerBaseModel):
     id = models.IntegerField(primary_key=True)
     anchor_value = models.TextField()
     date_add = models.DateField(null=True, default=None)
@@ -53,7 +63,7 @@ class LinksAllAnchors(models.Model):
         db_table = 'links_all_anchors'
 
 
-class LinksAllDomains(models.Model):
+class LinksAllDomains(LookerBaseModel):
     id = models.IntegerField(primary_key=True)
     domain_name = models.CharField(max_length=128, null=True, default=None)
     date_add = models.DateField(null=True, default=None)
@@ -69,7 +79,7 @@ class LinksAllDomains(models.Model):
         db_table = 'links_all_domains'
 
 
-class LinksAllUrls(models.Model):
+class LinksAllUrls(LookerBaseModel):
     id = models.IntegerField(primary_key=True)
     url = models.TextField()
     date_add = models.DateField(null=True, default=None)
@@ -87,7 +97,7 @@ class LinksAllUrls(models.Model):
         db_table = 'links_all_urls'
 
 
-class LinksCheckDonorAcceptor(models.Model):
+class LinksCheckDonorAcceptor(LookerBaseModel):
     id = models.IntegerField(primary_key=True)
     date_check = models.DateField(null=True, default=None)
     donor_url = models.ForeignKey(LinksAllUrls, related_name='donor_links', on_delete=models.CASCADE)
@@ -107,7 +117,7 @@ class LinksCheckDonorAcceptor(models.Model):
         db_table = 'links_check_donor_acceptor'
 
 
-class PbnSites(models.Model):
+class PbnSites(LookerBaseModel):
     id = models.IntegerField(primary_key=True)
     site_url = models.CharField(max_length=128, null=True, default=None)
     date_create = models.DateTimeField(null=True, default=None)
@@ -125,7 +135,7 @@ class PbnSites(models.Model):
         db_table = 'pbn_sites'
 
 
-class RelationPbnSitesLinksAllDomains(models.Model):
+class RelationPbnSitesLinksAllDomains(LookerBaseModel):
     pbn_site = models.ForeignKey(PbnSites, on_delete=models.CASCADE)
     links_all_domain = models.ForeignKey(LinksAllDomains, on_delete=models.CASCADE)
 
@@ -139,7 +149,7 @@ class RelationPbnSitesLinksAllDomains(models.Model):
         db_table = 'relation_pbn_sites_links_all_domains'
 
 
-class MoneySites(models.Model):
+class MoneySites(LookerBaseModel):
     id_row = models.IntegerField(primary_key=True)
     site_url = models.CharField(max_length=100, null=True, default=None)
     client = models.ForeignKey(Clients, on_delete=models.CASCADE)
@@ -158,7 +168,7 @@ class MoneySites(models.Model):
         db_table = 'money_sites'
 
 
-class PbnArticles(models.Model):
+class PbnArticles(LookerBaseModel):
     id_row = models.IntegerField(primary_key=True)
     id_article = models.IntegerField()
     date_create = models.DateTimeField(null=True, default=None)
