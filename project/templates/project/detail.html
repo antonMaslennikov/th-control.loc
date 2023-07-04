@@ -65,11 +65,11 @@
                         <li>
                             <a class="dropdown-item" href="{% url 'project_run_service' pk=project.id service_id=service.id %}"><i class="bi bi-play-circle"></i> Запустить</a>
                         </li>
-                        {% if service.site %}
-                             <li>
-                                <a class="dropdown-item"  target="_blank" href="{{service.site}}"><i class="bi bi-globe"></i> Сайт</a>
-                            </li>
-                        {%endif%}
+<!--                        {% if service.site %}-->
+<!--                             <li>-->
+<!--                                <a class="dropdown-item"  target="_blank" href="{{service.site}}"><i class="bi bi-globe"></i> Сайт</a>-->
+<!--                            </li>-->
+<!--                        {% endif %}-->
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item" href="{% url 'project_service_journal' pk=project.id service_id=service.id %}"><i class="bi bi-journal-check"></i> Журнал</a>
