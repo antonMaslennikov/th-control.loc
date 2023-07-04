@@ -66,6 +66,8 @@
 
 <body>
 </body>
+
+{% if user.is_authenticated %}
 <div class="container">
     <div class="row">
         <div class="col-4">
@@ -164,5 +166,7 @@
         </div>
     </div>
 </div>
-
+{% else %}
+    <a href="/">авторизуйтесь</a>
+{% endif %}
 </html>
