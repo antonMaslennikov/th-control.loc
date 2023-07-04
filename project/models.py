@@ -47,7 +47,7 @@ class Service(models.Model):
     STATUS = (
         (1, 'GoogleIndexer'),
         (2, 'AhrefsAnalysis'),
-        (3, 'LookerStudio'),
+        # (3, 'LookerStudio'),
     )
 
     name = models.CharField(max_length=255)
