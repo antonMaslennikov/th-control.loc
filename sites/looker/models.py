@@ -192,3 +192,46 @@ class PbnArticles(LookerBaseModel):
 
     class Meta:
         db_table = 'pbn_articles'
+
+
+class UrlsCheckNew(models.Model):
+    id_url_from_donor = models.IntegerField()
+    url_from_donor = models.TextField(db_collation='utf8mb4_0900_ai_ci', blank=True, null=True)
+    donor_domain = models.CharField(max_length=128, db_collation='utf8mb4_0900_ai_ci', blank=True, null=True)
+    donor_date_add = models.DateField(blank=True, null=True)
+    id_url_to_acceptor = models.IntegerField()
+    url_to_acceptor = models.TextField(db_collation='utf8mb4_0900_ai_ci', blank=True, null=True)
+    acceptor_domain = models.CharField(max_length=128, db_collation='utf8mb4_0900_ai_ci', blank=True, null=True)
+    client_name = models.CharField(max_length=128, db_collation='utf8mb4_0900_ai_ci', blank=True, null=True)
+    pbn_owner = models.CharField(max_length=128, db_collation='utf8mb4_0900_ai_ci', blank=True, null=True)
+    client_id = models.IntegerField(blank=True, null=True)
+    acceptor_date_add = models.DateField(blank=True, null=True)
+    anchor_value = models.TextField(db_collation='utf8mb4_0900_ai_ci', blank=True, null=True)
+    anchor_date_add = models.DateField(blank=True, null=True)
+    date_check = models.DateField(blank=True, null=True)
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = 'urls_check_new'
+        db_table_comment = 'VIEW'
+
+
+class ClientsPbnSitesAndArticlesNew(models.Model):
+    id_site = models.IntegerField()
+    site_url = models.CharField(max_length=128, db_collation='utf8mb4_0900_ai_ci', blank=True, null=True)
+    site_create = models.DateTimeField(blank=True, null=True)
+    id_server = models.IntegerField(blank=True, null=True)
+    server_name = models.CharField(max_length=64, db_collation='utf8mb4_0900_ai_ci', blank=True, null=True)
+    id_client = models.IntegerField(blank=True, null=True)
+    pbn_owner = models.CharField(max_length=128, db_collation='utf8mb4_0900_ai_ci', blank=True, null=True)
+    id_pbn_site = models.IntegerField(blank=True, null=True)
+    date_create = models.DateTimeField(blank=True, null=True)
+    date_modified = models.DateTimeField(blank=True, null=True)
+    article_url = models.TextField(db_collation='utf8mb4_0900_ai_ci', blank=True, null=True)
+    article_name = models.TextField(db_collation='utf8mb4_0900_ai_ci', blank=True, null=True)
+    acceptor_domain = models.CharField(max_length=128, db_collation='utf8mb4_0900_ai_ci', blank=True, null=True)
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = 'clients_pbn_sites_and_articles_new'
+        db_table_comment = 'VIEW'
