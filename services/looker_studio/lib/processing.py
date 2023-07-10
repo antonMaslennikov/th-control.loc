@@ -1,6 +1,6 @@
 from django.db import models
 from sites.looker.models import PbnSites, PbnArticles
-from .wordpress_api import WordPressAPI
+from wordpress_api import WordPressAPI
 from sites.looker.settings import DB
 
 pbn_sites = PbnSites.objects.using(DB).all()
