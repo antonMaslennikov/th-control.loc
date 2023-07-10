@@ -1,18 +1,46 @@
-const MAIN_CHART_URL = '/sites/looker/api/get-publications-chart';
-const CLIENTS_URL = '/sites/looker/api/clients';
-const MONEY_SITES_URL = '/sites/looker/api/money-sites';
-const DOMAIN_PBN_AND_PUBLICATIONS_URL = '/sites/looker/api/domain-pbn-and-publications';
-const LINKS_TO_MONEY_SITES_URL = '/sites/looker/api/links-to-money-sites';
-const LINKS_ANCHOR_COUNTER_URL = '/sites/looker/api/anchor-counter';
+const MAIN_CHART_URL = '/sites/looker/api/chart-data';
+const  FILTERS_URL = '/sites/looker/api/filters';
+const DOMAIN_PBN_AND_PUBLICATIONS_URL = '/sites/looker/api/table/domain-pbn-and-publications';
+const LINKS_TO_MONEY_SITES_URL = '/sites/looker/api/table/links-to-money-sites';
+const LINKS_ANCHOR_COUNTER_URL = '/sites/looker/api/table/anchors';
+const SUMMARY_URL='/sites/looker/api/summary';
+
+
 const DEFAULT_PAGE_NUM=1;
-const DEFAULT_PER_PAGE_COUNT=24;
+const DEFAULT_PER_PAGE_COUNT=10;
+
+
 $(document).ready(function() {
+
+    function getRusDate(dt){
+      return new Date(dt).toLocaleString('ru-RU', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        timeZone: 'Europe/Moscow', // Set the desired time zone
+                        hour12: false, // Use 24-hour format
+                    });
+    }
 
 	$('select').select2({
 		theme: 'bootstrap',
 		placeholder: 'Select an option',
-		width: '100%'
-	});
+		width: '100%',
+	}).on('select2:open', function () {
+  $('.select2-dropdown').addClass('custom-dropdown');
+});
+
+
+	function fillSummary() {
+		var url=`${SUMMARY_URL}?`;
+		url+=add_client_id_in_query();
+	    url+=add_money_sites_in_query();
+		fetchData(url).then(data => {
+		$("#count_new_domains>strong").text(data.count_new_domains.count);
+		$("#count_publications>strong").text(data.count_publications.count);
+		$("#count_new_publications>strong").text(data.count_new_publications.count);
+		});
+	}
 
 	function fillTableLinksToMoneySites(pageNumber = DEFAULT_PAGE_NUM, perPage = DEFAULT_PER_PAGE_COUNT) {
 		var url=`${LINKS_TO_MONEY_SITES_URL}?page=${pageNumber}&per_page=${perPage}&`;
@@ -39,23 +67,37 @@ $(document).ready(function() {
 	}
 
 	function fillTableAnchorCounter(pageNumber = DEFAULT_PAGE_NUM, perPage = DEFAULT_PER_PAGE_COUNT) {
-		var url=`${LINKS_ANCHOR_COUNTER_URL}?page=${pageNumber}&per_page=${perPage}`;
+		var url=`${LINKS_ANCHOR_COUNTER_URL}?page=${pageNumber}&per_page=${perPage}&`;
 		url+=add_client_id_in_query();
 	    url+=add_money_sites_in_query();
-		fetchData(url).then(data => {
+	    fetchData(url).then(data => {
 			const tbody = document.querySelector("table#table_anchor_counter tbody");
 			tbody.innerHTML = "";
 			createPagination('pagination_anchor_counter', data);
 			if(data['links']!=undefined){
+			    var counter=0;
                 data['links'].forEach((item) => {
                     const row = document.createElement("tr");
                     Object.values(item).forEach((value) => {
                         const td = document.createElement("td");
                         td.textContent = value;
                         row.appendChild(td);
+
+                        if(typeof value === 'number' && !isNaN(value)){
+                        counter+=value;
+                        }
                     });
                     tbody.appendChild(row);
                 });
+                var row = document.createElement("tr");
+                var td = document.createElement("th");
+                td.textContent = "Общий итог";
+                td.colSpan="2";
+                row.appendChild(td);
+                var td = document.createElement("th");
+                td.textContent = counter;
+                row.appendChild(td);
+                tbody.appendChild(row);
 			}
 		});
 	}
@@ -68,18 +110,10 @@ $(document).ready(function() {
 			const tbody = document.querySelector("table#table_domain_and_pbn tbody");
 			tbody.innerHTML = "";
 			createPagination('pagination_domain_and_pbn', data);
-			if(data['links']!=undefined){
-                data['links'].forEach((item) => {
-                    const row = document.createElement("tr");
-                    const options = {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        timeZone: 'Europe/Moscow', // Set the desired time zone
-                        hour12: false, // Use 24-hour format
-                    };
-                    item['date_create'] = new Date(item['date_create']).toLocaleString('ru-RU', options);
-                    item['last_post'] = new Date(item['last_post']).toLocaleString('ru-RU', options);
+			data['links'].forEach((item) => {
+			        const row = document.createElement("tr");
+                    item['last_post'] = getRusDate(item['last_post']);
+                    item['date_create'] = getRusDate(item['date_create']);
                     Object.values(item).forEach((value) => {
                         const td = document.createElement("td");
                         td.textContent = value;
@@ -87,13 +121,35 @@ $(document).ready(function() {
                     });
                     tbody.appendChild(row);
                 });
-			}
 		});
 	}
-	function fetchClients() {
-		fetchData(CLIENTS_URL).then(data => {
+	function fetchFilters() {
+	var url =FILTERS_URL;
+	if(getCurrentClientId()){
+		 url+="?client_id="+getCurrentClientId();
+	}
+		fetchData(url).then(data => {
+		    if(data!=undefined && data['money_sites']){
+		    	var options = '';
+				for (var item of data['money_sites']) {
+					var current_client = getCurrentClientId();
+					var option = '<option value=":val" :params>:name</option>';
+					if (current_client != null) {
+						if (item.client.id == current_client) {
+							options += option.replace(':val', item.id).replace(':name', item.name).replace(':params', 'selected="selected"');
+						}
+					} else {
+						options += option.replace(':val', item.id).replace(':name', item.name);
+					}
+
+				}
+				var money_sites = document.querySelector("select#money_sites");
+				money_sites.innerHTML = options;
+		    }
+		    if(data!=undefined && data['client_list'])
+
 				var options = '<option value="all">All</option>';
-				for (var item of data) {
+				for (var item of data['client_list']) {
 					var option = '<option value=":val">:name</option>';
 					options += option.replace(':val', item.id).replace(':name', item.name);
 				}
@@ -104,83 +160,34 @@ $(document).ready(function() {
 				console.error('Error fetching data:', error);
 			});
 	}
-	function fetchMoneySites()
-	{
-		fetchData(MONEY_SITES_URL).then(data => {
-				var options = '';
-				for (var item of data) {
-					var current_client = getCurrentClientId();
-					var option = '<option value=":val" :params>:name</option>';
-					if (current_client != null) {
-						if (item.client.id == current_client) {
-							options += option.replace(':val', item.id).replace(':name', item.site_url).replace(':params', 'selected="selected"');
-						}
-					} else {
-						options += option.replace(':val', item.id).replace(':name', item.site_url);
-					}
-
-				}
-				var money_sites = document.querySelector("select#money_sites");
-				money_sites.innerHTML = options;
-			})
-			.catch(error => {
-				console.error('Error fetching data:', error);
-			});
-	}
 
 	function fetchChart() {
         var url=`${MAIN_CHART_URL}?up&`;
         url+=add_client_id_in_query();
-	    var start_date=$('#start-date').val();
-	    var end_date=$('#end-date').val();
-	    if(start_date){
-	        url+=`&start_date=${start_date.toString()}`;
-	    }
-	    if(end_date){
-           url+=`&end_date=${end_date.toString()}`;
-	    }
-
-
-		fetchData(url).then(data => {
-				const publicationsData = prepareData(data);
-				var datasets = [];
-				var labels = [];
-				var dateList = [];
-				for (var key in publicationsData) {
-					var el = publicationsData[key];
-					if (getCurrentClientId() == null) {
-						dateList.push(...el.labels);
-						datasets.push({
-							label: el.label,
-							data: el.data,
-							borderColor: getRandomColor(),
-							fill: false
-						});
-						labels = el.labels;
-					} else {
-						if (getCurrentClientId() == el.client_id) {
-							dateList.push(...el.labels);
-							datasets.push({
-								label: el.label,
-								data: el.data,
-								borderColor: getRandomColor(),
-								fill: false
-							});
-							labels = el.labels;
-						}
-					}
-				}
-				dateList = dateList.sort();
-				var minDate = new Date(dateList[0]);
-				var minDateString = minDate.toISOString().split('T')[0];
-				var maxDate = new Date(dateList[dateList.length - 1]);
-				var maxDateString = maxDate.toISOString().split('T')[0];
-
-				$('#start-date').attr('min', minDateString);
-				$('#start-date').attr('max', maxDateString);
-				$('#end-date').attr('min', minDateString);
-				$('#end-date').attr('max', maxDateString);
-				// Create the chart
+	 	fetchData(url).then(data => {
+		   const datasets = {};
+          // Group data by label
+          data.forEach(item => {
+            const label = item.label;
+            if (!datasets[label]) {
+              datasets[label] = {
+                label: label,
+                data: [],
+                borderColor: getRandomColor(),
+                backgroundColor: 'rgba(0, 0, 0, 0)',
+              };
+            }
+            item['x'] = getRusDate(item['x']);
+            console.log(item);
+            datasets[label].data.push({
+              x: item.x,
+              y: item.y
+            });
+          });
+          const chartData = {
+            labels: Array.from(new Set(data.map(item => item.x))),
+            datasets: Object.values(datasets),
+          };
 				const ctx = document.getElementById('publicationChart').getContext('2d');
 				const existingChart = Chart.getChart(ctx);
 				if (existingChart) {
@@ -188,10 +195,7 @@ $(document).ready(function() {
 				}
 				var chart = new Chart(ctx, {
 					type: 'line',
-					data: {
-						labels: labels,
-						datasets: datasets
-					},
+					data: chartData,
 					options: {
 						responsive: true,
 						title: {
@@ -219,24 +223,21 @@ $(document).ready(function() {
 				console.error('Error fetching data:', error);
 			});
 	}
-	//////// fetch client list
-	fetchClients();
-	fetchMoneySites();
+	fetchFilters();
 	fetchChart();
 	fillTablePbnAndPublications();
 	fillTableLinksToMoneySites();
 	fillTableAnchorCounter();
+	fillSummary();
 	// Get the select element by its ID
 	var select_clients = $("select#clients");
 	select_clients.change(function() {
-
-		if (has_value_changed('current_client', $(this).val())) {
-	    		fetchMoneySites(DEFAULT_PAGE_NUM,DEFAULT_PER_PAGE_COUNT);
+        	fetchFilters();
+        	fillSummary();
 				fetchChart(DEFAULT_PAGE_NUM,DEFAULT_PER_PAGE_COUNT);
             	fillTablePbnAndPublications(DEFAULT_PAGE_NUM,DEFAULT_PER_PAGE_COUNT);
 	            fillTableLinksToMoneySites(DEFAULT_PAGE_NUM,DEFAULT_PER_PAGE_COUNT);
 	            fillTableAnchorCounter(DEFAULT_PAGE_NUM,DEFAULT_PER_PAGE_COUNT);
-		}
 	});
 	var select_money_sites = $("select#money_sites");
 	select_money_sites.change(function() {
@@ -323,16 +324,15 @@ function fetchData(url) {
 function prepareData(data) {
 	var output = {};
 	for (var el of data) {
-		if (output[el.client_name] == undefined) {
-			output[el.client_name] = {
-				data: [el.publication_count],
-				labels: [el.publication_date]
+		if (output[el.label] == undefined) {
+			output[el.label] = {
+				data: [el.y],
+				labels: [el.x]
 			};
-			output[el.client_name]['label'] = el.client_name;
-			output[el.client_name]['client_id'] = el.client_id;
+			output[el.label]['label'] = el.label;
 		} else {
-			output[el.client_name]['data'].push(el.publication_count);
-			output[el.client_name]['labels'].push(el.publication_date);
+			output[el.label]['data'].push(el.y);
+			output[el.label]['labels'].push(el.x);
 		}
 
 	}
