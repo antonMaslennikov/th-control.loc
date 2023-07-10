@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-
+from .queries import get_count_new_domains, get_count_new_publications, get_count_publications, get_chart_data, \
+    get_money_sites_lists, \
+    get_client_list, get_domain_pbn_and_publications, get_links_to_money_sites, get_anchor_lists
 import services.Service
-from .service import get_domain_and_pbn_publications, get_publications_by_client, filter_objects, \
-    get_links_to_money_sites, get_count_anchor_by_url
+
 from django.http import JsonResponse
 from django.views import View
 from .models import (
@@ -154,31 +155,52 @@ class PbnArticlesAPIView(View):
         return JsonResponse(data, safe=False)
 
 
-class FilterAPIView(View):
-    def get(self, request, model_name):
-        model_mapping = {
-            'clients': Clients,
-            'servers': Servers,
-            'links_all_domains': LinksAllDomains,
-            'links_all_urls': LinksAllUrls,
-            'links_check_donor_acceptor': LinksCheckDonorAcceptor,
-            'pbn_sites': PbnSites,
-            'relation_pbn_sites_links_all_domains': RelationPbnSitesLinksAllDomains,
-            'money_sites': MoneySites,
-            'pbn_articles': PbnArticles,
-        }
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+# ---
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
-        filters = request.GET.dict()
-        if model_name in model_mapping:
-            model = model_mapping[model_name]
-            data = filter_objects(model, filters)
-        else:
-            data = []
+
+class SummaryAPIView(View):
+    def get(self, request):
+        client_id = request.GET.get('client_id', None)
+        money_sites_id = request.GET.get('money_sites_id', None)
+        start_date = request.GET.get('start_date', None)
+        end_date = request.GET.get('end_date', None)
+        data = {}
+        data['count_new_domains'] = get_count_new_domains(client_id=client_id, money_sites=money_sites_id,
+                                                          start_date=start_date,
+                                                          end_date=end_date)
+
+        data['count_publications'] = get_count_publications(client_id=client_id, money_sites=money_sites_id)
+
+        data['count_new_publications'] = get_count_new_publications(client_id=client_id, money_sites=money_sites_id,
+                                                                    start_date=start_date,
+                                                                    end_date=end_date)
 
         return JsonResponse(data, safe=False)
 
 
-class DomainAndPublicationAPIView(View):
+class ChartDataAPIView(View):
+    def get(self, request):
+        client_id = request.GET.get('client_id', None)
+        money_sites_id = request.GET.get('money_sites_id', None)
+        data = get_chart_data(client_id, money_sites_id)
+        return JsonResponse(data, safe=False)
+
+
+class FiltersAPIView(View):
+    def get(self, request):
+        client_id = request.GET.get('client_id', None)
+        money_sites_id = request.GET.get('money_sites_id', None)
+        start_date = request.GET.get('start_date', None)
+        end_date = request.GET.get('end_date', None)
+        data = {'client_list': get_client_list(), 'money_sites': get_money_sites_lists(client_id)}
+        return JsonResponse(data, safe=False)
+
+
+class TableDomainAndPublicationsAPIView(View):
     def get(self, request):
         if request.method == 'GET':
             try:
@@ -186,7 +208,8 @@ class DomainAndPublicationAPIView(View):
                 items_per_page = request.GET.get('per_page', 5)
                 client_id = request.GET.get('client_id', None)
                 money_sites = request.GET.get('money_sites', None)
-                page = get_domain_and_pbn_publications(page_number, items_per_page, client_id, money_sites)
+                page = get_domain_pbn_and_publications(client_id=client_id, current_page=page_number,
+                                                       items_per_page=items_per_page, money_sites=money_sites)
                 links = []
                 for link in page.object_list:
                     link_dict = {
@@ -211,49 +234,62 @@ class DomainAndPublicationAPIView(View):
                 return JsonResponse({'status': 'error'})
 
 
-class LinksToMoneySitesAPIView(View):
+class TableLinksToMoneySitesAPIView(View):
     def get(self, request):
-        page_number = request.GET.get('page', 1)
-        items_per_page = request.GET.get('per_page', 10)
-        client_id = request.GET.get('client_id', None)
-        money_sites = request.GET.get('money_sites', None)
-        page = get_links_to_money_sites(page_number, items_per_page, client_id, money_sites)
-        links = []
-        for link in page.object_list:
-            link_dict = {
-                'link_id': link[0],
-                'donor_url': link[1],
-                'acceptor_url': link[2],
-                'anchor': link[3],
-            }
-            links.append(link_dict)
-        response = {
-            'links': links,
-            'page_number': page_number,
-            'total_pages': page.paginator.num_pages,
-            'has_previous': page.has_previous(),
-            'has_next': page.has_next(),
-        }
+        if request.method == 'GET':
+            try:
+                page_number = request.GET.get('page', 1)
+                items_per_page = request.GET.get('per_page', 10)
+                client_id = request.GET.get('client_id', None)
+                money_sites = request.GET.get('money_sites', None)
+                page = get_links_to_money_sites(current_page=page_number, items_per_page=items_per_page,
+                                                client_id=client_id, money_sites=money_sites)
+                links = []
+                for link in page.object_list:
+                    link_dict = {
+                        'url_from_donor': link[0],
+                        'anchor_value': link[1],
+                        'url_to_acceptor': link[2]
+                    }
+                    links.append(link_dict)
+                response = {
+                    'links': links,
+                    'page_number': page_number,
+                    'total_pages': page.paginator.num_pages,
+                    'has_previous': page.has_previous(),
+                    'has_next': page.has_next(),
+                }
+                return JsonResponse(response, safe=False)
+                # Return the data as JSON response
+            except Exception:
+                return JsonResponse({'status': 'error'})
 
-        return JsonResponse(response)
 
-
-class AnchorCounterByUrlAPIView(View):
+class TableAnchorsAPIView(View):
     def get(self, request):
         if request.method == 'GET':
             try:
                 page_number = request.GET.get('page', 1)
                 items_per_page = request.GET.get('per_page', 5)
+                stage = int(request.GET.get('stage', 1))
                 client_id = request.GET.get('client_id', None)
                 money_sites = request.GET.get('money_sites', None)
-                page = get_count_anchor_by_url(page_number, items_per_page, client_id, money_sites)
+                print(client_id)
+                page = get_anchor_lists(current_page=page_number, items_per_page=items_per_page, stage=stage,
+                                        client_id=client_id, money_sites=money_sites)
                 links = []
                 for link in page.object_list:
-                    link_dict = {
-                        'anchor_value': link[0],
-                        'accepted_domain': link[1],
-                        'url_count': link[2]
-                    }
+                    if stage == 0:
+                        link_dict = {
+                            'anchor_value': link[0],
+                            'url_count': link[1]
+                        }
+                    else:
+                        link_dict = {
+                            'anchor_value': link[0],
+                            'accepted_domain': link[1],
+                            'url_count': link[2]
+                        }
                     links.append(link_dict)
                 response = {
                     'links': links,
@@ -266,13 +302,3 @@ class AnchorCounterByUrlAPIView(View):
                 # Return the data as JSON response
             except Exception:
                 return JsonResponse({'status': 'error'})
-
-
-@csrf_exempt
-def get_publications_chart(request):
-    if request.method == 'GET':
-        client_id = request.GET.get('client_id', None)
-        start_date = request.GET.get('start_date', None)
-        end_date = request.GET.get('end_date', None)
-        data = get_publications_by_client(client_id, start_date, end_date)
-        return JsonResponse(data, safe=False)

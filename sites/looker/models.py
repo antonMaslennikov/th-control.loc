@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 
+
 class LookerBaseModel(models.Model):
     class Meta:
         abstract = True
@@ -235,3 +236,17 @@ class ClientsPbnSitesAndArticlesNew(models.Model):
         managed = False  # Created from a view. Don't remove.
         db_table = 'clients_pbn_sites_and_articles_new'
         db_table_comment = 'VIEW'
+
+
+class PbnPlans(models.Model):
+    id = models.IntegerField(primary_key=True)
+    client_id = models.IntegerField(blank=True, null=True)
+    client_name = models.CharField(max_length=255)
+    money_site_id = models.IntegerField(blank=True, null=True)
+    money_site_name = models.CharField(max_length=255)
+    pbn_sites = models.IntegerField()
+    links = models.IntegerField()
+    deadline = models.DateField()
+
+    class Meta:
+        db_table = 'pbn_plans'

@@ -43,24 +43,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     </style>
 </head>
 
@@ -95,6 +77,33 @@
             </div>
         </div>
     </div>
+    <div class="row p-5">
+        <div class="col">
+            <div class="card" style="width: 15rem;">
+                <div class="card-body">
+                    <h5 class="card-title  text-muted text-center">Новых PBN-доменов</h5>
+                    <h6 class="card-subtitle mb-2 text-center" id="count_new_domains"><strong>0</strong></h6>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card" style="width: 15rem;">
+                <div class="card-body">
+                    <h5 class="card-title text-muted text-center">Публикаций</h5>
+                    <h6 class="card-subtitle mb-2 text-center" id="count_publications"><strong>0</strong></h6>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card" style="width: 15rem;">
+                <div class="card-body">
+                    <h5 class="card-title text-muted text-center">Новых публикаций</h5>
+                    <h6 class="card-subtitle mb-2 text-center" id="count_new_publications"><strong>0</strong></h6>
+                </div>
+            </div>
+        </div>
+
+    </div>
     <div class="row">
         <div class="col">
             <h2 class="text-center">Клиенты и публикации</h2>
@@ -127,13 +136,13 @@
     <div class="row">
         <div class="col">
             <h2 class="text-center">Ссылки на money-site</h2>
-            <table id="table_links_to_money_sites" class="table table-bordered table-striped table-hover table-responsive">
+            <table id="table_links_to_money_sites"
+                   class="table table-bordered table-striped table-hover table-overflow ">
                 <thead>
                 <tr>
-                    <th>#</th>
                     <th>Ссылка-донор</th>
-                    <th>Ссылка на money-site</th>
                     <th>Акнкор</th>
+                    <th>Ссылка на money-site</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -152,7 +161,7 @@
                 <thead>
                 <tr>
                     <th>Акнкор</th>
-                    <th>Domain Acceptor</th>
+                    <th>Домен</th>
                     <th>Количество ссылок с анкор</th>
                 </tr>
                 </thead>
@@ -167,6 +176,6 @@
     </div>
 </div>
 {% else %}
-    <a href="/">авторизуйтесь</a>
+<a href="/">авторизуйтесь</a>
 {% endif %}
 </html>

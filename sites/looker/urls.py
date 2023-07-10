@@ -2,8 +2,9 @@ from django.urls import path
 from .views import (
     LinksAllDomainsAPIView, LinksAllUrlsAPIView, LinksCheckDonorAcceptorAPIView,
     PbnSitesAPIView, RelationPbnSitesLinksAllDomainsAPIView, MoneySitesAPIView, ClientsAPIView, ServersAPIView,
-    PbnArticlesAPIView, get_publications_chart, FilterAPIView, index,
-    DomainAndPublicationAPIView, LinksToMoneySitesAPIView, AnchorCounterByUrlAPIView
+    PbnArticlesAPIView, FiltersAPIView, index, TableDomainAndPublicationsAPIView,
+    TableLinksToMoneySitesAPIView, TableAnchorsAPIView,
+    SummaryAPIView, ChartDataAPIView
 )
 
 app_name = 'looker'
@@ -35,10 +36,17 @@ urlpatterns = [
     path('api/money-site/<int:money_site_id>/', MoneySitesAPIView.as_view(), name='money_sites_detail_api'),
     path('api/pbn-articles/', PbnArticlesAPIView.as_view(), name='pbn_articles_api'),
     path('api/pbn-article/<int:article_id>/', PbnArticlesAPIView.as_view(), name='pbn_articles_detail_api'),
-    path('api/get-publications-chart', get_publications_chart),
-    path('api/domain-pbn-and-publications', DomainAndPublicationAPIView.as_view(), name='domain_and_publications'),
-    path('api/links-to-money-sites', LinksToMoneySitesAPIView.as_view(), name='links_to_money_sites'),
-    path('api/anchor-counter', AnchorCounterByUrlAPIView.as_view(), name='links_to_money_sites'),
-    path('api/filter/<str:model_name>/', FilterAPIView.as_view(), name='filter_api'),
+    # ------
+    path('api/filters', FiltersAPIView.as_view(), name='filters_api'),
+    path('api/table/domain-pbn-and-publications', TableDomainAndPublicationsAPIView.as_view(),
+         name='pbn_and_publications'),
+
+    path('api/table/links-to-money-sites', TableLinksToMoneySitesAPIView.as_view(),
+         name='table_links_to_money_sites'),
+
+    path('api/table/anchors', TableAnchorsAPIView.as_view(),
+         name='table_anchors'),
+    path('api/summary', SummaryAPIView.as_view(), name='summary_api'),
+    path('api/chart-data', ChartDataAPIView.as_view(), name='chart_data_api'),
 
 ]
