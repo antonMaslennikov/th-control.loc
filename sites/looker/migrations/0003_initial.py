@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='PbnPlans',
             fields=[
-                ('id', models.IntegerField(primary_key=True, serialize=False)),
+                ('id', models.AutoField(primary_key=True, serialize=False)),
                 ('client_id', models.IntegerField(blank=True, null=True)),
                 ('client_name', models.CharField(max_length=255)),
                 ('money_site_id', models.IntegerField(blank=True, null=True)),

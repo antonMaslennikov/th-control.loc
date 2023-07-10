@@ -2,7 +2,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     operations = [
         migrations.RunSQL(
             """
@@ -10,7 +9,7 @@ class Migration(migrations.Migration):
             SELECT ps.id as id_site, ps.site_url, ps.date_create as site_create, 
             ps.id_server, s.server_name, c.id as id_client, c.client_name as pbn_owner,
             tbl.id_pbn_site, tbl.date_create, tbl.date_modified,
-            tbl.article_url, tbl.article_name, lad.domain_name as acceptor_domain
+            tbl.article_url, tbl.article_name, lad.domain_name as acceptor_domain, lad.id as acceptor_domain_id
             FROM pbn_sites ps 
             LEFT JOIN servers s ON ps.id_server = s.id 
             LEFT JOIN clients c ON c.id = s.client_id 
@@ -31,7 +30,7 @@ class Migration(migrations.Migration):
             CREATE or replace  VIEW urls_check_new AS
             SELECT lcda.id_url_from_donor, lau.url as url_from_donor, lad.domain_name as donor_domain, 
 		lau.date_add as donor_date_add, 
-		lcda.id_url_to_acceptor, lau2.url as url_to_acceptor, lad2.domain_name as acceptor_domain, 
+		lcda.id_url_to_acceptor, lau2.url as url_to_acceptor, lad2.domain_name as acceptor_domain, lad2.id as acceptor_domain_id,
 		cn.client_name as client_name, c2.client_name as pbn_owner, s.client_id,
 		lau2.date_add as acceptor_date_add,
 		laa.anchor_value, laa.date_add as anchor_date_add, 
