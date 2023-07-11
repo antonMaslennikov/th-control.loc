@@ -165,19 +165,19 @@ class PbnArticlesAPIView(View):
 class SummaryAPIView(View):
     def get(self, request):
         client_id = request.GET.get('client_id', None)
-        money_sites_id = request.GET.get('money_sites_id', None)
+        money_sites_id = request.GET.get('money_sites', None)
         start_date = request.GET.get('start_date', None)
         end_date = request.GET.get('end_date', None)
         data = {}
         data['count_new_domains'] = get_count_new_domains(client_id=client_id, money_sites=money_sites_id,
-                                                          start_date=start_date,
-                                                          end_date=end_date)
+                                                          date_start=start_date,
+                                                          date_end=end_date)
 
         data['count_publications'] = get_count_publications(client_id=client_id, money_sites=money_sites_id)
 
         data['count_new_publications'] = get_count_new_publications(client_id=client_id, money_sites=money_sites_id,
-                                                                    start_date=start_date,
-                                                                    end_date=end_date)
+                                                                    date_start=start_date,
+                                                                    date_end=end_date)
 
         return JsonResponse(data, safe=False)
 
@@ -185,18 +185,21 @@ class SummaryAPIView(View):
 class ChartDataAPIView(View):
     def get(self, request):
         client_id = request.GET.get('client_id', None)
-        money_sites_id = request.GET.get('money_sites_id', None)
-        data = get_chart_data(client_id, money_sites_id)
+        money_sites = request.GET.get('money_sites', None)
+        data = get_chart_data(client_id, money_sites)
         return JsonResponse(data, safe=False)
 
 
-class FiltersAPIView(View):
+class FiltersClientListAPIView(View):
+    def get(self, request):
+        data = get_client_list()
+        return JsonResponse(data, safe=False)
+
+
+class FiltersMoneySitesAPIView(View):
     def get(self, request):
         client_id = request.GET.get('client_id', None)
-        money_sites_id = request.GET.get('money_sites_id', None)
-        start_date = request.GET.get('start_date', None)
-        end_date = request.GET.get('end_date', None)
-        data = {'client_list': get_client_list(), 'money_sites': get_money_sites_lists(client_id)}
+        data = get_money_sites_lists(client_id)
         return JsonResponse(data, safe=False)
 
 
@@ -270,11 +273,11 @@ class TableAnchorsAPIView(View):
         if request.method == 'GET':
             try:
                 page_number = request.GET.get('page', 1)
-                items_per_page = request.GET.get('per_page', 5)
+                items_per_page = request.GET.get('per_page', 10)
                 stage = int(request.GET.get('stage', 1))
                 client_id = request.GET.get('client_id', None)
                 money_sites = request.GET.get('money_sites', None)
-                print(client_id)
+                print(money_sites)
                 page = get_anchor_lists(current_page=page_number, items_per_page=items_per_page, stage=stage,
                                         client_id=client_id, money_sites=money_sites)
                 links = []

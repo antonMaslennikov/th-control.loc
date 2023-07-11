@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (
     LinksAllDomainsAPIView, LinksAllUrlsAPIView, LinksCheckDonorAcceptorAPIView,
     PbnSitesAPIView, RelationPbnSitesLinksAllDomainsAPIView, MoneySitesAPIView, ClientsAPIView, ServersAPIView,
-    PbnArticlesAPIView, FiltersAPIView, index, TableDomainAndPublicationsAPIView,
+    PbnArticlesAPIView, FiltersMoneySitesAPIView, FiltersClientListAPIView, index, TableDomainAndPublicationsAPIView,
     TableLinksToMoneySitesAPIView, TableAnchorsAPIView,
     SummaryAPIView, ChartDataAPIView
 )
@@ -37,7 +37,8 @@ urlpatterns = [
     path('api/pbn-articles/', PbnArticlesAPIView.as_view(), name='pbn_articles_api'),
     path('api/pbn-article/<int:article_id>/', PbnArticlesAPIView.as_view(), name='pbn_articles_detail_api'),
     # ------
-    path('api/filters', FiltersAPIView.as_view(), name='filters_api'),
+    path('api/filter/client-list', FiltersClientListAPIView.as_view(), name='filters_api_client_list'),
+    path('api/filter/money-sites-list', FiltersClientListAPIView.as_view(), name='filters_api_money_sites_list'),
     path('api/table/domain-pbn-and-publications', TableDomainAndPublicationsAPIView.as_view(),
          name='pbn_and_publications'),
 
