@@ -46,3 +46,10 @@ POST /job/result/<int:job_id>
 - 2 - Успешно завершён
 - 3 - Завершился ошибкой
 - 4 - Промежуточный результат
+
+
+## Для Лукера
+
+manage.py migrate looker --database looker_db
+
+manage.py сollectstatic
