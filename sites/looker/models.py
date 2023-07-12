@@ -214,7 +214,7 @@ class UrlsCheckNew(models.Model):
     class Meta:
         managed = False  # Created from a view. Don't remove.
         db_table = 'urls_check_new'
-        db_table_comment = 'VIEW'
+        # db_table_comment = 'VIEW'
 
 
 class ClientsPbnSitesAndArticlesNew(models.Model):
@@ -235,7 +235,7 @@ class ClientsPbnSitesAndArticlesNew(models.Model):
     class Meta:
         managed = False  # Created from a view. Don't remove.
         db_table = 'clients_pbn_sites_and_articles_new'
-        db_table_comment = 'VIEW'
+        # db_table_comment = 'VIEW'
 
 
 class PbnPlans(models.Model):
