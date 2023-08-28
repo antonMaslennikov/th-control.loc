@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'pages',
     'project',
-    'sites.looker',
+    'lookerstudio',
     'accounts.apps.AccountsConfig',
 ]
 
@@ -74,6 +74,9 @@ WSGI_APPLICATION = 'thcontrol.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+
+LOOKER_DB_KEY = 'looker_db'
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -83,15 +86,16 @@ DATABASES = {
         'HOST': '127.0.0.1',
         'PORT': '3306',
     },
-    'looker_db': {'ENGINE': 'django.db.backends.mysql',
-                  'NAME': 'analitics',
-                  'USER': 'root',
-                  'PASSWORD': 'root',
-                  'HOST': '127.0.0.1',
-                  'PORT': '3306',
-                  }
+    LOOKER_DB_KEY: {'ENGINE': 'django.db.backends.mysql',
+                    'NAME': 'analitics',
+                    'USER': 'root',
+                    'PASSWORD': 'root',
+                    'HOST': '127.0.0.1',
+                    'PORT': '3306',
+                    }
 
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
