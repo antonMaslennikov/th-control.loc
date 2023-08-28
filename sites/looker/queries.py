@@ -66,7 +66,7 @@ def generate_where_clause(client_id=None, money_sites=None, date_start=None, dat
 
 # for filters
 def get_client_list():
-    sql_query = 'SELECT client_id as id , pbn_owner as name FROM clients_pbn_sites_and_articles_new GROUP BY client_id'
+    sql_query = 'SELECT pbn_owner as id, pbn_owner as name FROM clients_pbn_sites_and_articles_new GROUP BY pbn_owner'
     return execute_select_query(sql_query, None)
 
 
@@ -108,7 +108,7 @@ def get_count_new_domains(client_id=None, money_sites=None, date_start=None, dat
 
 
 def get_count_publications(client_id=None, money_sites=None):
-    sql_query = 'SELECT DISTINCT COUNT(article_url) as count FROM clients_pbn_sites_and_articles_new :where'
+    sql_query = 'SELECT COUNT(distinct id_article) as count FROM clients_pbn_sites_and_articles_new :where'
     where_clause, where_params = generate_where_clause(client_id=client_id, money_sites=money_sites)
     if where_clause:
         sql_query = sql_query.replace(':where', ' where ' + where_clause)
@@ -118,7 +118,7 @@ def get_count_publications(client_id=None, money_sites=None):
 
 
 def get_count_new_publications(client_id=None, money_sites=None, date_start=None, date_end=None):
-    sql_query = 'SELECT DISTINCT COUNT(article_url) as count FROM clients_pbn_sites_and_articles_new :where'
+    sql_query = 'SELECT COUNT(distinct id_article) as count FROM clients_pbn_sites_and_articles_new :where'
     where_clause, where_params = generate_where_clause(client_id=client_id, money_sites=money_sites,
                                                        date_start=date_start, date_end=date_end)
     if where_clause:
@@ -146,13 +146,14 @@ def get_count_pbn_domains(client_id=None, money_sites=None):
 # TABLE
 def get_domain_pbn_and_publications(client_id=None, money_sites=None, start_date=None, date_end=None, current_page=1,
                                     items_per_page=10):
-    sql_query = "SELECT pbn_owner, site_url, date(site_create) as site_create, COUNT(article_url) as count_article_url, MAX(date(date_create)) as date_created, DATEDIFF( CURRENT_DATE(), MAX(date_create)) as date_diff FROM clients_pbn_sites_and_articles_new :where GROUP BY pbn_owner, site_url, date(site_create)"
+    sql_query = "SELECT pbn_owner, site_url, date(site_create) as site_create, COUNT(id_article) as count_article_url, MAX(date(date_create)) as date_created, DATEDIFF( CURRENT_DATE(), MAX(date_create)) as date_diff FROM clients_pbn_sites_and_articles_new :where GROUP BY pbn_owner, site_url, date(site_create)"
     where_clause, where_params = generate_where_clause(client_id=client_id, money_sites=money_sites,
                                                        date_start=start_date, date_end=date_end)
     if where_clause:
         sql_query = sql_query.replace(':where', 'where ' + where_clause)
     else:
         sql_query = sql_query.replace(':where', '')
+
     return get_paginator(sql_query, where_params, current_page=current_page, items_per_page=items_per_page)
 
 

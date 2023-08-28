@@ -233,8 +233,8 @@ class TableDomainAndPublicationsAPIView(View):
                 }
                 return JsonResponse(response, safe=False)
                 # Return the data as JSON response
-            except Exception:
-                return JsonResponse({'status': 'error'})
+            except Exception as e:
+                return JsonResponse({'status': 'error', 'message': str(e)})
 
 
 class TableLinksToMoneySitesAPIView(View):
@@ -270,6 +270,7 @@ class TableLinksToMoneySitesAPIView(View):
 
 class TableAnchorsAPIView(View):
     def get(self, request):
+
         if request.method == 'GET':
             try:
                 page_number = request.GET.get('page', 1)
@@ -277,7 +278,7 @@ class TableAnchorsAPIView(View):
                 stage = int(request.GET.get('stage', 1))
                 client_id = request.GET.get('client_id', None)
                 money_sites = request.GET.get('money_sites', None)
-                print(money_sites)
+
                 page = get_anchor_lists(current_page=page_number, items_per_page=items_per_page, stage=stage,
                                         client_id=client_id, money_sites=money_sites)
                 links = []

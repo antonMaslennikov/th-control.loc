@@ -24,4 +24,6 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('', include('project.urls')),
     path('looker-studio/', include('lookerstudio.urls')),
+    # старая версия, убрать после релиза
+    path('sites/', include('sites.urls')),
 ]
