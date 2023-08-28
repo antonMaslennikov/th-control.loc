@@ -23,5 +23,5 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/', include('accounts.urls')),
     path('', include('project.urls')),
-    path('sites/', include('sites.urls')),
+    path('looker-studio/', include('lookerstudio.urls')),
 ]

@@ -3,8 +3,8 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 import sys
 
-sys.path.append('../../../sites')
-from sites.looker.models import PbnPlans
+from lookerstudio.models import PbnPlans
+from thcontrol.settings import LOOKER_DB_KEY
 
 
 def fetch_spreadsheet_data():
@@ -37,9 +37,8 @@ def fetch_spreadsheet_data():
 
 
 def clear_and_save_data():
-    PbnPlans.objects.using("looker_db").all().delete()
+    PbnPlans.objects.using(LOOKER_DB_KEY).all().delete()
     spreadsheet_data = fetch_spreadsheet_data()
-    print(spreadsheet_data)
     for row_dict in spreadsheet_data:
         pbn_plan = PbnPlans(
             client=row_dict.get('client'),
