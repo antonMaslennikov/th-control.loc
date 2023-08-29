@@ -11,7 +11,7 @@ const DEFAULT_PAGE_NUM = 1;
 const DEFAULT_PER_PAGE_COUNT = 10;
 
 function get_summary_list() {
-    var url = add_client_id_in_query(SUMMARY_URL);
+    var url = add_clients_in_query(SUMMARY_URL);
     url = add_money_sites_in_query(url);
     url = add_date_in_query(url);
     fetch_data(url).then(data => {
@@ -37,34 +37,47 @@ function get_rus_date_format(dt) {
     });
 }
 
+function add_clients_in_query(main_url) {
+    main_url = prepare_url(main_url);
+
+    var clients_query = '';
+    var clients = [];
+
+    $('#filter-client-list input[type="checkbox"]:checked').each((i, item) => {
+        clients.push($(item).val());
+    });
+
+    if (clients.length > 0) {
+        clients_query = "clients=" + clients.join(',');
+    }
+
+    return main_url + clients_query;
+}
+
 function add_money_sites_in_query(main_url) {
     main_url = prepare_url(main_url);
+
+    var money_sites_query = '';
+    var money_sites = [];
+
     var money_sites_query = "money_sites=";
-    if (false) {
-        money_sites_query += money_sites.join(',');
+
+    $('#filter-money-sites-list input[type="checkbox"]:checked').each((i, item) => {
+        money_sites.push($(item).val());
+    });
+
+    if (money_sites.length > 0) {
+        money_sites_query = "money_sites=" + money_sites.join(',');
     }
+
     return main_url + money_sites_query;
-}
-
-function get_client_id() {
-    var client_id = parseInt($("#clients").val());
-    return isNaN(client_id) ? null : client_id > 0 ? client_id : null;
-}
-
-function add_client_id_in_query(main_url) {
-    main_url = prepare_url(main_url);
-    var client_id = get_client_id();
-    if (client_id && client_id !== 'all') {
-        return main_url + `client_id=${client_id}`;
-    }
-    return main_url;
 }
 
 function add_date_in_query(main_url) {
     main_url = prepare_url(main_url);
     var query = '';
-    var start_date = $('#start-date').val();
-    var end_date = $('#end-date').val();
+    var start_date = $('#datepicker').data('range-from');
+    var end_date = $('#datepicker').data('range-to');
     if (start_date) {
         query += 'start_date=' + start_date;
     }
@@ -149,6 +162,8 @@ class Dropdown {
 
     fetchOptions() {
 
+        this.optionsURL = add_clients_in_query(this.optionsURL);
+
         fetch(this.optionsURL)
             .then((response) => response.json())
             .then((data) => {
@@ -163,6 +178,7 @@ class Dropdown {
               </li>
             `).join('');
 
+                $(`#${this.containerID} li:gt(0)`).remove();
                 $(`#${this.containerID}`).append(optionsHTML);
 
                 this.initDropdown();
@@ -174,6 +190,7 @@ class Dropdown {
     initDropdown() {
 
         var container_id = '#' + this.containerID;
+
         $(`.dropdown-trigger[data-target="${this.containerID}"]`).dropdown({
             closeOnClick: false,
             coverTrigger: false,
@@ -202,6 +219,17 @@ class Dropdown {
             $(container_id).parent().find('.selected-options').html(
                 '<p>Selected options: ' + selectedOptions.join(', ') + '</p>'
             );
+
+            if (container_id == '#filter-client-list') {
+                var dropdown = new Dropdown('filter-money-sites-list', FILTER_GET_MONEY_SITES_LIST_URL);
+                dropdown.fetchOptions();
+            }
+
+            get_summary_list();
+            get_data_for_chart();
+            get_data_for_anchors_table();
+            get_data_for_table_pbn_and_publications();
+            get_date_for_links_to_money_sites_table();
         });
     }
 
@@ -236,7 +264,7 @@ function fetch_data(url) {
 
 
 function get_data_for_chart() {
-    var url = add_client_id_in_query(MAIN_CHART_URL);
+    var url = add_clients_in_query(MAIN_CHART_URL);
     url = add_money_sites_in_query(url);
     fetch_data(url).then(data => {
         const datasets = {};
@@ -286,7 +314,7 @@ function get_data_for_chart() {
 
 function get_data_for_table_pbn_and_publications(pageNumber = DEFAULT_PAGE_NUM, perPage = DEFAULT_PER_PAGE_COUNT) {
     var url = `${DOMAIN_PBN_AND_PUBLICATIONS_URL}?page=${pageNumber}&per_page=${perPage}&`;
-    url = add_client_id_in_query(url);
+    url = add_clients_in_query(url);
     url = add_money_sites_in_query(url);
     url = add_date_in_query(url);
     fetch_data(url).then(data => {
@@ -309,7 +337,7 @@ function get_data_for_table_pbn_and_publications(pageNumber = DEFAULT_PAGE_NUM, 
 
 function get_date_for_links_to_money_sites_table(pageNumber = DEFAULT_PAGE_NUM, perPage = DEFAULT_PER_PAGE_COUNT) {
     var url = `${LINKS_TO_MONEY_SITES_URL}?page=${pageNumber}&per_page=${perPage}&`;
-    url = add_client_id_in_query(url);
+    url = add_clients_in_query(url);
     url = add_money_sites_in_query(url);
     url = add_date_in_query(url);
     fetch_data(url).then(data => {
@@ -334,7 +362,7 @@ function get_date_for_links_to_money_sites_table(pageNumber = DEFAULT_PAGE_NUM, 
 
 function get_data_for_anchors_table(pageNumber = DEFAULT_PAGE_NUM, perPage = DEFAULT_PER_PAGE_COUNT) {
     var url = `${LINKS_ANCHOR_COUNTER_URL}?page=${pageNumber}&per_page=${perPage}&`;
-    url = add_client_id_in_query(url);
+    url = add_clients_in_query(url);
     url = add_money_sites_in_query(url);
     url = add_date_in_query(url);
 
@@ -375,13 +403,47 @@ $(document).ready(function () {
     // Initialize the dropdown
     var dropdown = new Dropdown('filter-client-list', FILTER_GET_CLIENT_LIST_URL);
     dropdown.fetchOptions();
-    console.log(dropdown.getSelectedOptions());
+//    console.log(dropdown.getSelectedOptions());
 
     var dropdown2 = new Dropdown('filter-money-sites-list', FILTER_GET_MONEY_SITES_LIST_URL);
     dropdown2.fetchOptions();
-    console.log(dropdown2.getSelectedOptions());
-    get_data_for_chart();
+//    console.log(dropdown2.getSelectedOptions());
 
+    duDatepicker('#datepicker', {
+        format: 'mmmm d, yyyy',
+        outFormat: 'yyyy-mm-dd',
+        range: true,
+        clearBtn: true,
+        cancelBtn: true,
+        events: {
+            dateChanged: function (data) {
+                get_data_for_chart();
+                get_summary_list();
+                get_data_for_anchors_table();
+                get_data_for_table_pbn_and_publications();
+                get_date_for_links_to_money_sites_table();
+            },
+            onRangeFormat: function (from, to) {
+
+                var fromFormat = 'mmmm d, yyyy', toFormat = 'mmmm d, yyyy';
+
+                if (from.getMonth() === to.getMonth() && from.getFullYear() === to.getFullYear()) {
+                    fromFormat = 'mmmm d'
+                    toFormat = 'd, yyyy'
+                } else if (from.getFullYear() === to.getFullYear()) {
+                    fromFormat = 'mmmm d'
+                    toFormat = 'mmmm d, yyyy'
+                }
+
+                return from.getTime() === to.getTime() ?
+                    this.formatDate(from, 'mmmm d, yyyy') :
+                    [this.formatDate(from, fromFormat), this.formatDate(to, toFormat)].join('-');
+            }
+        }
+    });
+
+
+    get_data_for_chart();
     get_summary_list();
     get_data_for_anchors_table();
     get_data_for_table_pbn_and_publications();

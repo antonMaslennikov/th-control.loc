@@ -50,7 +50,7 @@ def generate_where_clause(client_id=None, money_sites=None, date_start=None, dat
 
     if money_sites:
         where_params.append(money_sites)
-        where_clause.append(f"acceptor_domain_id IN (%s)")
+        where_clause.append(f"acceptor_domain IN (%s)")
 
     if date_start:
         where_params.append(date_start)

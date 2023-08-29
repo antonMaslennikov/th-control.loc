@@ -167,44 +167,5 @@
     </div>
 </div>
 
-<script>
-    window.onload = function () {
-        document.querySelector('#datepicker').addEventListener('datechanged', function (e) {
-<!--            console.log('New date1', e.data, this.value)-->
-        })
-
-        duDatepicker('#datepicker', {
-            format: 'mmmm d, yyyy',
-            outFormat: 'yyyy-mm-dd',
-            range: true,
-            clearBtn: true,
-            cancelBtn: true,
-            events: {
-                dateChanged: function (data) {
-<!--                    console.log('From: ' + data.dateFrom + '\nTo: ' + data.dateTo)-->
-                },
-                onRangeFormat: function (from, to) {
-
-                    var fromFormat = 'mmmm d, yyyy', toFormat = 'mmmm d, yyyy';
-
-                    if (from.getMonth() === to.getMonth() && from.getFullYear() === to.getFullYear()) {
-                        fromFormat = 'mmmm d'
-                        toFormat = 'd, yyyy'
-                    } else if (from.getFullYear() === to.getFullYear()) {
-                        fromFormat = 'mmmm d'
-                        toFormat = 'mmmm d, yyyy'
-                    }
-
-                    return from.getTime() === to.getTime() ?
-                        this.formatDate(from, 'mmmm d, yyyy') :
-                        [this.formatDate(from, fromFormat), this.formatDate(to, toFormat)].join('-');
-                }
-            }
-        })
-    };
-
-</script>
-
 </body>
-
 </html>

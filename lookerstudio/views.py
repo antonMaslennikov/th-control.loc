@@ -31,7 +31,9 @@ def get_deadline_data(request):
 def get_summary(request):
     clients = request.GET.get('clients', None)
     money_sites = request.GET.get('money_sites', None)
-    data = {'new_domains': query_get_new_domains(clients, money_sites),
+    start_date = request.GET.get('start_date', None)
+    end_date = request.GET.get('end_date', None)
+    data = {'new_domains': query_get_new_domains(clients, money_sites, start_date, end_date),
             'publications': query_get_new_publications(clients, money_sites),
             'pbn_domains': query_get_new_pbn_domains(clients, money_sites),
             'money_sites': query_get_links_to_money_sites(clients, money_sites)}

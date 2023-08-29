@@ -62,9 +62,11 @@ def query_get_deadline_data(clients=None, money_sites=None):
 
 def query_get_new_domains(clients=None, money_sites=None, date_start=None, date_end=None):
     sql_query = 'select   count( distinct id_site) as new_domains from clients_pbn_sites_and_articles_new '
-    where_clause, where_params = generate_where_clause(clients, money_sites)
+
+    where_clause, where_params = generate_where_clause(clients=clients, money_sites=money_sites, date_create_start=date_start, date_create_end=date_end)
     if where_clause is not None:
         sql_query += ' where ' + where_clause
+    # print(sql_query, where_params)
     return execute_select_query(sql_query, where_params, True)
 
 
@@ -73,23 +75,26 @@ def query_get_new_publications(clients=None, money_sites=None):
     where_clause, where_params = generate_where_clause(clients, money_sites)
     if where_clause is not None:
         sql_query += ' where ' + where_clause
-    return execute_select_query(sql_query, None, True)
+    # print(sql_query, where_params)
+    return execute_select_query(sql_query, where_params, True)
 
 
 def query_get_new_pbn_domains(clients=None, money_sites=None):
     sql_query = 'SELECT MAX(`count_site_url`) max_site_url,  SUM(pbn_sites) as sum_pbn_sites, floor(MAX(count_site_url)/SUM(pbn_sites)*100) as progress_bar FROM `plan_fact`'
-    where_clause, where_params = generate_where_clause(clients, money_sites)
+    where_clause, where_params = generate_where_clause(clients, None, money_sites)
     if where_clause is not None:
         sql_query += ' where ' + where_clause
-    return execute_select_query(sql_query, None, True)
+    # print(sql_query,where_params)
+    return execute_select_query(sql_query, where_params, True)
 
 
 def query_get_links_to_money_sites(clients=None, money_sites=None):
     sql_query = 'SELECT SUM(count_url_to_acceptor) as summ_url_to_acceptor, SUM(links) as summ_links ,SUM(links)/SUM(count_url_to_acceptor)*100 as progress FROM plan_fact'
-    where_clause, where_params = generate_where_clause(clients, money_sites)
+    where_clause, where_params = generate_where_clause(clients, None, money_sites)
     if where_clause is not None:
         sql_query += ' where ' + where_clause
-    return execute_select_query(sql_query, None, True)
+    # print(sql_query,where_params)
+    return execute_select_query(sql_query, where_params, True)
 
 
 def query_get_chart_data(clients=None, money_sites=None):
@@ -99,7 +104,7 @@ def query_get_chart_data(clients=None, money_sites=None):
         sql_query = sql_query.replace(':where', ' where ' + where_clause)
     else:
         sql_query = sql_query.replace(':where', '')
-    print(sql_query,where_params)
+    # print(sql_query,where_params)
     return execute_select_query(sql_query, where_params)
 
 
@@ -134,20 +139,30 @@ def query_anchor_links(clients=None, money_sites=None, query_type=1, current_pag
     return get_paginator(sql_query, where_params, current_page, items_per_page)
 
 
-def generate_where_clause(clients=None, money_sites=None, date_start=None, date_end=None):
+def generate_where_clause(clients=None, money_sites=None, acceptor_domains=None, date_start=None, date_end=None, date_create_start=None, date_create_end=None):
     where_params = []
     where_clause = []
 
-    if clients is not None:
+    print(date_start, date_end)
+
+    if clients is not None and len(clients) > 0:
         clients_array = clients.split(',')
         clients_placeholder = ','.join(['%s'] * len(clients_array))
         where_clause.append("pbn_owner IN (" + clients_placeholder + ')')
         where_params += clients_array
+
     if money_sites:
         money_sites_array = money_sites.split(',')
         clients_placeholder = ','.join(['%s'] * len(money_sites_array))
-        where_clause.append("acceptor_domain IN (" + clients_placeholder + ')')
+        where_clause.append("site_url IN (" + clients_placeholder + ')')
         where_params += money_sites_array
+
+    if acceptor_domains:
+        acceptor_domains_array = acceptor_domains.split(',')
+        clients_placeholder = ','.join(['%s'] * len(acceptor_domains_array))
+        where_clause.append("acceptor_domain IN (" + clients_placeholder + ')')
+        where_params += acceptor_domains_array
+
     if date_start:
         where_params.append(date_start)
         where_clause.append("check_date >= %s")
@@ -155,6 +170,14 @@ def generate_where_clause(clients=None, money_sites=None, date_start=None, date_
     if date_end:
         where_params.append(date_end)
         where_clause.append("check_date <= %s")
+
+    if date_create_start:
+        where_params.append(date_create_start)
+        where_clause.append("date_create >= %s")
+
+    if date_create_end:
+        where_params.append(date_create_end)
+        where_clause.append("date_create <= %s")
 
     if len(where_clause) > 0:
         where_clause = ' AND '.join(where_clause)
