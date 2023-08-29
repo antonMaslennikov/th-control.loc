@@ -26,7 +26,12 @@
 </head>
 
 <body>
+
+
+
 <div class="container">
+
+
     <div class="row">
         <div class="col s4">
             <label>Select options:</label>
@@ -35,8 +40,8 @@
                 <li class="search-wrap">
                     <div class="input-field">
                         <i class="material-icons prefix">search</i>
-                        <input type="search" class="search-box" autocomplete="off">
-                        <label for="search-box">Search</label>
+                        <input type="search" class="search-box" id="search-box1" autocomplete="off">
+                        <label for="search-box1">Search</label>
                     </div>
                     <div class="search-result"></div>
                 </li>
@@ -50,8 +55,8 @@
                 <li class="search-wrap">
                     <div class="input-field">
                         <i class="material-icons prefix">search</i>
-                        <input type="search" class="search-box" autocomplete="off">
-                        <label for="search-box">Search</label>
+                        <input type="search" class="search-box" id="search-box2" autocomplete="off">
+                        <label for="search-box2">Search</label>
                     </div>
                     <div class="search-result"></div>
                 </li>
@@ -63,6 +68,8 @@
         </div>
 
     </div>
+
+
     <div class="row p-5">
         <div class="col s4">
             <div class="card">
@@ -163,16 +170,21 @@
 <script>
     window.onload = function () {
         document.querySelector('#datepicker').addEventListener('datechanged', function (e) {
-            console.log('New date', e.data, this.value)
+<!--            console.log('New date1', e.data, this.value)-->
         })
 
         duDatepicker('#datepicker', {
-            format: 'mmmm d, yyyy', range: true, clearBtn: true,
+            format: 'mmmm d, yyyy',
+            outFormat: 'yyyy-mm-dd',
+            range: true,
+            clearBtn: true,
+            cancelBtn: true,
             events: {
                 dateChanged: function (data) {
-                    log('From: ' + data.dateFrom + '\nTo: ' + data.dateTo)
+<!--                    console.log('From: ' + data.dateFrom + '\nTo: ' + data.dateTo)-->
                 },
                 onRangeFormat: function (from, to) {
+
                     var fromFormat = 'mmmm d, yyyy', toFormat = 'mmmm d, yyyy';
 
                     if (from.getMonth() === to.getMonth() && from.getFullYear() === to.getFullYear()) {

@@ -148,7 +148,7 @@ class Dropdown {
     }
 
     fetchOptions() {
-        this.initDropdown();
+
         fetch(this.optionsURL)
             .then((response) => response.json())
             .then((data) => {
@@ -156,7 +156,7 @@ class Dropdown {
               <li>
                 <span>
                   <label>
-                    <input type="checkbox" value="${client.item}" />
+                    <input type="checkbox" class="filter-checkbox" value="${client.item}" />
                     <span>${client.item}</span>
                   </label>
                 </span>
@@ -165,11 +165,14 @@ class Dropdown {
 
                 $(`#${this.containerID}`).append(optionsHTML);
 
+                this.initDropdown();
+
             })
             .catch((error) => console.error('Error fetching options:', error));
     }
 
     initDropdown() {
+
         var container_id = '#' + this.containerID;
         $(`.dropdown-trigger[data-target="${this.containerID}"]`).dropdown({
             closeOnClick: false,
@@ -189,14 +192,14 @@ class Dropdown {
             });
         });
 
-        $(`#${this.containerID} input[type="checkbox"]`).on('change', function () {
+        $(container_id + ' input[type="checkbox"]').on('change', function () {
             const selectedOptions = $(`${container_id} input[type="checkbox"]:checked`)
                 .map(function () {
                     return $(this).val();
                 })
                 .get();
 
-            $(`.selected-options`).html(
+            $(container_id).parent().find('.selected-options').html(
                 '<p>Selected options: ' + selectedOptions.join(', ') + '</p>'
             );
         });
