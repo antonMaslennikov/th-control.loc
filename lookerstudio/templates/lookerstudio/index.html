@@ -33,7 +33,7 @@
 
 
     <div class="row">
-        <div class="col s4">
+        <div class="col s3">
             <label>Select options:</label>
             <a class="dropdown-trigger btn" href="#" data-target="filter-client-list">CLIENTS</a>
             <ul id="filter-client-list" class="dropdown-content options-dropdown">
@@ -48,7 +48,7 @@
             </ul>
             <div class="selected-options"></div>
         </div>
-        <div class="col s4">
+        <div class="col s3">
             <label>Select options:</label>
             <a class="dropdown-trigger btn" href="#" data-target="filter-money-sites-list">MONEY SITES</a>
             <ul id="filter-money-sites-list" class="dropdown-content options-dropdown">
@@ -63,15 +63,30 @@
             </ul>
             <div class="selected-options"></div>
         </div>
-        <div class="col s4">
-            <input type="text" id="datepicker" class="form-control">
+        <div class="col s3 input-field">
+            <input type="text" id="datepicker" class="form-control" placeholder="Выберите">
+            <label for="datepicker">Диапазон дат</label>
         </div>
-
+        <div class="col s1 kpimetric" id="deadline">
+            <div class="kpi-label">Дедлайн</div>
+            <div class="valueLabel"></div>
+        </div>
+        <div class="col s2 kpimetric" id="days_left">
+            <div class="kpi-label">Осталось дней</div>
+            <div class="valueLabel"></div>
+        </div>
     </div>
 
-
-    <div class="row p-5">
-        <div class="col s4">
+    <div class="row">
+        <div class="col s2 l2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title  text-muted text-center">PBN-доменов</h5>
+                    <h6 class="card-subtitle mb-2 text-center" id="count_domains"><strong>0</strong></h6>
+                </div>
+            </div>
+        </div>
+        <div class="col s3 l3">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title  text-muted text-center">Новых PBN-доменов</h5>
@@ -79,7 +94,7 @@
                 </div>
             </div>
         </div>
-        <div class="col s-4">
+        <div class="col s2 l2">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title text-muted text-center">Публикаций</h5>
@@ -87,7 +102,7 @@
                 </div>
             </div>
         </div>
-        <div class="col s4">
+        <div class="col s3 l3">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title text-muted text-center">Новых публикаций</h5>
@@ -95,7 +110,14 @@
                 </div>
             </div>
         </div>
-
+        <div class="col s2 l2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title  text-muted text-center">Ссылок на money</h5>
+                    <h6 class="card-subtitle mb-2 text-center" id="count_money_links"><strong>0</strong></h6>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="row">
         <div class="col s12">

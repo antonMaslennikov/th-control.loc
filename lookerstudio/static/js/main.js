@@ -15,9 +15,17 @@ function get_summary_list() {
     url = add_money_sites_in_query(url);
     url = add_date_in_query(url);
     fetch_data(url).then(data => {
+
+        $("#count_domains>strong").text(data.pbn_domains.max_site_url);
         $("#count_new_domains>strong").text(data.new_domains.new_domains);
-        $("#count_publications>strong").text(data.publications.new_publications);
-        $("#count_new_publications>strong").text(data.pbn_domains.count);
+        $("#count_publications>strong").text(data.publications.count);
+        $("#count_new_publications>strong").text(data.new_publications.count);
+
+        $("#deadline .valueLabel").text(data.deadline_data[0].deadline ?? 'Нет данных');
+        $("#days_left .valueLabel").text(data.deadline_data[0].diff ?? 'Нет данных');
+
+//        $("#count_domains>strong").text(data.new_domains.domains.value ?? 0);
+//        $("#count_money_links>strong").text(data.new_domains.money_links ?? 0);
     });
 }
 
@@ -86,6 +94,33 @@ function add_date_in_query(main_url) {
             query += '&'
         }
         query += 'end_date=' + end_date;
+    }
+    return main_url + query;
+}
+
+function add_date_deadline_in_query(main_url) {
+    main_url = prepare_url(main_url);
+    var query = '';
+    var start_date = $('#datepicker_deadline').data('range-from');
+    var end_date = $('#datepicker_deadline').data('range-to');
+    if (start_date) {
+        query += 'start_date=' + start_date;
+    }
+    if (end_date) {
+        if (query) {
+            query += '&'
+        }
+        query += 'end_date=' + end_date;
+    }
+    return main_url + query;
+}
+
+function add_days_left_in_query(main_url) {
+    main_url = prepare_url(main_url);
+    var query = '';
+    var days_left = $('#days_left').val();
+    if (days_left) {
+        query += 'days_left=' + days_left;
     }
     return main_url + query;
 }
@@ -410,6 +445,39 @@ $(document).ready(function () {
 //    console.log(dropdown2.getSelectedOptions());
 
     duDatepicker('#datepicker', {
+        format: 'mmmm d, yyyy',
+        outFormat: 'yyyy-mm-dd',
+        range: true,
+        clearBtn: true,
+        cancelBtn: true,
+        events: {
+            dateChanged: function (data) {
+                get_data_for_chart();
+                get_summary_list();
+                get_data_for_anchors_table();
+                get_data_for_table_pbn_and_publications();
+                get_date_for_links_to_money_sites_table();
+            },
+            onRangeFormat: function (from, to) {
+
+                var fromFormat = 'mmmm d, yyyy', toFormat = 'mmmm d, yyyy';
+
+                if (from.getMonth() === to.getMonth() && from.getFullYear() === to.getFullYear()) {
+                    fromFormat = 'mmmm d'
+                    toFormat = 'd, yyyy'
+                } else if (from.getFullYear() === to.getFullYear()) {
+                    fromFormat = 'mmmm d'
+                    toFormat = 'mmmm d, yyyy'
+                }
+
+                return from.getTime() === to.getTime() ?
+                    this.formatDate(from, 'mmmm d, yyyy') :
+                    [this.formatDate(from, fromFormat), this.formatDate(to, toFormat)].join('-');
+            }
+        }
+    });
+
+    duDatepicker('#datepicker_deadline', {
         format: 'mmmm d, yyyy',
         outFormat: 'yyyy-mm-dd',
         range: true,

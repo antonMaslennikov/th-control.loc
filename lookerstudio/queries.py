@@ -59,9 +59,9 @@ def query_get_deadline_data(clients=None, money_sites=None):
         sql_query += ' where ' + where_clause
     return execute_select_query(sql_query, where_params)
 
-
+# Новых PBN-доменов
 def query_get_new_domains(clients=None, money_sites=None, date_start=None, date_end=None):
-    sql_query = 'select   count( distinct id_site) as new_domains from clients_pbn_sites_and_articles_new '
+    sql_query = 'select count(distinct id_site) as new_domains from clients_pbn_sites_and_articles_new '
 
     where_clause, where_params = generate_where_clause(clients=clients, money_sites=money_sites, date_create_start=date_start, date_create_end=date_end)
     if where_clause is not None:
@@ -70,12 +70,14 @@ def query_get_new_domains(clients=None, money_sites=None, date_start=None, date_
     return execute_select_query(sql_query, where_params, True)
 
 
-def query_get_new_publications(clients=None, money_sites=None):
-    sql_query = 'select   count( distinct id_article) as new_publications from clients_pbn_sites_and_articles_new'
-    where_clause, where_params = generate_where_clause(clients, money_sites)
+def query_get_new_publications(clients=None, money_sites=None, date_start=None, date_end=None):
+    sql_query = 'select   count( distinct id_article) as count from clients_pbn_sites_and_articles_new'
+    where_clause, where_params = generate_where_clause(clients, money_sites, date_create_start=date_start, date_create_end=date_end)
     if where_clause is not None:
         sql_query += ' where ' + where_clause
+
     # print(sql_query, where_params)
+
     return execute_select_query(sql_query, where_params, True)
 
 
