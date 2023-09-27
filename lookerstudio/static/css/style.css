@@ -19,7 +19,6 @@
   background-color: #fff;
   border-radius: 4px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
   margin: 20px auto;
 }
 
@@ -40,6 +39,7 @@
 /* Style the card body */
 .card-body {
   padding: 10px;
+  min-height:115px;
 }
 
 /* Style the card footer */

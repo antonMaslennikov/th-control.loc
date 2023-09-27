@@ -16,16 +16,23 @@ function get_summary_list() {
     url = add_date_in_query(url);
     fetch_data(url).then(data => {
 
-        $("#count_domains>strong").text(data.pbn_domains.max_site_url);
-        $("#count_new_domains>strong").text(data.new_domains.new_domains);
-        $("#count_publications>strong").text(data.publications.count);
-        $("#count_new_publications>strong").text(data.new_publications.count);
-
         $("#deadline .valueLabel").text(data.deadline_data[0].deadline ?? 'Нет данных');
         $("#days_left .valueLabel").text(data.deadline_data[0].diff ?? 'Нет данных');
 
-//        $("#count_domains>strong").text(data.new_domains.domains.value ?? 0);
-//        $("#count_money_links>strong").text(data.new_domains.money_links ?? 0);
+        $("#count_domains .card-subtitle strong").text(data.pbn_domains.max_site_url + ' (' + data.pbn_domains.progress_bar + '%)');
+        $("#count_domains .progress-bar .svg-percent").attr('width', data.pbn_domains.progress_bar + '%');
+        $("#count_domains .progress-bar .svg-text").text(data.pbn_domains.sum_pbn_sites);
+
+        $("#count_new_domains>strong").text(data.new_domains.new_domains);
+
+        $("#count_publications>strong").text(data.publications.count);
+        $("#count_new_publications>strong").text(data.new_publications.count);
+
+        $("#count_money_links>strong").text(data.new_domains.money_links ?? 0);
+
+        $("#count_money_links .card-subtitle strong").text(data.money_sites.summ_url_to_acceptor + ' (' + data.money_sites.progress + '%)');
+        $("#count_money_links .progress-bar .svg-percent").attr('width', data.money_sites.progress + '%');
+        $("#count_money_links .progress-bar .svg-text").text(data.money_sites.summ_links);
     });
 }
 

@@ -91,7 +91,7 @@ def query_get_new_pbn_domains(clients=None, money_sites=None):
 
 
 def query_get_links_to_money_sites(clients=None, money_sites=None):
-    sql_query = 'SELECT SUM(count_url_to_acceptor) as summ_url_to_acceptor, SUM(links) as summ_links ,SUM(links)/SUM(count_url_to_acceptor)*100 as progress FROM plan_fact'
+    sql_query = 'SELECT SUM(count_url_to_acceptor) as summ_url_to_acceptor, SUM(links) as summ_links , floor(SUM(links)/SUM(count_url_to_acceptor)*100) as progress FROM plan_fact'
     where_clause, where_params = generate_where_clause(clients, None, money_sites)
     if where_clause is not None:
         sql_query += ' where ' + where_clause

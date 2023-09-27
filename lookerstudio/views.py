@@ -36,10 +36,12 @@ def get_summary(request):
     data = {
         'pbn_domains': query_get_new_pbn_domains(clients, money_sites),
         'new_domains': query_get_new_domains(clients, money_sites, start_date, end_date),
+
         'publications': query_get_new_publications(clients, money_sites),
         'new_publications': query_get_new_publications(clients, money_sites, start_date, end_date),
 
         'money_sites': query_get_links_to_money_sites(clients, money_sites),
+
         'deadline_data': query_get_deadline_data(clients, money_sites),
     }
     return JsonResponse(data, safe=False)
