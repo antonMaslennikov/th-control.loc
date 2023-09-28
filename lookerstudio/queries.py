@@ -153,7 +153,7 @@ def generate_where_clause(clients=None, money_sites=None, acceptor_domains=None,
     where_params = []
     where_clause = []
 
-    print(date_start, date_end)
+    # print(date_start, date_end)
 
     if clients is not None and len(clients) > 0:
         clients_array = clients.split(',')
@@ -194,3 +194,8 @@ def generate_where_clause(clients=None, money_sites=None, acceptor_domains=None,
     else:
         where_clause = None
     return where_clause, where_params
+
+
+def query_summary():
+    sql_query = 'select pbn_owner, acceptor_domain, count_site_url, pbn_sites, (pbn_sites - count_site_url) AS rest_domains, count_url_to_acceptor, links, (links - count_url_to_acceptor) AS rest_links, DATEDIFF(deadline, CURRENT_DATE) from plan_fact'
+    return execute_select_query(sql_query)

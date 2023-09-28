@@ -14,7 +14,8 @@
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="{% static 'js/main.js'%}"></script>
+    <script src="{% static 'js/common.js'%}"></script>
+    <script src="{% static 'js/summary.js'%}"></script>
     <link rel="stylesheet" href="{% static 'css/duDatepicker.min.css'%}">
     <script src="{% static 'js/duDatepicker.min.js'%}"></script>
 
@@ -43,6 +44,26 @@
         <br>
         <br>
 
+        <table id="summary_table">
+            <thead>
+                <tr>
+                    <th>Клиент</th>
+                    <th>money_site</th>
+                    <th>PBN-доменов</th>
+<!--                    <th>PBN-доменов (money)</th>-->
+                    <th>План по PBN-доменам</th>
+                    <th>Осталось доменов</th>
+                    <th>Ссылок на money-site</th>
+                    <th>План по ссылкам</th>
+                    <th>Осталось ссылок</th>
+<!--                    <th>url_to_acceptor</th>-->
+                    <th>Дней до дедлайна</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            </tbody>
+        </table>
 
     </div>
 

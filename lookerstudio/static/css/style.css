@@ -63,5 +63,12 @@
 }
 
 .menu .active {
-background-color:#EE6E73;
+    background-color:#EE6E73;
+}
+
+.red-td {
+    background-color:#F4C7C3;
+}
+.green-td {
+    background-color:#C8E6C9;
 }

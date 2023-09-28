@@ -48,22 +48,6 @@ function get_summary_list() {
     });
 }
 
-function get_random_color() {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-}
-
-function get_rus_date_format(dt) {
-    return new Date(dt).toLocaleString('ru-RU', {
-        year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Europe/Moscow', // Set the desired time zone
-        hour12: false, // Use 24-hour format
-    });
-}
-
 function add_clients_in_query(main_url) {
     main_url = prepare_url(main_url);
 
@@ -142,68 +126,6 @@ function add_days_left_in_query(main_url) {
         query += 'days_left=' + days_left;
     }
     return main_url + query;
-}
-
-function createPagination(el, data) {
-    const pagination = document.querySelector(`#${el}`);
-    pagination.innerHTML = ""; // Clear existing links
-    if (!(data != undefined && data.total_pages != undefined && data.total_pages > 1)) {
-        return;
-    }
-
-    let startPage = Math.max(1, data.page_number - 2);
-    if (isNaN(startPage)) {
-        startPage = 1;
-    }
-
-    let endPage = Math.min(startPage + 4, data.total_pages);
-    if (startPage > 1) {
-        const firstLink = document.createElement("li");
-        if (1 === data.page_number) {
-            firstLink.classList.add('active');
-        }
-        firstLink.innerHTML = `<a href="#" data-page="1">1</a>`;
-        pagination.appendChild(firstLink);
-
-        if (startPage > 2) {
-            const ellipsisLink = document.createElement("li");
-            ellipsisLink.innerHTML = `<span>...</span>`;
-            pagination.appendChild(ellipsisLink);
-        }
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-        const pageLink = document.createElement("li");
-        if (i == data.page_number) {
-            pageLink.classList.add('active');
-        }
-        pageLink.innerHTML = `<a href="#" data-page="${i}">${i}</a>`;
-        pagination.appendChild(pageLink);
-    }
-
-    if (endPage < data.total_pages) {
-        if (endPage < data.total_pages - 1) {
-            const ellipsisLink = document.createElement("li");
-            ellipsisLink.innerHTML = `<span>...</span>`;
-            pagination.appendChild(ellipsisLink);
-        }
-
-        const lastLink = document.createElement("li");
-        lastLink.innerHTML = `<a href="#" data-page="${data.total_pages}">${data.total_pages}</a>`;
-        pagination.appendChild(lastLink);
-    }
-}
-
-function prepare_url(main_url) {
-    var length = main_url.length;
-    if (main_url.includes('?')) {
-        if (main_url[length - 1] !== '&') {
-            main_url += '&';
-        }
-    } else {
-        main_url += '?';
-    }
-    return main_url;
 }
 
 
@@ -298,24 +220,6 @@ class Dropdown {
     }
 }
 
-function fetch_data(url) {
-    return fetch(url)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            const serializedData = JSON.stringify(data);
-            localStorage.setItem(url, serializedData);
-            return data;
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-}
-
 
 function get_data_for_chart() {
     var url = add_clients_in_query(MAIN_CHART_URL);
@@ -377,8 +281,8 @@ function get_data_for_table_pbn_and_publications(pageNumber = DEFAULT_PAGE_NUM, 
         createPagination('pagination_domain_and_pbn', data);
         data['links'].forEach((item) => {
             const row = document.createElement("tr");
-            item['last_post'] = get_rus_date_format(item['last_post']);
-            item['date_create'] = get_rus_date_format(item['date_create']);
+            item['site_create'] = get_rus_date_format(item['site_create']);
+            item['last_update'] = get_rus_date_format(item['last_update']);
             Object.values(item).forEach((value) => {
                 const td = document.createElement("td");
                 td.textContent = value;
@@ -552,8 +456,4 @@ $(document).ready(function () {
         }
         get_data_for_anchors_table();
     });
-
-
-
-//    $('.tabs').tabs();
 });

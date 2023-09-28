@@ -52,7 +52,7 @@ POST /job/result/<int:job_id>
 
 manage.py migrate looker --database looker_db
 
-manage.py сollectstatic
+manage.py collectstatic
 
 # создать в mysql процедуру и событие и поставить их на исполнение раз в день 
 lookerstudio/sheduler.sql
