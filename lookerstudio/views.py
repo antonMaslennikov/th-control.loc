@@ -57,24 +57,31 @@ def get_chart_date(request):
 def get_pbn_domains_and_publications(request):
     clients = request.GET.get('clients', None)
     money_sites = request.GET.get('money_sites', None)
-    data = query_get_pbn_domains(clients, money_sites)
-    data = paginator_prepare(data, 1)
+    page_number = request.GET.get('page', 1)
+    items_per_page = request.GET.get('per_page', 5)
+    data = query_get_pbn_domains(clients, money_sites, page_number, items_per_page)
+    data = paginator_prepare(data, page_number)
     return JsonResponse(data, safe=False)
 
 
 def get_links_to_money_sites(request):
     clients = request.GET.get('clients', None)
     money_sites = request.GET.get('money_sites', None)
-    data = query_links_to_money_sites(clients, money_sites)
-    data = paginator_prepare(data, 1)
+    page_number = request.GET.get('page', 1)
+    items_per_page = request.GET.get('per_page', 5)
+    data = query_links_to_money_sites(clients, money_sites, page_number, items_per_page)
+    data = paginator_prepare(data, page_number)
     return JsonResponse(data, safe=False)
 
 
 def get_anchor_links(request):
     clients = request.GET.get('clients', None)
     money_sites = request.GET.get('money_sites', None)
-    data = query_anchor_links(clients, money_sites, 1)
-    data = paginator_prepare(data, 1)
+    page_number = request.GET.get('page', 1)
+    items_per_page = request.GET.get('per_page', 5)
+    query_type = request.GET.get('query_type', 1)
+    data = query_anchor_links(clients, money_sites, current_page=page_number, items_per_page=items_per_page, query_type=query_type)
+    data = paginator_prepare(data, page_number)
     return JsonResponse(data, safe=False)
 
 

@@ -224,6 +224,7 @@ class TableDomainAndPublicationsAPIView(View):
                         'day_since_last_publication': link[5],
                     }
                     links.append(link_dict)
+
                 response = {
                     'links': links,
                     'page_number': page_number,
@@ -231,8 +232,9 @@ class TableDomainAndPublicationsAPIView(View):
                     'has_previous': page.has_previous(),
                     'has_next': page.has_next(),
                 }
+
                 return JsonResponse(response, safe=False)
-                # Return the data as JSON response
+
             except Exception as e:
                 return JsonResponse({'status': 'error', 'message': str(e)})
 

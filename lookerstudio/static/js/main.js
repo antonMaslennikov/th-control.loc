@@ -3,9 +3,9 @@ const FILTER_GET_MONEY_SITES_LIST_URL = '/looker-studio/get-money-sites-list';
 const MAIN_CHART_URL = '/looker-studio/chart-data';
 const FILTERS_CLIENTS_URL = '/sites/looker/api/filter/client-list';
 const FILTERS_MONEY_SITES_URL = '/sites/looker/api/filter/money-sites-list';
-const DOMAIN_PBN_AND_PUBLICATIONS_URL = '/sites/looker/api/table/domain-pbn-and-publications';
-const LINKS_TO_MONEY_SITES_URL = '/sites/looker/api/table/links-to-money-sites';
-const LINKS_ANCHOR_COUNTER_URL = '/sites/looker/api/table/anchors';
+const DOMAIN_PBN_AND_PUBLICATIONS_URL = '/looker-studio/domain-and-publications';
+const LINKS_TO_MONEY_SITES_URL = '/looker-studio/link-to-money-sites';
+const LINKS_ANCHOR_COUNTER_URL = '/looker-studio/anchor-links';
 const SUMMARY_URL = '/looker-studio/summary';
 const DEFAULT_PAGE_NUM = 1;
 const DEFAULT_PER_PAGE_COUNT = 10;
@@ -19,9 +19,16 @@ function get_summary_list() {
         $("#deadline .valueLabel").text(data.deadline_data[0].deadline ?? 'Нет данных');
         $("#days_left .valueLabel").text(data.deadline_data[0].diff ?? 'Нет данных');
 
-        $("#count_domains .card-subtitle strong").text(data.pbn_domains.max_site_url + ' (' + data.pbn_domains.progress_bar + '%)');
-        $("#count_domains .progress-bar .svg-percent").attr('width', data.pbn_domains.progress_bar + '%');
-        $("#count_domains .progress-bar .svg-text").text(data.pbn_domains.sum_pbn_sites);
+        if (data.pbn_domains.max_site_url != null) {
+            $("#count_domains .card-subtitle strong").text(data.pbn_domains.max_site_url + ' (' + data.pbn_domains.progress_bar + '%)');
+
+            $("#count_domains .progress-bar").removeClass('hide');
+            $("#count_domains .progress-bar .svg-percent").attr('width', data.pbn_domains.progress_bar + '%');
+            $("#count_domains .progress-bar .svg-text").text(data.pbn_domains.sum_pbn_sites);
+        } else {
+            $("#count_domains .progress-bar").addClass('hide');
+            $("#count_domains .card-subtitle strong").text('Нет данных');
+        }
 
         $("#count_new_domains>strong").text(data.new_domains.new_domains);
 
@@ -30,9 +37,14 @@ function get_summary_list() {
 
         $("#count_money_links>strong").text(data.new_domains.money_links ?? 0);
 
-        $("#count_money_links .card-subtitle strong").text(data.money_sites.summ_url_to_acceptor + ' (' + data.money_sites.progress + '%)');
-        $("#count_money_links .progress-bar .svg-percent").attr('width', data.money_sites.progress + '%');
-        $("#count_money_links .progress-bar .svg-text").text(data.money_sites.summ_links);
+        if (data.money_sites.summ_url_to_acceptor != null) {
+            $("#count_money_links .card-subtitle strong").text(data.money_sites.summ_url_to_acceptor + ' (' + data.money_sites.progress + '%)');
+            $("#count_money_links .progress-bar .svg-percent").attr('width', data.money_sites.progress + '%');
+            $("#count_money_links .progress-bar .svg-text").text(data.money_sites.summ_links);
+        } else {
+            $("#count_money_links .progress-bar").addClass('hide');
+            $("#count_money_links .card-subtitle strong").text('Нет данных');
+        }
     });
 }
 
@@ -408,6 +420,10 @@ function get_data_for_anchors_table(pageNumber = DEFAULT_PAGE_NUM, perPage = DEF
     url = add_money_sites_in_query(url);
     url = add_date_in_query(url);
 
+    if (localStorage.getItem('anchors--show-more')) {
+        url += '&query_type=2';
+    }
+
     fetch_data(url).then(data => {
         const tbody = document.querySelector("table#table_anchor_counter tbody");
         tbody.innerHTML = "";
@@ -484,38 +500,11 @@ $(document).ready(function () {
         }
     });
 
-    duDatepicker('#datepicker_deadline', {
-        format: 'mmmm d, yyyy',
-        outFormat: 'yyyy-mm-dd',
-        range: true,
-        clearBtn: true,
-        cancelBtn: true,
-        events: {
-            dateChanged: function (data) {
-                get_data_for_chart();
-                get_summary_list();
-                get_data_for_anchors_table();
-                get_data_for_table_pbn_and_publications();
-                get_date_for_links_to_money_sites_table();
-            },
-            onRangeFormat: function (from, to) {
-
-                var fromFormat = 'mmmm d, yyyy', toFormat = 'mmmm d, yyyy';
-
-                if (from.getMonth() === to.getMonth() && from.getFullYear() === to.getFullYear()) {
-                    fromFormat = 'mmmm d'
-                    toFormat = 'd, yyyy'
-                } else if (from.getFullYear() === to.getFullYear()) {
-                    fromFormat = 'mmmm d'
-                    toFormat = 'mmmm d, yyyy'
-                }
-
-                return from.getTime() === to.getTime() ?
-                    this.formatDate(from, 'mmmm d, yyyy') :
-                    [this.formatDate(from, fromFormat), this.formatDate(to, toFormat)].join('-');
-            }
-        }
-    });
+    if (localStorage.getItem('anchors--show-more')) {
+        document.querySelector(".anchors--show-more").innerHTML = '-';
+    } else {
+        document.querySelector(".anchors--show-more").innerHTML = '+';
+    }
 
 
     get_data_for_chart();
@@ -525,6 +514,7 @@ $(document).ready(function () {
     get_date_for_links_to_money_sites_table();
 
 
+    // Пагинации
     document.querySelector("#pagination_links_to_money_sites").addEventListener("click", function (event) {
         event.preventDefault();
         if (event.target.tagName === "A") {
@@ -549,4 +539,20 @@ $(document).ready(function () {
             get_data_for_anchors_table(pageNumber);
         }
     });
+    // \ Пагинации
+
+
+
+
+    document.querySelector(".anchors--show-more").addEventListener("click", function (event) {
+        if (localStorage.getItem('anchors--show-more')) {
+            localStorage.removeItem('anchors--show-more');
+            event.currentTarget.innerHTML = '+';
+        } else {
+            localStorage.setItem('anchors--show-more', true);
+            event.currentTarget.innerHTML = '-';
+        }
+        get_data_for_anchors_table();
+    });
+
 });
