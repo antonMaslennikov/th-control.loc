@@ -9,7 +9,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 import sys
 
-from lookerstudio.models import PbnPlans
+from lookerstudio.models import PbnPlans, LinksAllDomains
 from thcontrol.settings import LOOKER_DB_KEY
 
 
@@ -48,8 +48,8 @@ def clear_and_save_data():
         pbn_plan = PbnPlans(
             client=row_dict.get('client'),
             money_site=row_dict.get('money_site'),
-            pbn_sites=row_dict.get('pbn_sites'),
-            links=row_dict.get('links'),
+            pbn_sites=int(row_dict.get('pbn_sites')) if row_dict.get('pbn_sites') else 0,
+            links=int(row_dict.get('links')) if row_dict.get('links') else 0,
             deadline=row_dict.get('deadline')
         )
-        pbn_plan.save()
+        pbn_plan.save(using=LOOKER_DB_KEY)
