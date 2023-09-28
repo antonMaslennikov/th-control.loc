@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "looker-400413",
+  "private_key_id": "4cfe6a2df3adc3c4e763346fb749caab9c50b9c2",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDZ7ktY9gEP8MZA\nWFvQ5QO81GqLtQAX1WsHTx5Q75Ui3OLmuRC4SNpPvCXi34k/R07bd279LKMoWBgy\nuu/ZPfkstmnCA8zrNr3AuFtOt2HUd2Y0d9nefTMb+u7j4tfGm5Jtq0JafhEr12GJ\nDtF1Y65mET0lm8stjNExbm88Ta1YNuGM7jSoLnz/dMIUu7pdu5s7Nv4KlN25SusH\nrsBIlf1LqiGhpYlP8zbw/nk86KsfYaojxG427Om3GHEUtPb30CJHo+KwHUO9KLoj\nBQVubnhe+7ia5jAZTaMKvjmEM3646MqpzpcupNL6yIZHMx/WRgyPE7OM/uqKPR+V\nfRJc73P7AgMBAAECggEAO/C8XaQQB7vgM2t6GXsb65B7G6D1fRiwnuqGepli6htZ\n9z64mA9FqH+l5gA4piRtTpTLfKwN1jdgtHdRJ+3RPpiPfxL/hkRgrYSnbH+o00Dh\n5hV+4aCK8auzkA9g7Nn2TN65Wd1pyKatR37BYqm/mogsSs9Oc2FTWma3Bp2Qy32O\nmlaMTCCc1oId95VbARwf5mzJ1yUNw70R3KMNl4D1lnq6enejQ5Le1jqB43sr01VZ\nLkKaFXPWOSUIjD6dFkmZf3kVFIQdMj6ZuljCBG77+xdvt1psvuHznW4QbkMU3ffv\ncb/azhHF6yB9IENyO/QUD922oIXliSmTdUf9LL3cdQKBgQD7ycfViejmPcfz9Tdz\nPY4MJlStH0TEEBpD4VbTfjyuecw2M0WVcyhMsh6QKhpd9zIbvqMkg6FzrbDH5Gnu\nY6YYbsnSWa6AU9S94X63gzbLyGZnuLc+0/+Sm1hjCoTI1HZybAehWl4SvCT124Ar\njYg+IK2OtXrWj1C++9Ncwo+bRQKBgQDdk4cxRXiNurlGZAmKwbCGAXeTkEHy+jGw\nMY6mRrOlawDvf01UkZVf1m1wmOFFY2uWnAKSKnOX/oXAnkAmZcGVxbL6l8J0C4Ta\n7nTsRQDOOY22pQNOGwIeVWX3tB+6oMiWlC20YUCfd7fu97Wd/lxPCDYBiDYHkRLQ\nSaCy4xwmPwKBgQDsMprjB+9SZax4f5XX5mulnCOdEBMrNcvd17rixa5ZImregXSK\nQTAR2pnvNX/snCMGgex7KXxAjzSiH/T7q8E5dFyhln2rZnjQ84My1cWGn2Tpcg98\nwdUji9T7e/eaiizfI9Z4l9ReEN8/P/1ZXfjsBy2pDTfBpUnjD0t03hNnXQKBgQDR\nD2BQadbMCvDC7KJgLE4ssfer4EGJSu1U6/1G/5CCtApG7pr8/vusWDocMfLisGKT\n0RFP7gPw1jJGwkmOsRXNBaLQdB4BtdidZL4nKxgOfBksylbq++qsyjCSXX5ObWO1\nR4w0FEqP67o9G7Vdo+BepUWnfmhUDVpt8fpQrp4hqwKBgQDDTsh7P0SSojHGIod0\n1RUXIBgo3aHdU2l9QQcXOx+BuubiPjmYUt3up2gWivkqEcKcjAzM7hQ6yLUUrQrx\nadHx45U0bhfPzSCdUzv7//g6+P7wzwr6J2cpYTyis1vWJPMKsacRj1p2vtvuto8Y\nlsgVEmPGY2oXTYWNDZ5lY3oCDw==\n-----END PRIVATE KEY-----\n",
+  "client_email": "looker-service-account@looker-400413.iam.gserviceaccount.com",
+  "client_id": "105884293291206138587",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/looker-service-account%40looker-400413.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

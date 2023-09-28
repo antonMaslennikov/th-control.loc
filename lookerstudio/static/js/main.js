@@ -6,7 +6,7 @@ const FILTERS_MONEY_SITES_URL = '/sites/looker/api/filter/money-sites-list';
 const DOMAIN_PBN_AND_PUBLICATIONS_URL = '/looker-studio/domain-and-publications';
 const LINKS_TO_MONEY_SITES_URL = '/looker-studio/link-to-money-sites';
 const LINKS_ANCHOR_COUNTER_URL = '/looker-studio/anchor-links';
-const SUMMARY_URL = '/looker-studio/summary';
+const SUMMARY_URL = '/looker-studio/get-summary';
 const DEFAULT_PAGE_NUM = 1;
 const DEFAULT_PER_PAGE_COUNT = 10;
 
@@ -542,8 +542,6 @@ $(document).ready(function () {
     // \ Пагинации
 
 
-
-
     document.querySelector(".anchors--show-more").addEventListener("click", function (event) {
         if (localStorage.getItem('anchors--show-more')) {
             localStorage.removeItem('anchors--show-more');
@@ -555,4 +553,7 @@ $(document).ready(function () {
         get_data_for_anchors_table();
     });
 
+
+
+//    $('.tabs').tabs();
 });

@@ -8,6 +8,8 @@ from django.http import JsonResponse
 # Create your views here.
 def index(request):
     return render(request, 'lookerstudio/index.html')
+def summary(request):
+    return render(request, 'lookerstudio/summary.html')
 
 
 def get_client_list(request):

@@ -1,6 +1,12 @@
+import json
+import os
+
+import httplib2
 from googleapiclient.discovery import build
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
+from oauth2client.service_account import ServiceAccountCredentials
+
 import sys
 
 from lookerstudio.models import PbnPlans
@@ -8,18 +14,17 @@ from thcontrol.settings import LOOKER_DB_KEY
 
 
 def fetch_spreadsheet_data():
-    # Load the access token from file
-    credentials = Credentials.from_authorized_user_file('token.json')
 
-    # Check if the access token has expired and refresh if necessary
-    if credentials.expired and credentials.refresh_token:
-        credentials.refresh(Request())
+    with open('services/looker_studio/lib/looker-400413-4cfe6a2df3ad.json', 'r', encoding='utf-8') as f:
+        credentials = ServiceAccountCredentials._from_parsed_json_keyfile(json.load(f), scopes=['https://www.googleapis.com/auth/spreadsheets.readonly'])
+
+    http = credentials.authorize(httplib2.Http())
 
     # Build the service
     service = build('sheets', 'v4', credentials=credentials)
 
     # Read the spreadsheet data
-    spreadsheet_id = '1lr605ApFV2Mdoevc4HZxi1qiPmuuLfIV-ccb2wfg4H4'
+    spreadsheet_id = '1jUP0o3k7CIELL1Kj-4ARzOgYj3nCb47o21c58AMBguE'
     range_ = '!A1:E'  # Adjust the range to match the columns in the spreadsheet
     response = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id, range=range_).execute()
     values = response.get('values', [])

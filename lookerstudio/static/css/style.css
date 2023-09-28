@@ -61,3 +61,7 @@
 .card-footer-icon:hover {
   color: #0056b3;
 }
+
+.menu .active {
+background-color:#EE6E73;
+}

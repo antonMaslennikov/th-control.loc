@@ -1,0 +1,50 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Looker</title>
+    <!-- Material Design CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'js/main.js'%}"></script>
+    <link rel="stylesheet" href="{% static 'css/duDatepicker.min.css'%}">
+    <script src="{% static 'js/duDatepicker.min.js'%}"></script>
+
+    <!-- Material Design JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/style.css'%}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <br>
+
+        <div class="row menu">
+            <div class="col s1">
+                <a href="/looker-studio" class="btn">Отчёт</a>
+            </div>
+            <div class="col s1">
+                <a href="/looker-studio/summary" class="btn active">Сводная</a>
+            </div>
+        </div>
+
+        <br>
+        <br>
+
+
+    </div>
+
+</body>
+</html>
