@@ -42,14 +42,19 @@ def fetch_spreadsheet_data():
 
 
 def clear_and_save_data():
-    PbnPlans.objects.using(LOOKER_DB_KEY).all().delete()
+
     spreadsheet_data = fetch_spreadsheet_data()
-    for row_dict in spreadsheet_data:
-        pbn_plan = PbnPlans(
-            client=row_dict.get('client'),
-            money_site=row_dict.get('money_site'),
-            pbn_sites=int(row_dict.get('pbn_sites')) if row_dict.get('pbn_sites') else 0,
-            links=int(row_dict.get('links')) if row_dict.get('links') else 0,
-            deadline=row_dict.get('deadline')
-        )
-        pbn_plan.save(using=LOOKER_DB_KEY)
+
+    if spreadsheet_data and len(spreadsheet_data) > 0:
+
+        PbnPlans.objects.using(LOOKER_DB_KEY).all().delete()
+
+        for row_dict in spreadsheet_data:
+            pbn_plan = PbnPlans(
+                client=row_dict.get('client'),
+                money_site=row_dict.get('money_site'),
+                pbn_sites=int(row_dict.get('pbn_sites')) if row_dict.get('pbn_sites') else 0,
+                links=int(row_dict.get('links')) if row_dict.get('links') else 0,
+                deadline=row_dict.get('deadline')
+            )
+            pbn_plan.save(using=LOOKER_DB_KEY)
