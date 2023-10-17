@@ -197,5 +197,16 @@ def generate_where_clause(clients=None, money_sites=None, acceptor_domains=None,
 
 
 def query_summary():
-    sql_query = 'select client, site_url, money_site, site_url_money, pbn_sites, (pbn_sites - site_url) AS rest_domains, links_fact, links, (links - links_fact) AS rest_links, DATEDIFF(deadline, CURRENT_DATE) from plan_fact'
+    sql_query = 'select client, ' \
+                    'site_url, ' \
+                    'money_site, ' \
+                    'site_url_money, ' \
+                    'pbn_sites, ' \
+                    '(IFNULL(sum(pbn_sites) - ifnull(SUM(site_url_money), SUM(site_url)), SUM(pbn_sites))) AS rest_domains, ' \
+                    'links_fact, ' \
+                    'links, ' \
+                    '(IFNULL(sum(links) - sum(links_fact), SUM(links))) AS rest_links, ' \
+                    'DATEDIFF(deadline, CURRENT_DATE) ' \
+                'from plan_fact ' \
+                'group by client, money_site'
     return execute_select_query(sql_query)
