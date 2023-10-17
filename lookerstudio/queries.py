@@ -40,7 +40,8 @@ def get_paginator(sql_query, params, current_page=1, items_per_page=20):
 
 
 def query_get_clients_list():
-    sql_query = 'select pbn_owner as item, count(pbn_owner) as count from clients_pbn_sites_and_articles_new group by pbn_owner order by count desc'
+    # sql_query = 'select pbn_owner as item, count(pbn_owner) as count from clients_pbn_sites_and_articles_new group by pbn_owner order by count desc'
+    sql_query = 'select client_name as item from clients order by client_name'
     return execute_select_query(sql_query)
 
 
