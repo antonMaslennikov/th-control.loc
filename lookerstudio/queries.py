@@ -92,7 +92,7 @@ def query_get_new_pbn_domains(clients=None, money_sites=None):
 
 
 def query_get_links_to_money_sites(clients=None, money_sites=None):
-    sql_query = 'SELECT SUM(site_url) as summ_url_to_acceptor, SUM(links) as summ_links , floor(SUM(links)/SUM(site_url)*100) as progress FROM plan_fact'
+    sql_query = 'SELECT SUM(links_fact) as summ_url_to_acceptor, SUM(links) as summ_links , floor(SUM(links)/SUM(links_fact)*100) as progress FROM plan_fact'
     where_clause, where_params = generate_where_clause(clients, None, money_sites)
     if where_clause is not None:
         sql_query += ' where ' + where_clause
@@ -127,7 +127,7 @@ def query_get_pbn_domains(clients=None, money_sites=None, current_page=1, items_
 
 def query_links_to_money_sites(clients=None, money_sites=None, current_page=1, items_per_page=20):
     sql_query = 'SELECT url_from_donor, anchor_value, url_to_acceptor FROM urls_check_new'
-    where_clause, where_params = generate_where_clause(clients, money_sites)
+    where_clause, where_params = generate_where_clause(clients=clients, acceptor_domains=money_sites)
     if where_clause is not None:
         sql_query += ' where ' + where_clause
     return get_paginator(sql_query, where_params, current_page, items_per_page)
@@ -140,7 +140,7 @@ def query_anchor_links(clients=None, money_sites=None, query_type=1, current_pag
     else:
         sql_query = 'SELECT anchor_value, acceptor_domain, COUNT(url_from_donor) as count_url_from_donor FROM urls_check_new   :where GROUP by anchor_value,acceptor_domain'
 
-    where_clause, where_params = generate_where_clause(clients, money_sites)
+    where_clause, where_params = generate_where_clause(clients=clients, acceptor_domains=money_sites)
 
     if where_clause is not None:
         sql_query = sql_query.replace(':where', ' where ' + where_clause)
@@ -204,10 +204,12 @@ def query_summary():
         'cp2.site_url, ' \
         'pp.money_site, ' \
         'cp.site_url_money, ' \
-        'uc.links_fact, ' \
         'pp.pbn_sites, ' \
+        '(IFNULL(sum(pp.pbn_sites) - ifnull(SUM(cp.site_url_money), SUM(site_url)), SUM(pp.pbn_sites))) AS rest_domains, ' \
+        'uc.links_fact, ' \
         'pp.links, ' \
-        'pp.deadline ' \
+        '(IFNULL(sum(links) - sum(links_fact), SUM(links))) AS rest_links, ' \
+        'DATEDIFF(deadline, CURRENT_DATE) ' \
         'FROM ' \
             'pbn_plans pp ' \
                 'LEFT JOIN ' \
