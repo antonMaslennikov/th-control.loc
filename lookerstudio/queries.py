@@ -92,7 +92,7 @@ def query_get_new_pbn_domains(clients=None, money_sites=None):
 
 
 def query_get_links_to_money_sites(clients=None, money_sites=None):
-    sql_query = 'SELECT SUM(site_url_money) as summ_url_to_acceptor, SUM(links) as summ_links , floor(SUM(links)/SUM(site_url_money)*100) as progress FROM plan_fact'
+    sql_query = 'SELECT SUM(site_url) as summ_url_to_acceptor, SUM(links) as summ_links , floor(SUM(links)/SUM(site_url)*100) as progress FROM plan_fact'
     where_clause, where_params = generate_where_clause(clients, None, money_sites)
     if where_clause is not None:
         sql_query += ' where ' + where_clause
@@ -194,20 +194,40 @@ def generate_where_clause(clients=None, money_sites=None, acceptor_domains=None,
         where_clause = ' AND '.join(where_clause)
     else:
         where_clause = None
+
     return where_clause, where_params
 
 
 def query_summary():
-    sql_query = 'select client, ' \
-                    'site_url, ' \
-                    'money_site, ' \
-                    'site_url_money, ' \
-                    'pbn_sites, ' \
-                    '(IFNULL(sum(pbn_sites) - ifnull(SUM(site_url_money), SUM(site_url)), SUM(pbn_sites))) AS rest_domains, ' \
-                    'links_fact, ' \
-                    'links, ' \
-                    '(IFNULL(sum(links) - sum(links_fact), SUM(links))) AS rest_links, ' \
-                    'DATEDIFF(deadline, CURRENT_DATE) ' \
-                'from plan_fact ' \
-                'group by client, money_site'
+    sql_query = 'SELECT ' \
+        'pp.client, ' \
+        'cp2.site_url, ' \
+        'pp.money_site, ' \
+        'cp.site_url_money, ' \
+        'uc.links_fact, ' \
+        'pp.pbn_sites, ' \
+        'pp.links, ' \
+        'pp.deadline ' \
+        'FROM ' \
+            'pbn_plans pp ' \
+                'LEFT JOIN ' \
+                    '( ' \
+                        'SELECT pbn_owner, COUNT(DISTINCT site_url) AS site_url_money ' \
+                        'FROM clients_pbn_sites_and_articles_new ' \
+                        'GROUP BY pbn_owner ' \
+                    ') cp ON pp.money_site = cp.pbn_owner ' \
+                'LEFT JOIN ' \
+                    '( ' \
+                        'SELECT COUNT(url_to_acceptor) as links_fact, pbn_owner, acceptor_domain ' \
+                        'FROM urls_check_new WHERE date_check = (select max(`date_check`) from `urls_check_new`) ' \
+                        'GROUP BY pbn_owner, acceptor_domain ' \
+                    ') uc ON cp.pbn_owner = uc.pbn_owner AND uc.acceptor_domain = pp.money_site ' \
+                'LEFT JOIN ' \
+                    '( ' \
+                        'SELECT pbn_owner, COUNT(DISTINCT site_url) AS site_url ' \
+                        'FROM clients_pbn_sites_and_articles_new ' \
+                        'GROUP BY pbn_owner ' \
+                    ') cp2 ON pp.client =cp2.pbn_owner ' \
+        'GROUP BY pp.client, pp.money_site'
+
     return execute_select_query(sql_query)
