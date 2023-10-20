@@ -113,7 +113,7 @@ def query_get_chart_data(clients=None, money_sites=None):
 
 def query_get_pbn_domains(clients=None, money_sites=None, current_page=1, items_per_page=20):
     sql_query = 'SELECT pbn_owner, site_url, site_create, COUNT(DISTINCT site_url) as count_article, MAX(date_create) as last_update, DATEDIFF(CURRENT_DATE,MAX(date_create)) as date_diff FROM clients_pbn_sites_and_articles_new :where GROUP by pbn_owner, site_url, site_create'
-    where_clause, where_params = generate_where_clause(clients, money_sites)
+    where_clause, where_params = generate_where_clause(clients)
     if where_clause is not None:
         sql_query = sql_query.replace(':where', ' where ' + where_clause)
     else:
@@ -232,4 +232,19 @@ def query_summary():
                     ') cp2 ON pp.client =cp2.pbn_owner ' \
         'GROUP BY pp.client, pp.money_site'
 
-    return execute_select_query(sql_query)
+    data = execute_select_query(sql_query)
+
+    prev = ''
+
+    i = 0;
+
+    while i < len(data):
+        print(data[i])
+        print(data[i]['client'])
+        if prev == data[i]['client']:
+            data[i]['client'] = ''
+
+        prev = data[i]['client']
+        i += 1
+
+    return data
