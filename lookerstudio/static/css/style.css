@@ -7,10 +7,6 @@
     padding: 10px;
 }
 
-.dropdown-content .search-wrap input[type="search"] {
-    width: 100%;
-}
-
 .dropdown-content .search-wrap .search-result {
     display: none;
 }

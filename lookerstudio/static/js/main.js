@@ -23,7 +23,7 @@ function get_summary_list() {
             $("#count_domains .card-subtitle strong").text(data.pbn_domains.max_site_url + ' (' + data.pbn_domains.progress_bar + '%)');
 
             $("#count_domains .progress-bar").removeClass('hide');
-            $("#count_domains .progress-bar .svg-percent").attr('width', data.pbn_domains.progress_bar + '%');
+            $("#count_domains .progress-bar .svg-percent").attr('width', Math.min(data.pbn_domains.progress_bar, 100) + '%');
             $("#count_domains .progress-bar .svg-text").text(data.pbn_domains.sum_pbn_sites);
         } else {
             $("#count_domains .progress-bar").addClass('hide');
@@ -39,7 +39,7 @@ function get_summary_list() {
 
         if (data.money_sites.summ_url_to_acceptor != null) {
             $("#count_money_links .card-subtitle strong").text(data.money_sites.summ_url_to_acceptor + ' (' + data.money_sites.progress + '%)');
-            $("#count_money_links .progress-bar .svg-percent").attr('width', data.money_sites.progress + '%');
+            $("#count_money_links .progress-bar .svg-percent").attr('width', Math.min(data.money_sites.progress, 100) + '%');
             $("#count_money_links .progress-bar .svg-text").text(data.money_sites.summ_links);
         } else {
             $("#count_money_links .progress-bar").addClass('hide');

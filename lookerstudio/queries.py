@@ -72,7 +72,7 @@ def query_get_new_domains(clients=None, money_sites=None, date_start=None, date_
 
 
 def query_get_new_publications(clients=None, money_sites=None, date_start=None, date_end=None):
-    sql_query = 'select   count( distinct site_url) as count from clients_pbn_sites_and_articles_new'
+    sql_query = 'select count( distinct article_url) as count from clients_pbn_sites_and_articles_new'
     where_clause, where_params = generate_where_clause(clients, money_sites, date_create_start=date_start, date_create_end=date_end)
     if where_clause is not None:
         sql_query += ' where ' + where_clause
@@ -83,20 +83,20 @@ def query_get_new_publications(clients=None, money_sites=None, date_start=None, 
 
 
 def query_get_new_pbn_domains(clients=None, money_sites=None):
-    sql_query = 'SELECT MAX(`site_url`) max_site_url,  SUM(pbn_sites) as sum_pbn_sites, floor(MAX(site_url)/SUM(pbn_sites)*100) as progress_bar FROM `plan_fact`'
+    sql_query = 'SELECT MAX(`site_url`) max_site_url,  SUM(pbn_sites) as sum_pbn_sites, round(MAX(site_url)/SUM(pbn_sites)*100, 1) as progress_bar FROM `plan_fact`'
     where_clause, where_params = generate_where_clause(clients, None, money_sites)
     if where_clause is not None:
         sql_query += ' where ' + where_clause
-    # print(sql_query,where_params)
+    print(sql_query, where_params)
     return execute_select_query(sql_query, where_params, True)
 
 
 def query_get_links_to_money_sites(clients=None, money_sites=None):
-    sql_query = 'SELECT SUM(links_fact) as summ_url_to_acceptor, SUM(links) as summ_links , floor(SUM(links)/SUM(links_fact)*100) as progress FROM plan_fact'
+    sql_query = 'SELECT SUM(links_fact) as summ_url_to_acceptor, SUM(links) as summ_links , floor(SUM(links_fact)/SUM(links)*100) as progress FROM plan_fact'
     where_clause, where_params = generate_where_clause(clients, None, money_sites)
     if where_clause is not None:
         sql_query += ' where ' + where_clause
-    # print(sql_query,where_params)
+    print(sql_query,where_params)
     return execute_select_query(sql_query, where_params, True)
 
 
