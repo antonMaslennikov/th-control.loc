@@ -8,6 +8,7 @@ import shutil
 
 from .libs.anchors_report import AnchorsReport
 from .libs.simple_report import SimpleReport
+from django.db import connection
 
 class AhrefsAnalysis(Service):
 
@@ -29,6 +30,9 @@ class AhrefsAnalysis(Service):
         print(f"Формирование файла завершено."
               f"Время окончания: {datetime.datetime.now()}\n")
 
+        connection.connection.close()
+        connection.connection = None
+
         self.Job.appendResults([{'simple_report': res1,
                              'date': str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M')),
                              'message': 'успешно создан'}])
@@ -44,6 +48,9 @@ class AhrefsAnalysis(Service):
         print(f"Формирование файла завершено."
               f"Время окончания: {datetime.datetime.now()}\n")
 
+        connection.connection.close()
+        connection.connection = None
+
         self.Job.appendResults([{'simple_anchors_report': res2,
                              'date': str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M')),
                              'message': 'успешно создан'}])
@@ -58,6 +65,9 @@ class AhrefsAnalysis(Service):
 
         print(f"Формирование файла завершено."
               f"Время окончания: {datetime.datetime.now()}\n")
+
+        connection.connection.close()
+        connection.connection = None
 
         self.Job.appendResults([{'detailed_anchors_report': res3,
                              'date': str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M')),
