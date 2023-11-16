@@ -347,15 +347,8 @@ function get_data_for_anchors_table(pageNumber = DEFAULT_PAGE_NUM, perPage = DEF
                 });
                 tbody.appendChild(row);
             });
-            var row = document.createElement("tr");
-            var td = document.createElement("th");
-            td.textContent = "Общий итог";
-            td.colSpan = "2";
-            row.appendChild(td);
-            var td = document.createElement("th");
-            td.textContent = counter;
-            row.appendChild(td);
-            tbody.appendChild(row);
+
+            document.querySelector("table#table_anchor_counter_footer .total").textContent = counter;
         }
     });
 }
@@ -406,8 +399,10 @@ $(document).ready(function () {
 
     if (localStorage.getItem('anchors--show-more')) {
         document.querySelector(".anchors--show-more").innerHTML = '-';
+        document.getElementById('table_anchor_counter_header').querySelector('th.table_anchor-domain_name').classList.remove('hidden');
     } else {
         document.querySelector(".anchors--show-more").innerHTML = '+';
+        document.getElementById('table_anchor_counter_header').querySelector('th.table_anchor-domain_name').classList.add('hidden');
     }
 
 
@@ -450,9 +445,11 @@ $(document).ready(function () {
         if (localStorage.getItem('anchors--show-more')) {
             localStorage.removeItem('anchors--show-more');
             event.currentTarget.innerHTML = '+';
+            document.getElementById('table_anchor_counter_header').querySelector('th.table_anchor-domain_name').classList.add('hidden');
         } else {
             localStorage.setItem('anchors--show-more', true);
             event.currentTarget.innerHTML = '-';
+            document.getElementById('table_anchor_counter_header').querySelector('th.table_anchor-domain_name').classList.remove('hidden');
         }
         get_data_for_anchors_table();
     });

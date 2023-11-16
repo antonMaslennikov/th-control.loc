@@ -199,16 +199,28 @@
         <div class="row">
             <div class="col">
                 <h2 class="text-center">Анкоры</h2>
-                <table id="table_anchor_counter" class="table table-bordered table-striped table-hover">
+                <table id="table_anchor_counter_header" class="table table-bordered table-striped table-hover">
                     <thead>
                     <tr>
                         <th><button class="btn btn-small anchors--show-more">+</button> Анкор</th>
-                        <th>Домен</th>
-                        <th>Количество ссылок с анкором</th>
+                        <th class="table_anchor-domain_name">Домен</th>
+                        <th class="table_anchor-last-td">Количество ссылок с анкором</th>
                     </tr>
                     </thead>
-                    <tbody>
-                    </tbody>
+                </table>
+                <div class="scroll-table-body">
+                    <table id="table_anchor_counter" class="table table-bordered table-striped table-hover">
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <table id="table_anchor_counter_footer" class="table table-bordered table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th>Общий итог</th>
+                        <th class="total table_anchor-last-td"></th>
+                    </tr>
+                    </thead>
                 </table>
 
                 <ul class="pagination" id="pagination_anchor_counter"></ul>

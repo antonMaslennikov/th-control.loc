@@ -87,11 +87,9 @@ def get_links_to_money_sites(request):
 def get_anchor_links(request):
     clients = request.GET.get('clients', None)
     money_sites = request.GET.get('money_sites', None)
-    page_number = request.GET.get('page', 1)
-    items_per_page = request.GET.get('per_page', 5)
     query_type = request.GET.get('query_type', 1)
-    data = query_anchor_links(clients, money_sites, current_page=page_number, items_per_page=items_per_page, query_type=query_type)
-    data = paginator_prepare(data, page_number)
+    data = query_anchor_links(clients, money_sites, query_type=query_type)
+    data = paginator_prepare(data)
     return JsonResponse(data, safe=False)
 
 

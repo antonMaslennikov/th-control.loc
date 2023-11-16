@@ -138,19 +138,23 @@ def query_links_to_money_sites(clients=None, money_sites=None, current_page=1, i
     return get_paginator(sql_query, where_params, current_page, items_per_page)
 
 
-def query_anchor_links(clients=None, money_sites=None, query_type=1, current_page=1, items_per_page=20):
+def query_anchor_links(clients=None, money_sites=None, query_type=1, current_page=1, items_per_page=20000):
 
     if query_type == 1:
-        sql_query = 'SELECT anchor_value, COUNT(url_from_donor) as count_url_from_donor FROM urls_check_new  :where GROUP by anchor_value'
+        sql_query = 'SELECT anchor_value, COUNT(url_from_donor) as count_url_from_donor FROM urls_check_new :where GROUP by anchor_value'
     else:
-        sql_query = 'SELECT anchor_value, acceptor_domain, COUNT(url_from_donor) as count_url_from_donor FROM urls_check_new   :where GROUP by anchor_value,acceptor_domain'
+        sql_query = 'SELECT anchor_value, acceptor_domain, COUNT(url_from_donor) as count_url_from_donor FROM urls_check_new :where GROUP by anchor_value,acceptor_domain'
 
     where_clause, where_params = generate_where_clause(clients=clients, acceptor_domains=money_sites)
 
     if where_clause is not None:
-        sql_query = sql_query.replace(':where', ' where ' + where_clause)
+        # sql_query = sql_query.replace(':where', ' where ' + where_clause + ' and date_check = CURRENT_DATE')
+        sql_query = sql_query.replace(':where', ' where ' + where_clause + ' and date_check = (select max(`date_check`) from `urls_check_new`)')
     else:
-        sql_query = sql_query.replace(':where', '')
+        # sql_query = sql_query.replace(':where', 'date_check = CURRENT_DATE')
+        sql_query = sql_query.replace(':where', ' where date_check = (select max(`date_check`) from `urls_check_new`)')
+
+    # print(sql_query)
 
     return get_paginator(sql_query, where_params, current_page, items_per_page)
 
