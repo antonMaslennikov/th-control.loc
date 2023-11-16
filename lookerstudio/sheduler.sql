@@ -50,7 +50,7 @@ BEGIN
                         LEFT JOIN links_all_urls lau2 ON lcda2.id_url_to_acceptor = lau2.id
                         LEFT JOIN links_all_domains lad ON lau2.id_domain = lad.id
                 ) pzdc
-            GROUP BY pbn_owner, id_site
+            GROUP BY pbn_owner_temp, id_site
         )
 
         SELECT articles_new.id_site, site_url, site_create, article_url, article_length, article_name, count_h1_h2, date_create, pbn_owner
