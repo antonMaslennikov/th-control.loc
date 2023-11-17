@@ -67,9 +67,11 @@ def get_chart_date(request):
 def get_pbn_domains_and_publications(request):
     clients = request.GET.get('clients', None)
     money_sites = request.GET.get('money_sites', None)
+    start_date = request.GET.get('start_date', None)
+    end_date = request.GET.get('end_date', None)
     page_number = request.GET.get('page', 1)
     items_per_page = request.GET.get('per_page', 5)
-    data = query_get_pbn_domains(clients, money_sites, page_number, items_per_page)
+    data = query_get_pbn_domains(clients, money_sites, start_date, end_date, page_number, items_per_page)
     data = paginator_prepare(data, page_number)
     return JsonResponse(data, safe=False)
 

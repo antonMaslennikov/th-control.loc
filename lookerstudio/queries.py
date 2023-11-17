@@ -113,12 +113,14 @@ def query_get_chart_data(clients=None, money_sites=None):
     return execute_select_query(sql_query, where_params)
 
 
-def query_get_pbn_domains(clients=None, money_sites=None, current_page=1, items_per_page=20):
+def query_get_pbn_domains(clients=None, money_sites=None, start_date=None, end_date = None, current_page=1, items_per_page=20):
     sql_query = 'SELECT pbn_owner, site_url, site_create, COUNT(site_url) as count_article, MAX(date_create) as last_update, DATEDIFF(CURRENT_DATE,MAX(date_create)) as date_diff ' \
                 'FROM clients_pbn_sites_and_articles_new ' \
                 ':where ' \
                 'GROUP by pbn_owner, site_url, site_create'
-    where_clause, where_params = generate_where_clause(clients)
+
+    where_clause, where_params = generate_where_clause(clients=clients, site_create_start=start_date, site_create_end=end_date)
+
     if where_clause is not None:
         sql_query = sql_query.replace(':where', ' where ' + where_clause)
     else:
@@ -159,7 +161,15 @@ def query_anchor_links(clients=None, money_sites=None, query_type=1, current_pag
     return get_paginator(sql_query, where_params, current_page, items_per_page)
 
 
-def generate_where_clause(clients=None, money_sites=None, acceptor_domains=None, date_start=None, date_end=None, date_create_start=None, date_create_end=None):
+def generate_where_clause(clients=None,
+                          money_sites=None,
+                          acceptor_domains=None,
+                          date_start=None,
+                          date_end=None,
+                          date_create_start=None,
+                          date_create_end=None,
+                          site_create_start=None,
+                          site_create_end=None):
     where_params = []
     where_clause = []
 
@@ -198,6 +208,14 @@ def generate_where_clause(clients=None, money_sites=None, acceptor_domains=None,
     if date_create_end:
         where_params.append(date_create_end)
         where_clause.append("date_create <= %s")
+
+    if site_create_start:
+        where_params.append(site_create_start)
+        where_clause.append("site_create >= %s")
+
+    if site_create_end:
+        where_params.append(site_create_end)
+        where_clause.append("site_create <= %s")
 
     if len(where_clause) > 0:
         where_clause = ' AND '.join(where_clause)
