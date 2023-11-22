@@ -46,6 +46,7 @@ class Setting(models.Model):
 class Service(models.Model):
     STATUS = (
         (1, 'GoogleIndexer'),
+        (4, 'GoogleDeIndexer'),
         (2, 'AhrefsAnalysis'),
         # (3, 'LookerStudio'),
     )
