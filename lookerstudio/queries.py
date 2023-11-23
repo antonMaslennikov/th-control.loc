@@ -109,8 +109,23 @@ def query_get_chart_data(clients=None, money_sites=None):
         sql_query = sql_query.replace(':where', ' where ' + where_clause)
     else:
         sql_query = sql_query.replace(':where', '')
-    # print(sql_query,where_params)
-    return execute_select_query(sql_query, where_params)
+
+    results = get_query_result(sql_query, where_params)
+
+    data = []
+    counts = dict()
+
+    for row in results:
+
+        if row[0] in counts:
+            counts[row[0]] += row[2]
+        else:
+            counts[row[0]] = row[2]
+
+        data.append({'pbn_owner': row[0], 'x': row[1], 'y': counts[row[0]]})
+
+    return data
+    # return execute_select_query(sql_query, where_params)
 
 
 def query_get_pbn_domains(clients=None, money_sites=None, start_date=None, end_date = None, current_page=1, items_per_page=20):
