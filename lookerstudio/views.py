@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from .queries import query_get_clients_list, query_get_money_sites_list, query_get_deadline_data, query_get_new_domains, \
     query_get_chart_data, query_get_new_publications, query_get_new_pbn_domains, query_get_links_to_money_sites, \
-    query_get_pbn_domains, query_links_to_money_sites, query_anchor_links, query_summary
+    query_get_pbn_domains, query_links_to_money_sites, query_anchor_links, query_summary, query_get_publications
 from django.http import JsonResponse
 
 
@@ -29,6 +29,15 @@ def get_money_sites_list(request):
     data = query_get_money_sites_list(clients)
     return JsonResponse(data, safe=False)
 
+def get_publications(request):
+    clients = request.GET.get('clients', None)
+    start_date = request.GET.get('start_date', None)
+    end_date = request.GET.get('end_date', None)
+    page_number = request.GET.get('page', 1)
+    items_per_page = request.GET.get('per_page', 5)
+    data = query_get_publications(clients, start_date, end_date, page_number, items_per_page)
+    data = paginator_prepare(data, page_number)
+    return JsonResponse(data, safe=False)
 
 def get_deadline_data(request):
     clients = request.GET.get('clients', None)

@@ -2,7 +2,7 @@ from django.urls import path
 
 from .views import (
     index, summary, get_client_list, get_money_sites_list, get_deadline_data, get_summary, get_chart_date,
-    get_pbn_domains_and_publications, get_links_to_money_sites, get_anchor_links, summary_page_data
+    get_pbn_domains_and_publications, get_links_to_money_sites, get_anchor_links, summary_page_data, get_publications
 )
 
 urlpatterns = [
@@ -17,4 +17,5 @@ urlpatterns = [
     path('domain-and-publications', get_pbn_domains_and_publications),
     path('link-to-money-sites', get_links_to_money_sites),
     path('anchor-links', get_anchor_links),
+    path('publications', get_publications),
 ]

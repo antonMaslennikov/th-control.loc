@@ -181,6 +181,21 @@ def query_anchor_links(clients=None, money_sites=None, query_type=1, current_pag
 
     return get_paginator(sql_query, where_params, current_page, items_per_page)
 
+def query_get_publications(clients=None, start_date=None, end_date = None, current_page=1, items_per_page=20):
+    sql_query = 'SELECT site_url, article_url, article_name, count_h1_h2, article_length ' \
+                'FROM clients_pbn_sites_and_articles_new ' \
+                'WHERE article_url is not null :where'
+
+    where_clause, where_params = generate_where_clause(clients=clients,
+                                                       site_create_start=start_date,
+                                                       site_create_end=end_date)
+
+    if where_clause is not None:
+        sql_query = sql_query.replace(':where', ' and ' + where_clause)
+    else:
+        sql_query = sql_query.replace(':where', '')
+
+    return get_paginator(sql_query, where_params, current_page, items_per_page)
 
 def generate_where_clause(clients=None,
                           money_sites=None,

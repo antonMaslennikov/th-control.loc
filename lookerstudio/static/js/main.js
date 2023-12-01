@@ -7,6 +7,7 @@ const DOMAIN_PBN_AND_PUBLICATIONS_URL = '/looker-studio/domain-and-publications'
 const LINKS_TO_MONEY_SITES_URL = '/looker-studio/link-to-money-sites';
 const LINKS_ANCHOR_COUNTER_URL = '/looker-studio/anchor-links';
 const SUMMARY_URL = '/looker-studio/get-summary';
+const PUBLICATIONS_URL = '/looker-studio/publications';
 const DEFAULT_PAGE_NUM = 1;
 const DEFAULT_PER_PAGE_COUNT = 10;
 
@@ -205,6 +206,7 @@ class Dropdown {
             get_data_for_chart();
             get_data_for_anchors_table();
             get_data_for_table_pbn_and_publications();
+            get_data_for_table_publications();
             get_date_for_links_to_money_sites_table();
         });
     }
@@ -273,11 +275,15 @@ function get_data_for_chart() {
                 scales: {
                     x: {
                         title: {
-                            display: true, text: 'Publication Date'
+                            display: true
+//                            ,
+//                            text: 'Publication Date'
                         }
                     }, y: {
                         title: {
-                            display: true, text: 'Publication Count'
+                            display: true
+//                            ,
+//                            text: 'Publication Count'
                         }
                     }
                 }
@@ -314,6 +320,30 @@ function get_data_for_table_pbn_and_publications(pageNumber = DEFAULT_PAGE_NUM, 
     });
 }
 
+function get_data_for_table_publications(pageNumber = DEFAULT_PAGE_NUM, perPage = DEFAULT_PER_PAGE_COUNT) {
+    var url = `${PUBLICATIONS_URL}?page=${pageNumber}&per_page=${perPage}&`;
+    url = add_clients_in_query(url);
+    url = add_date_in_query(url);
+    fetch_data(url).then(data => {
+        const tbody = document.querySelector("table#table_publications tbody");
+        tbody.innerHTML = "";
+        createPagination('pagination_publications', data);
+        data['links'].forEach((item) => {
+            const row = document.createElement("tr");
+            Object.values(item).forEach((value) => {
+                const td = document.createElement("td");
+                if (/^(ftp|http|https):\/\/[^ "]+$/.test(value)) {
+                    td.appendChild(createA(value));
+                } else {
+                    td.textContent = value;
+                }
+                row.appendChild(td);
+            });
+            tbody.appendChild(row);
+        });
+    });
+}
+
 function get_date_for_links_to_money_sites_table(pageNumber = DEFAULT_PAGE_NUM, perPage = DEFAULT_PER_PAGE_COUNT) {
     var url = `${LINKS_TO_MONEY_SITES_URL}?page=${pageNumber}&per_page=${perPage}&`;
     url = add_clients_in_query(url);
@@ -330,7 +360,13 @@ function get_date_for_links_to_money_sites_table(pageNumber = DEFAULT_PAGE_NUM, 
                 Object.values(item).forEach((value) => {
 
                     const td = document.createElement("td");
-                    td.textContent = value;
+
+                    if (/^(ftp|http|https):\/\/[^ "]+$/.test(value)) {
+                        td.appendChild(createA(value));
+                    } else {
+                        td.textContent = value;
+                    }
+
                     row.appendChild(td);
                 });
                 tbody.appendChild(row);
@@ -372,6 +408,15 @@ function get_data_for_anchors_table(pageNumber = DEFAULT_PAGE_NUM, perPage = DEF
             document.querySelector("table#table_anchor_counter_footer .total").textContent = counter;
         }
     });
+}
+
+function createA(url) {
+    let a = document.createElement('a');
+    a.setAttribute('href', url);
+    a.setAttribute('target', '_blank');
+    a.innerHTML = url;
+
+    return a;
 }
 
 
@@ -431,6 +476,7 @@ $(document).ready(function () {
     get_summary_list();
     get_data_for_anchors_table();
     get_data_for_table_pbn_and_publications();
+    get_data_for_table_publications();
     get_date_for_links_to_money_sites_table();
 
 
@@ -448,6 +494,14 @@ $(document).ready(function () {
         if (event.target.tagName === "A") {
             const pageNumber = parseInt(event.target.dataset.page);
             get_data_for_table_pbn_and_publications(pageNumber);
+        }
+    });
+
+    document.querySelector("#pagination_publications").addEventListener("click", function (event) {
+        event.preventDefault();
+        if (event.target.tagName === "A") {
+            const pageNumber = parseInt(event.target.dataset.page);
+            get_data_for_table_publications(pageNumber);
         }
     });
 
