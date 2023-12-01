@@ -103,7 +103,7 @@ def query_get_links_to_money_sites(clients=None, money_sites=None):
 
 
 def query_get_chart_data(clients=None, money_sites=None):
-    sql_query = 'SELECT pbn_owner, date(site_create) as x, count(DISTINCT site_url) as y  FROM clients_pbn_sites_and_articles_new :where GROUP BY pbn_owner, date(site_create);'
+    sql_query = 'SELECT pbn_owner, date(site_create) as x, count(DISTINCT site_url) as y  FROM clients_pbn_sites_and_articles_new :where GROUP BY pbn_owner, date(site_create) ORDER BY date(site_create);'
     where_clause, where_params = generate_where_clause(clients, money_sites)
     if where_clause is not None:
         sql_query = sql_query.replace(':where', ' where ' + where_clause)
