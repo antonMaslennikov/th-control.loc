@@ -225,33 +225,52 @@ function get_data_for_chart() {
     var url = add_clients_in_query(MAIN_CHART_URL);
     url = add_money_sites_in_query(url);
     fetch_data(url).then(data => {
-        const datasets = {};
+        const datasets_tmp = {};
+
         // Group data by label
         data.forEach(item => {
             const label = item.pbn_owner;
-            if (!datasets[label]) {
-                datasets[label] = {
+            if (!datasets_tmp[label]) {
+                datasets_tmp[label] = {
                     label: label, data: [], borderColor: get_random_color(), backgroundColor: 'rgba(0, 0, 0, 0)',
                 };
             }
             item['x'] = get_rus_date_format(item['x']);
-            datasets[label].data.push({
+            datasets_tmp[label].data.push({
                 x: item.x, y: item.y
             });
         });
+
+        const datasets = {};
+
+        for (var key in datasets_tmp) {
+            if (datasets_tmp[key].data.length > 1) {
+                datasets[key] = datasets_tmp[key];
+            }
+        }
+
         const chartData = {
-            labels: Array.from(new Set(data.map(item => item.x))), datasets: Object.values(datasets),
+            labels: Array.from(new Set(data.map(item => item.x))),
+            datasets: Object.values(datasets),
         };
+
         const ctx = document.getElementById('publicationChart').getContext('2d');
         const existingChart = Chart.getChart(ctx);
+
         if (existingChart) {
             existingChart.destroy();
         }
+
         var chart = new Chart(ctx, {
-            type: 'line', data: chartData, options: {
-                responsive: true, title: {
-                    display: true, text: 'Publications by Client'
-                }, scales: {
+            type: 'line',
+            data: chartData,
+            options: {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: 'Publications by Client'
+                },
+                scales: {
                     x: {
                         title: {
                             display: true, text: 'Publication Date'
