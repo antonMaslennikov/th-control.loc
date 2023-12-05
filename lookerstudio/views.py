@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 from .queries import query_get_clients_list, query_get_money_sites_list, query_get_deadline_data, query_get_new_domains, \
     query_get_chart_data, query_get_new_publications, query_get_new_pbn_domains, query_get_links_to_money_sites, \
     query_get_pbn_domains, query_links_to_money_sites, query_anchor_links, query_summary, query_get_publications
@@ -6,10 +7,11 @@ from django.http import JsonResponse
 
 
 # Create your views here.
+@login_required
 def index(request):
     return render(request, 'lookerstudio/index.html')
 
-
+@login_required
 def summary(request):
     return render(request, 'lookerstudio/summary.html')
 
