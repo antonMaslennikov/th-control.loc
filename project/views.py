@@ -493,6 +493,32 @@ def run_service(request, pk, service_id):
     })
 
 
+def restart_service(request, pk, service_id, job_id):
+    project = Project.objects.get(
+        pk=pk,
+        is_deleted=False,
+    )
+
+    project_users = []
+
+    for user in project.users.values('id'):
+        project_users.append(user['id'])
+
+    if project.author_id != request.user.id and request.user.id not in project_users:
+        raise Http404('No access')
+
+    try:
+        service = Service.objects.get(pk=service_id)
+    except Project.DoesNotExist:
+        raise Http404('No access')
+
+    job = Job.objects.get(pk=job_id)
+    job.status = 0
+    job.save()
+
+    return redirect('project_service_journal', pk=project.id, service_id=service_id)
+
+
 def journal_service(request, pk, service_id):
     try:
         project = Project.objects.get(

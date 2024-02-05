@@ -30,6 +30,7 @@
                     <span class="badge bg-secondary">Поставлен в очередь. Ожидает запуска</span>
                 {% elif job.status == 1 %}
                     <span class="badge bg-primary">Запущен</span>
+                    <a href="{% url 'project_service_restart' pk=project.id service_id=service.id job_id=job.id %}" onclick="return confirm('Вы уверены?')">перезапустить</a>
                 {% elif job.status == 2 %}
                     <span class="badge bg-success">Успешно завершён</span>
                 {% elif job.status == 3 %}

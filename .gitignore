@@ -12,3 +12,6 @@ media
 node_modules
 package-lock.json
 *.bundle.*
+Lib
+Scripts
+pyvenv.cfg

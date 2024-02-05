@@ -19,6 +19,7 @@ urlpatterns = [
     path('<int:pk>/log/<int:service_id>/<int:job_id>', views.service_log, name='project_service_job_journal'),
     path('<int:pk>/log/<int:service_id>/<str:download>', views.service_log, name='project_service_jobs_log_download'),
     path('<int:pk>/log/<int:service_id>/<int:job_id>/<str:download>', views.service_log, name='project_service_jobs_log_download'),
+    path('<int:pk>/restart/<int:service_id>/<int:job_id>', views.restart_service, name='project_service_restart'),
 
     path('job/info/<int:job_id>', views.jobinfo, name='project_job_info'),
     path('job/result/<int:job_id>', views.jobresult, name='project_job_result'),
