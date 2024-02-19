@@ -24,8 +24,10 @@ function get_summary_list() {
             $("#count_domains .card-subtitle strong").text(data.pbn_domains.max_site_url + ' (' + data.pbn_domains.progress_bar + '%)');
 
             $("#count_domains .progress-bar").removeClass('hide');
-            $("#count_domains .progress-bar .svg-percent").attr('width', Math.min(data.pbn_domains.progress_bar, 100) + '%');
-            $("#count_domains .progress-bar .svg-text").text(data.pbn_domains.sum_pbn_sites);
+            $("#count_domains .progress-bar").css('width', Math.min(data.pbn_domains.progress_bar, 100) + '%');
+            $("#count_domains .svg-text").text(data.pbn_domains.sum_pbn_sites);
+//            $("#count_domains .progress-bar .svg-percent").attr('width', Math.min(data.pbn_domains.progress_bar, 100) + '%');
+//            $("#count_domains .progress-bar .svg-text").text(data.pbn_domains.sum_pbn_sites);
         } else {
             $("#count_domains .progress-bar").addClass('hide');
             $("#count_domains .card-subtitle strong").text('Нет данных');
@@ -40,8 +42,10 @@ function get_summary_list() {
 
         if (data.money_sites.summ_url_to_acceptor != null) {
             $("#count_money_links .card-subtitle strong").text(data.money_sites.summ_url_to_acceptor + ' (' + data.money_sites.progress + '%)');
-            $("#count_money_links .progress-bar .svg-percent").attr('width', Math.min(data.money_sites.progress, 100) + '%');
-            $("#count_money_links .progress-bar .svg-text").text(data.money_sites.summ_links);
+            $("#count_money_links .progress-bar").css('width', Math.min(data.money_sites.progress, 100) + '%');
+            $("#count_money_links .svg-text").text(data.money_sites.summ_links);
+//            $("#count_money_links .progress-bar .svg-percent").attr('width', Math.min(data.money_sites.progress, 100) + '%');
+//            $("#count_money_links .progress-bar .svg-text").text(data.money_sites.summ_links);
         } else {
             $("#count_money_links .progress-bar").addClass('hide');
             $("#count_money_links .card-subtitle strong").text('Нет данных');
@@ -53,11 +57,7 @@ function add_clients_in_query(main_url) {
     main_url = prepare_url(main_url);
 
     var clients_query = '';
-    var clients = [];
-
-    $('#filter-client-list input[type="checkbox"]:checked').each((i, item) => {
-        clients.push($(item).val());
-    });
+    var clients = $('#filter-client-list').val();
 
     if (clients.length > 0) {
         clients_query = "clients=" + clients.join(',');
@@ -70,13 +70,9 @@ function add_money_sites_in_query(main_url) {
     main_url = prepare_url(main_url);
 
     var money_sites_query = '';
-    var money_sites = [];
+    var money_sites = $('#filter-money-sites-list').val();
 
     var money_sites_query = "money_sites=";
-
-    $('#filter-money-sites-list input[type="checkbox"]:checked').each((i, item) => {
-        money_sites.push($(item).val());
-    });
 
     if (money_sites.length > 0) {
         money_sites_query = "money_sites=" + money_sites.join(',');
@@ -139,24 +135,21 @@ class Dropdown {
 
     fetchOptions() {
 
+        let self = this;
+
         this.optionsURL = add_clients_in_query(this.optionsURL);
 
         fetch(this.optionsURL)
             .then((response) => response.json())
             .then((data) => {
-                const optionsHTML = data.map((client) => `
-              <li>
-                <span>
-                  <label>
-                    <input type="checkbox" class="filter-checkbox" value="${client.item}" />
-                    <span>${client.item}</span>
-                  </label>
-                </span>
-              </li>
-            `).join('');
+                $(`#${this.containerID} option`).remove();
 
-                $(`#${this.containerID} li:gt(0)`).remove();
-                $(`#${this.containerID}`).append(optionsHTML);
+                data.forEach(function(client) {
+                    let option = document.createElement('option');
+                    option.setAttribute('value', client.item);
+                    option.innerHTML = client.item;
+                    $(`#${self.containerID}`).append(option);
+                });
 
                 this.initDropdown();
 
@@ -168,47 +161,63 @@ class Dropdown {
 
         var container_id = '#' + this.containerID;
 
-        $(`.dropdown-trigger[data-target="${this.containerID}"]`).dropdown({
-            closeOnClick: false,
-            coverTrigger: false,
-            constrainWidth: false,
-            alignment: 'left',
-        });
+        $(container_id).select2({
+          theme: 'bootstrap4'
+        }).on(
+            'change', function(e) {
+                var data = $(container_id).val();
 
-        $(`${container_id} .search-box`).on('keyup', function () {
-            const searchText = $(this).val().toLowerCase();
-            const $options = $(`${container_id} li span:not(.search-wrap)`);
-            $options.each(function () {
-                const $option = $(this);
-                const optionText = $option.text().toLowerCase();
-                const isVisible = optionText.includes(searchText);
-                $option.closest('li').toggle(isVisible);
-            });
-        });
-
-        $(container_id + ' input[type="checkbox"]').on('change', function () {
-            const selectedOptions = $(`${container_id} input[type="checkbox"]:checked`)
-                .map(function () {
-                    return $(this).val();
-                })
-                .get();
-
-            $(container_id).parent().find('.selected-options').html(
-                '<p>Selected options: ' + selectedOptions.join(', ') + '</p>'
-            );
-
-            if (container_id == '#filter-client-list') {
-                var dropdown = new Dropdown('filter-money-sites-list', FILTER_GET_MONEY_SITES_LIST_URL);
-                dropdown.fetchOptions();
+                get_summary_list();
+                get_data_for_chart();
+                get_data_for_anchors_table();
+                get_data_for_table_pbn_and_publications();
+                get_data_for_table_publications();
+                get_date_for_links_to_money_sites_table();
             }
+        );
 
-            get_summary_list();
-            get_data_for_chart();
-            get_data_for_anchors_table();
-            get_data_for_table_pbn_and_publications();
-            get_data_for_table_publications();
-            get_date_for_links_to_money_sites_table();
-        });
+
+//        $(`.dropdown-trigger[data-target="${this.containerID}"]`).dropdown({
+//            closeOnClick: false,
+//            coverTrigger: false,
+//            constrainWidth: false,
+//            alignment: 'left',
+//        });
+
+//        $(`${container_id} .search-box`).on('keyup', function () {
+//            const searchText = $(this).val().toLowerCase();
+//            const $options = $(`${container_id} li span:not(.search-wrap)`);
+//            $options.each(function () {
+//                const $option = $(this);
+//                const optionText = $option.text().toLowerCase();
+//                const isVisible = optionText.includes(searchText);
+//                $option.closest('li').toggle(isVisible);
+//            });
+//        });
+
+//        $(container_id + ' input[type="checkbox"]').on('change', function () {
+//            const selectedOptions = $(`${container_id} input[type="checkbox"]:checked`)
+//                .map(function () {
+//                    return $(this).val();
+//                })
+//                .get();
+//
+//            $(container_id).parent().find('.selected-options').html(
+//                '<p>Selected options: ' + selectedOptions.join(', ') + '</p>'
+//            );
+//
+//            if (container_id == '#filter-client-list') {
+//                var dropdown = new Dropdown('filter-money-sites-list', FILTER_GET_MONEY_SITES_LIST_URL);
+//                dropdown.fetchOptions();
+//            }
+//
+//            get_summary_list();
+//            get_data_for_chart();
+//            get_data_for_anchors_table();
+//            get_data_for_table_pbn_and_publications();
+//            get_data_for_table_publications();
+//            get_date_for_links_to_money_sites_table();
+//        });
     }
 
     getSelectedOptions() {
@@ -430,6 +439,7 @@ $(document).ready(function () {
     dropdown2.fetchOptions();
 //    console.log(dropdown2.getSelectedOptions());
 
+    /*
     duDatepicker('#datepicker', {
         format: 'mmmm d, yyyy',
         outFormat: 'yyyy-mm-dd',
@@ -462,13 +472,31 @@ $(document).ready(function () {
             }
         }
     });
+    */
 
-    if (localStorage.getItem('anchors--show-more')) {
-        document.querySelector(".anchors--show-more").innerHTML = '-';
-        document.getElementById('table_anchor_counter_header').querySelector('th.table_anchor-domain_name').classList.remove('hidden');
-    } else {
-        document.querySelector(".anchors--show-more").innerHTML = '+';
-        document.getElementById('table_anchor_counter_header').querySelector('th.table_anchor-domain_name').classList.add('hidden');
+    $('#datepicker').daterangepicker({
+        autoApply: true
+    })
+    .on('apply.daterangepicker', function(ev, picker) {
+
+        this.setAttribute('data-range-from', picker.startDate.format('YYYY-MM-DD'));
+        this.setAttribute('data-range-to', picker.endDate.format('YYYY-MM-DD'));
+
+        get_data_for_chart();
+        get_summary_list();
+        get_data_for_anchors_table();
+        get_data_for_table_pbn_and_publications();
+        get_date_for_links_to_money_sites_table();
+    });
+
+    if (document.querySelector(".anchors--show-more")) {
+        if (localStorage.getItem('anchors--show-more')) {
+            document.querySelector(".anchors--show-more").innerHTML = '-';
+            document.getElementById('table_anchor_counter_header').querySelector('th.table_anchor-domain_name').classList.remove('hidden');
+        } else {
+            document.querySelector(".anchors--show-more").innerHTML = '+';
+            document.getElementById('table_anchor_counter_header').querySelector('th.table_anchor-domain_name').classList.add('hidden');
+        }
     }
 
 

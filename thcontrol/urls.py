@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from pages import views
+# from pages import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,5 +25,5 @@ urlpatterns = [
     path('', include('project.urls')),
     path('looker-studio/', include('lookerstudio.urls')),
     # старая версия, убрать после релиза
-    path('sites/', include('sites.urls')),
+    # path('sites/', include('sites.urls')),
 ]

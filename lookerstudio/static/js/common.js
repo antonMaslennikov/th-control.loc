@@ -60,37 +60,41 @@ function createPagination(el, data) {
     let endPage = Math.min(startPage + 4, data.total_pages);
     if (startPage > 1) {
         const firstLink = document.createElement("li");
+        firstLink.classList.add('page-item');
         if (1 === data.page_number) {
             firstLink.classList.add('active');
         }
-        firstLink.innerHTML = `<a href="#" data-page="1">1</a>`;
+        firstLink.innerHTML = `<a href="#" data-page="1" class="page-link">1</a>`;
         pagination.appendChild(firstLink);
 
         if (startPage > 2) {
             const ellipsisLink = document.createElement("li");
-            ellipsisLink.innerHTML = `<span>...</span>`;
+            ellipsisLink.classList.add('page-item');
+            ellipsisLink.innerHTML = `<span class="page-link">...</span>`;
             pagination.appendChild(ellipsisLink);
         }
     }
 
     for (let i = startPage; i <= endPage; i++) {
         const pageLink = document.createElement("li");
+        pageLink.classList.add('page-item');
         if (i == data.page_number) {
             pageLink.classList.add('active');
         }
-        pageLink.innerHTML = `<a href="#" data-page="${i}">${i}</a>`;
+        pageLink.innerHTML = `<a href="#" data-page="${i}" class="page-link">${i}</a>`;
         pagination.appendChild(pageLink);
     }
 
     if (endPage < data.total_pages) {
         if (endPage < data.total_pages - 1) {
             const ellipsisLink = document.createElement("li");
-            ellipsisLink.innerHTML = `<span>...</span>`;
+            ellipsisLink.classList.add('page-item');
+            ellipsisLink.innerHTML = `<span class="page-link">...</span>`;
             pagination.appendChild(ellipsisLink);
         }
 
         const lastLink = document.createElement("li");
-        lastLink.innerHTML = `<a href="#" data-page="${data.total_pages}">${data.total_pages}</a>`;
+        lastLink.innerHTML = `<a href="#" data-page="${data.total_pages}" class="page-link">${data.total_pages}</a>`;
         pagination.appendChild(lastLink);
     }
 }

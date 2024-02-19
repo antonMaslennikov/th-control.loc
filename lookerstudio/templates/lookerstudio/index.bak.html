@@ -1,0 +1,258 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Looker</title>
+    <!-- Material Design CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'js/common.js'%}"></script>
+    <script src="{% static 'js/main.js'%}"></script>
+    <link rel="stylesheet" href="{% static 'css/duDatepicker.min.css'%}">
+    <script src="{% static 'js/duDatepicker.min.js'%}"></script>
+
+    <!-- Material Design JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/style.css'%}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <meta name="robots" content="noindex, nofollow">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <br>
+
+        <div class="row menu">
+            <div class="col s1">
+                <a href="/looker-studio" class="btn active">Отчёт</a>
+            </div>
+            <div class="col s1">
+                <a href="/looker-studio/summary" class="btn">Сводная</a>
+            </div>
+        </div>
+
+        <br>
+        <br>
+
+        <div class="row">
+            <div class="col s3">
+                <label>Select options:</label>
+                <a class="dropdown-trigger btn" href="#" data-target="filter-client-list">CLIENTS</a>
+                <ul id="filter-client-list" class="dropdown-content options-dropdown">
+                    <li class="search-wrap">
+                        <div class="input-field">
+                            <i class="material-icons prefix">search</i>
+                            <input type="search" class="search-box" id="search-box1" autocomplete="off">
+                            <label for="search-box1">Search</label>
+                        </div>
+                        <div class="search-result"></div>
+                    </li>
+                </ul>
+                <div class="selected-options"></div>
+            </div>
+            <div class="col s3">
+                <label>Select options:</label>
+                <a class="dropdown-trigger btn" href="#" data-target="filter-money-sites-list">MONEY SITES</a>
+                <ul id="filter-money-sites-list" class="dropdown-content options-dropdown">
+                    <li class="search-wrap">
+                        <div class="input-field">
+                            <i class="material-icons prefix">search</i>
+                            <input type="search" class="search-box" id="search-box2" autocomplete="off">
+                            <label for="search-box2">Search</label>
+                        </div>
+                        <div class="search-result"></div>
+                    </li>
+                </ul>
+                <div class="selected-options"></div>
+            </div>
+            <div class="col s3 input-field">
+                <input type="text" id="datepicker" class="form-control" placeholder="Выберите">
+                <label for="datepicker">Диапазон дат</label>
+            </div>
+            <div class="col s1 kpimetric" id="deadline">
+                <div class="kpi-label">Дедлайн</div>
+                <div class="valueLabel"></div>
+            </div>
+            <div class="col s2 kpimetric" id="days_left">
+                <div class="kpi-label">Осталось дней</div>
+                <div class="valueLabel"></div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col s2 l2">
+                <div class="card" id="count_domains">
+                    <div class="card-body">
+                        <h5 class="card-title  text-muted text-center">PBN-доменов</h5>
+                        <h6 class="card-subtitle mb-2 text-center"><strong>0</strong></h6>
+
+                        <svg class="progress-bar" height="20" width="100%" display="block" style="overflow: visible">
+                            <rect x="0" y="5" width="100%" height="15" rx="5" ry="10" fill="rgb(220,220,220, 0.5)"></rect>
+                            <rect class="svg-percent" x="0" y="5" width="0%" height="15" rx="5" ry="10" fill="rgba(244,67,54,1)"></rect>
+                            <text class="svg-text" x="167" y="35" text-anchor="end" font-size="10px" fill="rgb(77,77,77)"></text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="col s3 l3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title  text-muted text-center">Новых PBN-доменов</h5>
+                        <h6 class="card-subtitle mb-2 text-center" id="count_new_domains"><strong>0</strong></h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col s2 l2">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title text-muted text-center">Публикаций</h5>
+                        <h6 class="card-subtitle mb-2 text-center" id="count_publications"><strong>0</strong></h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col s3 l3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title text-muted text-center">Новых публикаций</h5>
+                        <h6 class="card-subtitle mb-2 text-center" id="count_new_publications"><strong>0</strong></h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col s2 l2">
+                <div class="card" id="count_money_links">
+                    <div class="card-body">
+                        <h5 class="card-title  text-muted text-center">Ссылок на money</h5>
+                        <h6 class="card-subtitle mb-2 text-center" ><strong>0</strong></h6>
+
+                        <svg class="progress-bar" height="20" width="100%" display="block" style="overflow: visible">
+                            <rect x="0" y="5" width="100%" height="15" rx="5" ry="10" fill="rgb(220,220,220, 0.5)"></rect>
+                            <rect class="svg-percent" x="0" y="5" width="0%" height="15" rx="5" ry="10" fill="rgba(244,67,54,1)"></rect>
+                            <text class="svg-text" x="167" y="35" text-anchor="end" font-size="10px" fill="rgb(77,77,77)"></text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col s12">
+<!--                <h2 class="text-center">Клиенты и публикации</h2>-->
+
+                <canvas id="publicationChart"></canvas>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <h2 class="text-center">Домены PBN и публикации</h2>
+                <table id="table_domain_and_pbn" class="table table-bordered table-striped table-hover  table-responsive">
+                    <thead>
+                    <tr>
+                        <th>Клиент</th>
+                        <th>Домен PBN</th>
+                        <th>Дата создания</th>
+                        <th>Всего публикаций</th>
+                        <th>Последняя публикациия</th>
+                        <th>Дней с последней публикации</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+                <ul class="pagination" id="pagination_domain_and_pbn"></ul>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <h2 class="text-center">Ссылки на money-site</h2>
+                <table id="table_links_to_money_sites"
+                       class="table table-bordered table-striped table-hover table-overflow ">
+                    <thead>
+                    <tr>
+                        <th>Ссылка-донор</th>
+                        <th>Акнкор</th>
+                        <th>Ссылка на money-site</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+
+                <ul class="pagination" id="pagination_links_to_money_sites"></ul>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <h2 class="text-center">Анкоры</h2>
+                <table id="table_anchor_counter_header" class="table table-bordered table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th><button class="btn btn-small anchors--show-more">+</button> Анкор</th>
+                        <th class="table_anchor-domain_name">Домен</th>
+                        <th class="table_anchor-last-td">Количество ссылок с анкором</th>
+                    </tr>
+                    </thead>
+                </table>
+                <div class="scroll-table-body">
+                    <table id="table_anchor_counter" class="table table-bordered table-striped table-hover">
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <table id="table_anchor_counter_footer" class="table table-bordered table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th>Общий итог</th>
+                        <th class="total table_anchor-last-td"></th>
+                    </tr>
+                    </thead>
+                </table>
+
+                <ul class="pagination" id="pagination_anchor_counter"></ul>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <h2 class="text-center">Публикации</h2>
+                <table id="table_publications"
+                       class="table table-bordered table-striped table-hover table-overflow ">
+                    <thead>
+                    <tr>
+                        <th><a href="">Домен PBN</a></th>
+                        <th>URL</th>
+                        <th>Заголовок h1</th>
+                        <th>Кол-во заголовков h1 и h2</th>
+                        <th>Кол-во символов</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+
+                <ul class="pagination" id="pagination_publications"></ul>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
