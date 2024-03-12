@@ -41,7 +41,7 @@ class GoogleIndexer(Service):
         print(len(u.strip()))
 
         if len(u.strip()) == 0:
-            return
+            return {}
 
         ENDPOINT = "https://indexing.googleapis.com/v3/urlNotifications:publish"
         content = {'url': u.strip(), 'type': "URL_UPDATED"}
