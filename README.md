@@ -57,5 +57,5 @@ manage.py collectstatic
 # создать в mysql процедуру и событие и поставить их на исполнение раз в день 
 lookerstudio/sheduler.sql
 
-# добавить в крон обнвление таблицы pbn_plans
+# добавить в крон обновление таблицы pbn_plans
 python manage.py update_pbn_plans

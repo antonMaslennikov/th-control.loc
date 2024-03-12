@@ -37,6 +37,10 @@ class GoogleIndexer(Service):
         self.urls_file = file
 
     def indexURL(self, u, http):
+
+        if len(u) == 0:
+            return
+
         ENDPOINT = "https://indexing.googleapis.com/v3/urlNotifications:publish"
         content = {'url': u.strip(), 'type': "URL_UPDATED"}
         json_ctn = json.dumps(content)
