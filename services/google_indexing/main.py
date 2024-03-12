@@ -38,7 +38,9 @@ class GoogleIndexer(Service):
 
     def indexURL(self, u, http):
 
-        if len(u) == 0:
+        print(len(u.strip()))
+
+        if len(u.strip()) == 0:
             return
 
         ENDPOINT = "https://indexing.googleapis.com/v3/urlNotifications:publish"
