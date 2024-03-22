@@ -134,6 +134,14 @@ def query_get_chart_data(clients=None, money_sites=None):
     # return execute_select_query(sql_query, where_params)
 
 
+def query_get_chart_redirects_data(start_date=None, end_date=None, clients=None, money_sites=None):
+    sql_query = 'SELECT DISTINCT(`has_redirect`), count(`id_site`) FROM `clients_pbn_sites_and_articles_new` WHERE 1 GROUP by `has_redirect`' \
+
+    results = get_query_result(sql_query)
+
+    return results
+
+
 def query_get_pbn_domains(clients=None, money_sites=None, start_date=None, end_date = None, current_page=1, items_per_page=20):
     sql_query = 'SELECT pbn_owner, site_url, site_create, COUNT(site_url) as count_article, MAX(date_create) as last_update, DATEDIFF(CURRENT_DATE,MAX(date_create)) as date_diff ' \
                 'FROM clients_pbn_sites_and_articles_new ' \
@@ -299,11 +307,11 @@ def query_summary():
 
     prev = ''
 
-    i = 0;
+    i = 0
 
     while i < len(data):
-        print(data[i])
-        print(data[i]['client'])
+        # print(data[i])
+        # print(data[i]['client'])
         if prev == data[i]['client']:
             data[i]['client'] = ''
 

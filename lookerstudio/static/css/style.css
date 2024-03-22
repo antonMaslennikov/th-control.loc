@@ -148,3 +148,9 @@
 .content-wrapper {
     min-height:6000px!important;
 }
+
+#data_table tr.bg-danger td,
+#data_table tr.bg-danger td a
+{
+    color:#fff;
+}

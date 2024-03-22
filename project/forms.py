@@ -95,7 +95,8 @@ class RunServiceForm(forms.Form):
 
 
 class RunService2Form(RunServiceForm):
-    file = forms.FileField(help_text='В формате csv, несколько файлов выбирать с ctrl', label='Файлы', widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    # file = forms.FileField(help_text='В формате csv, несколько файлов выбирать с ctrl', label='Файлы', widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    file = forms.FileField(help_text='В формате csv, несколько файлов выбирать с ctrl', label='Файлы', widget=forms.ClearableFileInput())
 
     def clean_file(self):
         data = self.cleaned_data['file']

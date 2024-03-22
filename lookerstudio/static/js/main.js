@@ -1,6 +1,7 @@
 const FILTER_GET_CLIENT_LIST_URL = '/looker-studio/get-client-list';
 const FILTER_GET_MONEY_SITES_LIST_URL = '/looker-studio/get-money-sites-list';
 const MAIN_CHART_URL = '/looker-studio/chart-data';
+const REDIRECT_CHART_URL = '/looker-studio/chart-redirects-data';
 const FILTERS_CLIENTS_URL = '/sites/looker/api/filter/client-list';
 const FILTERS_MONEY_SITES_URL = '/sites/looker/api/filter/money-sites-list';
 const DOMAIN_PBN_AND_PUBLICATIONS_URL = '/looker-studio/domain-and-publications';
@@ -169,6 +170,7 @@ class Dropdown {
 
                 get_summary_list();
                 get_data_for_chart();
+                get_data_for_redirects_chart();
                 get_data_for_anchors_table();
                 get_data_for_table_pbn_and_publications();
                 get_data_for_table_publications();
@@ -302,6 +304,64 @@ function get_data_for_chart() {
         .catch(error => {
             console.error('Error fetching data:', error);
         });
+}
+
+function get_data_for_redirects_chart() {
+
+    var url = add_clients_in_query(REDIRECT_CHART_URL);
+        url = add_money_sites_in_query(url);
+
+    fetch_data(url).then(data => {
+
+        const ctx1 = document.getElementById('redirectsChart').getContext('2d');
+        const existingChart1 = Chart.getChart(ctx1);
+
+        if (existingChart1) {
+            existingChart1.destroy();
+        }
+        let labels = [],
+            values = []
+
+        data.forEach((item) => {
+            if (item[0] == '0') {
+                labels.push('ОК');
+                values.push(item[1]);
+            } else if (item[0] == 1) {
+                labels.push('Редирект');
+                values.push(item[1]);
+            } else {
+                labels.push('Ответ не получен');
+                values.push(item[1]);
+            }
+        });
+
+        var chart = new Chart(ctx1,
+        {
+          type: 'doughnut',
+          data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'redirects',
+              data: values,
+            }
+          ]
+        },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'top',
+              },
+              title: {
+                display: true,
+                text: 'Редирект'
+              }
+            }
+          },
+        })
+        ;
+    });
 }
 
 function get_data_for_table_pbn_and_publications(pageNumber = DEFAULT_PAGE_NUM, perPage = DEFAULT_PER_PAGE_COUNT) {
@@ -483,6 +543,7 @@ $(document).ready(function () {
         this.setAttribute('data-range-to', picker.endDate.format('YYYY-MM-DD'));
 
         get_data_for_chart();
+        get_data_for_redirects_chart();
         get_summary_list();
         get_data_for_anchors_table();
         get_data_for_table_pbn_and_publications();
@@ -501,6 +562,7 @@ $(document).ready(function () {
 
 
     get_data_for_chart();
+    get_data_for_redirects_chart();
     get_summary_list();
     get_data_for_anchors_table();
     get_data_for_table_pbn_and_publications();

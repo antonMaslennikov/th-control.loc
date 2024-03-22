@@ -29,7 +29,7 @@ BEGIN
                     ELSE pbn_owner_temp
                 END as pbn_owner, id_site
             FROM (
-                SELECT ps.id as id_site, ps.site_url, ps.date_create as site_create,
+                SELECT ps.id as id_site, ps.site_url, ps.has_redirect, ps.date_create as site_create,
                     ps.id_server, s.server_name, c.id as id_client, c.client_name as pbn_owner_temp,
                     tbl.id_pbn_site, tbl.date_create, tbl.date_modified,
                     tbl.article_url, tbl.article_name, lad.domain_name as acceptor_domain
@@ -53,12 +53,12 @@ BEGIN
             GROUP BY pbn_owner_temp, id_site
         )
 
-        SELECT articles_new.id_site, site_url, site_create, article_url, article_length, article_name, count_h1_h2, date_create, pbn_owner
+        SELECT articles_new.id_site, site_url, site_create, has_redirect, article_url, article_length, article_name, count_h1_h2, date_create, pbn_owner
         FROM
             (
-                SELECT pzdc.id_site, pzdc.site_url, pzdc.site_create, pzdc.article_url, pzdc.article_length, pzdc.count_h1_h2, pzdc.article_name, pzdc.date_create
+                SELECT pzdc.id_site, pzdc.site_url, pzdc.site_create, pzdc.has_redirect, pzdc.article_url, pzdc.article_length, pzdc.count_h1_h2, pzdc.article_name, pzdc.date_create
                 FROM (
-                    SELECT ps.id as id_site, ps.site_url, ps.date_create as site_create,
+                    SELECT ps.id as id_site, ps.site_url, ps.has_redirect, ps.date_create as site_create,
                         ps.id_server, s.server_name, c.id as id_client, c.client_name as pbn_owner_temp,
                         tbl.id_pbn_site, tbl.date_create, tbl.date_modified,
                         tbl.article_url, tbl.article_length, tbl.count_h1_h2, tbl.article_name, lad.domain_name as acceptor_domain

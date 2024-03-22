@@ -1,6 +1,6 @@
 function get_data() {
     fetch_data('/looker-studio/summary_page_data').then(data => {
-        const tbody = document.querySelector("table#summary_table tbody");
+        const tbody = document.querySelector("table#data_table tbody");
         tbody.innerHTML = "";
 
         data.forEach((item) => {

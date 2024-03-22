@@ -112,108 +112,23 @@
             </div>
         </div>
 
+        {% include "lookerstudio/summaries.v2.html" %}
+
         <div class="row mb-4">
-
-          <div class="col-2 col-lg-2  col-sm-12">
-              <div class="card" id="count_domains">
-                  <div class="card-header">
-                    <h5 class="card-title">PBN-доменов</h5>
-                  </div>
-                  <div class="card-body">
-                      <h6 class="card-subtitle mb-2"><strong>0</strong></h6>
-
-<!--                      <svg class="progress-bar" height="20" width="100%" display="block" style="overflow: visible">-->
-<!--                          <rect x="0" y="5" width="100%" height="15" rx="5" ry="10" fill="rgb(220,220,220, 0.5)"></rect>-->
-<!--                          <rect class="svg-percent" x="0" y="5" width="0%" height="15" rx="5" ry="10" fill="rgba(244,67,54,1)"></rect>-->
-<!--                          <text class="svg-text" x="167" y="35" text-anchor="end" font-size="10px" fill="rgb(77,77,77)"></text>-->
-<!--                      </svg>-->
-
-                      <div class="progress progress-xs progress-striped active">
-                        <div class="progress-bar bg-success" style="width: 0%"></div>
-                      </div>
-
-                      <span class="badge bg-danger mt-2 float-right svg-text"></span>
-                  </div>
-              </div>
-          </div>
-          <div class="col-2 col-lg-2 col-sm-12">
-              <div class="card">
-                  <div class="card-header">
-                    <h5 class="card-title">Новых PBN-доменов</h5>
-                  </div>
-                  <div class="card-body">
-                      <h6 class="card-subtitle mb-2" id="count_new_domains"><strong>0</strong></h6>
-                  </div>
-              </div>
-          </div>
-          <div class="col-1 col-lg-1 col-sm-12">
-              <div class="card">
-                  <div class="card-header">
-                    <h5 class="card-title">Публикаций</h5>
-                  </div>
-                  <div class="card-body">
-                      <h6 class="card-subtitle mb-2" id="count_publications"><strong>0</strong></h6>
-                  </div>
-              </div>
-          </div>
-          <div class="col-2 col-lg-2 col-sm-12">
-              <div class="card">
-                  <div class="card-header">
-                    <h5 class="card-title">Новых публикаций</h5>
-                  </div>
-                  <div class="card-body">
-                      <h6 class="card-subtitle mb-2" id="count_new_publications"><strong>0</strong></h6>
-                  </div>
-              </div>
-          </div>
-          <div class="col-2 col-lg-2 col-sm-12">
-              <div class="card" id="count_money_links">
-                  <div class="card-header">
-                    <h5 class="card-title">Ссылок на money</h5>
-                  </div>
-                  <div class="card-body">
-                      <h6 class="card-subtitle mb-2"><strong>0</strong></h6>
-
-                      <div class="progress progress-xs progress-striped active">
-                        <div class="progress-bar bg-success" style="width: 0%"></div>
-                      </div>
-
-                      <span class="badge bg-danger mt-2 float-right svg-text"></span>
-
-<!--                      <svg class="progress-bar" height="20" width="100%" display="block" style="overflow: visible">-->
-<!--                          <rect x="0" y="5" width="100%" height="15" rx="5" ry="10" fill="rgb(220,220,220, 0.5)"></rect>-->
-<!--                          <rect class="svg-percent" x="0" y="5" width="0%" height="15" rx="5" ry="10" fill="rgba(244,67,54,1)"></rect>-->
-<!--                          <text class="svg-text" x="167" y="35" text-anchor="end" font-size="10px" fill="rgb(77,77,77)"></text>-->
-<!--                      </svg>-->
-                  </div>
-              </div>
-          </div>
-          <div class="col-1 col-lg-1 col-sm-12">
-            <div class="card kpimetric" id="deadline">
-              <div class="card-header">
-                <h5 class="card-title">Дедлайн</h5>
-              </div>
-              <div class="card-body">
-                <div class="valueLabel"></div>
-              </div>
-            </div>
-          </div>
-          <div class="col-2 col-lg-2 col-sm-12">
-            <div class="card kpimetric" id="days_left">
-              <div class="card-header">
-                <h5 class="card-title">Осталось дней</h5>
-              </div>
-              <div class="card-body">
-                <div class="valueLabel"></div>
+            <div class="col-xl-10 col-lg-9 col-md-12 col-sm-10">
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="publicationChart"></canvas>
+                    </div>
                 </div>
             </div>
-          </div>
 
-        </div>
-
-        <div class="card mb-4">
-            <div class="card-body">
-                <canvas id="publicationChart"></canvas>
+            <div class="col-xl-2 col-lg-3 col-md-12 col-sm-2">
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="redirectsChart"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
 

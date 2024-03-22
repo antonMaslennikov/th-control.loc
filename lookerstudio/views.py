@@ -2,7 +2,8 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .queries import query_get_clients_list, query_get_money_sites_list, query_get_deadline_data, query_get_new_domains, \
     query_get_chart_data, query_get_new_publications, query_get_new_pbn_domains, query_get_links_to_money_sites, \
-    query_get_pbn_domains, query_links_to_money_sites, query_anchor_links, query_summary, query_get_publications
+    query_get_pbn_domains, query_links_to_money_sites, query_anchor_links, query_summary, query_get_publications, \
+    query_get_chart_redirects_data, get_paginator
 from django.http import JsonResponse
 
 
@@ -14,6 +15,32 @@ def index(request):
 @login_required
 def summary(request):
     return render(request, 'lookerstudio/summary.html')
+
+@login_required
+def expireds(request):
+    sql_query = 'SELECT c.client_name, ' \
+                '   ps.site_url, ' \
+                '   ps.registration_expiration, ' \
+                '   DATEDIFF(registration_expiration, CURRENT_DATE()) AS registration_expiration_rest, ' \
+                '   ps.ssl_expiration,' \
+                '   DATEDIFF(ssl_expiration, CURRENT_DATE()) AS ssl_expiration_rest ' \
+                'FROM pbn_sites ps ' \
+                '   JOIN servers s ON ps.id_server = s.id ' \
+                '   JOIN clients c ON s.client_id = c.id ' \
+                'WHERE ' \
+                '   ps.registration_expiration IS NOT NULL ' \
+                'ORDER BY ' \
+                '   IF (registration_expiration IS NULL || registration_expiration = \'0000-00-00\', 0, 1) DESC, ' \
+                '   registration_expiration, ' \
+                '   ssl_expiration'
+
+    page = get_paginator(sql_query, '', request.GET.get('page', 1), request.GET.get('per_page', 20))
+
+    return render(request, 'lookerstudio/expireds.html', {
+        'paginator': page,
+        'min_page': max(1, page.number - 5),
+        'max_page': min(page.paginator.num_pages, page.number + 5),
+    })
 
 
 def summary_page_data(request):
@@ -72,6 +99,15 @@ def get_chart_date(request):
     clients = request.GET.get('clients', None)
     money_sites = request.GET.get('money_sites', None)
     data = query_get_chart_data(clients, money_sites)
+    return JsonResponse(data, safe=False)
+def get_chart_redirects_data(request):
+
+    start_date = request.GET.get('start_date', None)
+    end_date = request.GET.get('end_date', None)
+    clients = request.GET.get('clients', None)
+    money_sites = request.GET.get('money_sites', None)
+
+    data = query_get_chart_redirects_data(start_date, end_date, clients, money_sites)
     return JsonResponse(data, safe=False)
 
 
