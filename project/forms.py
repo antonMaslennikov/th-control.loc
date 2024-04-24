@@ -94,16 +94,44 @@ class RunServiceForm(forms.Form):
         pass
 
 
+class MultipleFileInput(forms.ClearableFileInput):
+    allow_multiple_selected = True
+
+
+class MultipleFileField(forms.FileField):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("help_text", 'В формате csv, несколько файлов выбирать с ctrl')
+        kwargs.setdefault('label', 'Файлы')
+        kwargs.setdefault("widget", MultipleFileInput())
+        super().__init__(*args, **kwargs)
+
+    def clean(self, data, initial=None):
+
+        single_file_clean = super().clean
+
+        if isinstance(data, (list, tuple)):
+            result = [single_file_clean(d, initial) for d in data]
+        else:
+            result = [single_file_clean(data, initial)]
+
+        return result
+
 class RunService2Form(RunServiceForm):
-    # file = forms.FileField(help_text='В формате csv, несколько файлов выбирать с ctrl', label='Файлы', widget=forms.ClearableFileInput(attrs={'multiple': True}))
-    file = forms.FileField(help_text='В формате csv, несколько файлов выбирать с ctrl', label='Файлы', widget=forms.ClearableFileInput())
+    # file = forms.FileField(help_text='В формате csv, несколько файлов выбирать с ctrl', label='Файлы', widget=forms.ClearableMultipleFileInput(attrs={'multiple': True}))
+    file = MultipleFileField()
 
     def clean_file(self):
         data = self.cleaned_data['file']
 
-        valid_extensions = ['.csv']
+        def single_file_clean(d):
+            valid_extensions = ['.csv']
 
-        if not os.path.splitext(data.name)[1] in valid_extensions:
-            raise ValidationError("Файл должен иметь расширение csv")
+            if not os.path.splitext(d.name)[1] in valid_extensions:
+                raise ValidationError("Файл должен иметь расширение csv")
 
-        return data
+        if isinstance(data, (list, tuple)):
+            result = [single_file_clean(d) for d in data]
+        else:
+            result = [single_file_clean(data)]
+
+        return result
